@@ -1,3 +1,6 @@
 main(){
 	print "hello world!";
 }
+method(){
+	print "add method"
+}
