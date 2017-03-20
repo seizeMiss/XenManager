@@ -1,0 +1,50 @@
+.login {
+	width: 400px;
+	height: auto;
+	margin-left: 39%;
+	margin-top: 200px;
+}
+.logo {
+	margin-bottom: 30px;
+	margin-left: 40px;
+}
+input {
+	border: 0;
+}
+input:focus {
+	outline: none;
+}
+.username,.password{
+	width: 360px;
+	height: 50px;
+	margin-bottom: 30px;
+	border: 1px solid gray;
+	border-radius: 5px;
+}
+#input-psw,#input-username,#input-psw-clear{
+	line-height: 50px;
+	width: 270px;
+	font-size: 25px;
+	margin-left: 8px;
+	background: transparent;
+}
+#psw-label{
+	position: absolute;
+	left: 325px;
+	top: 15px;
+	font-size: 20px;
+}
+#login{
+	width: 360px;
+	height: 40px;
+	background: #09f;
+	color: white;
+}
+.login-error{
+	width: 300px;
+	height: 25px;
+	margin-bottom: 20px;
+	color: red;
+	font-size: 20px;
+	display: none;
+}
