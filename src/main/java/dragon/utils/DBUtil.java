@@ -11,7 +11,7 @@ import java.sql.Statement;
 
 public class DBUtil {
 	private final static String DRIVER_NAME="com.mysql.jdbc.Driver";
-	private final static String URL="jdbc:mysql://localhost:3306/demo";
+	private final static String URL="jdbc:mysql://localhost:3306/vmmanager";
 	private final static String USERNAME="root";
 	private final static String PASSWORD="root";
 	public static Connection getConnection(){

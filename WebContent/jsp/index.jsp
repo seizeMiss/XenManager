@@ -33,7 +33,7 @@
 							<div id="user-child" class="panel-collapse collapse">
 								<ul class="nav nav-pills nav-stacked" style="width: auto;">
 									<li>
-										<a href="local_user.html"><span style="margin-left: 50px;">本地用户</span></a>
+										<a href="showLocalUser"><span style="margin-left: 50px;">本地用户</span></a>
 									</li>
 									<li>
 										<a href="admin_user.html"><span style="margin-left: 50px;">管理员</span></a>

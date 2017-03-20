@@ -14,7 +14,7 @@
 				data-toggle="popover" data-placement="bottom"
 				data-content="<a href='local_user.html' style='color:#605757'>用户信息</a>">
 					admin </a></li>
-			<li title="注销"><a href="login.html"> <span id="loginout"
+			<li title="注销"><a href="loginOut"> <span id="loginout"
 					class="glyphicon glyphicon-log-out"></span>
 			</a></li>
 		</ul>

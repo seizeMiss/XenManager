@@ -4,14 +4,11 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import main.java.dragon.dao.IUserDao;
 import main.java.dragon.pojo.User;
-import main.java.dragon.utils.ConnectionUtils;
 
 @Repository
 @Transactional

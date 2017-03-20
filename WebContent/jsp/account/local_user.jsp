@@ -26,7 +26,7 @@
 							<div id="user-child" class="panel-collapse collapse in">
 								<ul class="nav nav-pills nav-stacked" style="width: auto;">
 									<li class="active">
-										<a href="#"><span style="margin-left: 50px;">本地用户</span></a>
+										<a href="showLocalUser"><span style="margin-left: 50px;">本地用户</span></a>
 									</li>
 									<li>
 										<a href="admin_user.html"><span style="margin-left: 50px;">管理员</span></a>
@@ -81,11 +81,11 @@
 									</thead>
 									<tbody>
 									<tr>
-										<td>Tanmay</td>
-										<td>Bangalore</td>
-										<td>560001</td>
-										<td>2018.03.03</td>
-										<td>560001</td>
+										<td>${account.userName }</td>
+										<td>${account.email }</td>
+										<td>${account.realName }</td>
+										<td>${account.createTime }</td>
+										<td>${account.description }</td>
 									</tr>
 									</tbody>
 								</table>
