@@ -73,10 +73,8 @@ public class UserController {
 		model.addAttribute("users", users);
 		return "alluser";
 	}
-	
 	@RequestMapping("getLocalUser")
 	public String getLocalUSer(){
 		return "jsp/account/add_user";
 	}
-
 }
