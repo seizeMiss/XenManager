@@ -134,7 +134,11 @@ public class AccountController {
 		}
 		return "/jsp/account/edit_user";
 	}
-	
+	/**
+	 * 编辑用户信息
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping("editUser")
 	@ResponseBody
 	public Map<String, Object> edit(HttpServletRequest request){
