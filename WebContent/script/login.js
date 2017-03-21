@@ -56,4 +56,10 @@ $(function() {
 		
 //		location.href = "index.html";
 	});
+	
+	$("body").keydown(function(){
+		if(event.keyCode == "13"){
+			$("#login").click();
+		}
+	});
 });

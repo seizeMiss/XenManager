@@ -80,7 +80,7 @@ $(function() {
 	
 	
 	//使所有的textarea标签都是空值
-	$("textarea").val("");
+//	$("textarea").val("");
 	var li_record;
 	
 	$(".nav-li").click(function() {
