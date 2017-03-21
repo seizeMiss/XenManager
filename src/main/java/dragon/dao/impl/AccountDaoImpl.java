@@ -17,20 +17,58 @@ public class AccountDaoImpl extends HibernateUtils implements IAccountDao{
 
 	@Override
 	public int insertAccount(Account account) {
-		
+		Session session = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			session.save(account);
+			session.getTransaction().commit();
+			return 1;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
 		return 0;
 	}
 
 	@Override
 	public int updateAccount(Account account) {
-		
+		Session session = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			session.update(account);
+			session.flush();
+			session.getTransaction().commit();
+			return 1;
+		}catch (Exception e) {
+			session.getTransaction().rollback();
+			e.printStackTrace();
+		} finally {
+			closeSession(session);
+		}
 		return 0;
 	}
 
 	@Override
-	public int selectAccountById(String id) {
-		
-		return 0;
+	public Account selectAccountById(String id) {
+		Session session = null;
+		Account account = null;
+		try {
+			session = getSession();
+			account = (Account) session.get(Account.class, id);
+			if (!StringUtils.isEmpty(account)){
+				return account;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally {
+			closeSession(session);
+		}
+		return account;
 	}
 
 	@Override
@@ -41,9 +79,7 @@ public class AccountDaoImpl extends HibernateUtils implements IAccountDao{
 			session = getSession();
 			session.beginTransaction();
 			String hql = "from Account a where a.userName = ? and a.password = ?";
-			Query query = session.createQuery(hql);
-			query.setParameter(0, account.getUserName());
-			query.setParameter(1, account.getPassword());
+			Query query = queryByParams(session, hql, account.getUserName(),account.getPassword());
 			selectAccounts = (List<Account>)query.list();
 			session.getTransaction().commit();
 			if(!StringUtils.isEmpty(selectAccounts)){
@@ -61,13 +97,41 @@ public class AccountDaoImpl extends HibernateUtils implements IAccountDao{
 
 	@Override
 	public List<Account> selectAllAccount() {
-		
-		return null;
+		List<Account> accounts = null;
+		Session session = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String hql = "from Account";
+			Query query = session.createQuery(hql);
+			accounts = query.list();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally {
+			closeSession(session);
+		}
+		return accounts;
 	}
 
 	@Override
 	public int deleteAccount(String id) {
-		
+		Session session = null;
+		Account account = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			account = (Account) session.load(Account.class, id);
+			session.delete(account);
+			session.getTransaction().commit();
+			return 1;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally {
+			
+		}
 		return 0;
 	}
 
