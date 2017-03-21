@@ -36,7 +36,7 @@
 										<a href="showLocalUser"><span style="margin-left: 50px;">本地用户</span></a>
 									</li>
 									<li>
-										<a href="admin_user.html"><span style="margin-left: 50px;">管理员</span></a>
+										<a href="showAdminUser"><span style="margin-left: 50px;">管理员</span></a>
 									</li>
 								</ul>
 							</div>

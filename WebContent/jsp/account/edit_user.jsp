@@ -1,19 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="../common/common.jsp"></jsp:include>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/user.js"></script>
 <script type="text/javascript">
 	$(function() {
-		$(".configure-user").bind("click", operationSuccess);
 		$("#popover-pwd").webuiPopover({
 			closeable : true,
 			animation : 'pop',
 			placement : 'right'
 		});
+		$("#user_desc").val($("#user_desc").val().trim());
 	});
-	function operationSuccess() {
-		zeroModal.success("操作成功！");
-		return false;
-	}
 </script>
 <style>
 #popover-pwd {
@@ -70,7 +68,7 @@
 									用户管理
 								</li>
 								<li>
-									<a href="local_user.html">本地用户</a>
+									<a href="showLocalUser">本地用户</a>
 								</li>
 								<li>
 									编辑用户
@@ -78,12 +76,12 @@
 							</ol>
 						</div>
 					</div>
-					<div class="content-form">
+					<div class="content-form" tid="${localAccount.id }">
 						<form class="form-horizontal" role="form">
 							<div class="form-group">
 								<label for="user_name" class="col-sm-2 control-label">账户名</label>
 								<div class="col-sm-10">
-									<span style="line-height: 27px;">chenbaolong</span>
+									<span style="line-height: 27px;">${localAccount.userName }</span>
 								</div>
 							</div>
 							<div class="form-group">
@@ -91,7 +89,7 @@
 									<span class="asterisk">*</span>真实姓名
 								</label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control" id="user_real_name" placeholder="请输入真实姓名">
+									<input type="text" class="form-control" id="user_real_name" value="${localAccount.realName }" placeholder="请输入真实姓名">
 								</div>
 								<a id="popover-pwd" data-container="body" data-toggle="popover" 
 								data-placement="right" data-content="真实姓名只能由中英文、数字、空格和横杠 (-)构成，最长30字符" 
@@ -100,13 +98,14 @@
 							<div class="form-group">
 								<label for="user_mail" class="col-sm-2 control-label">邮箱</label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control" id="user_mail" placeholder="请输入邮箱">
+									<input type="text" class="form-control" id="user_mail" value="${localAccount.email }" placeholder="请输入邮箱">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="user_desc" class="col-sm-2 control-label">描述</label>
 								<div class="col-sm-10">
 									<textarea id="user_desc" placeholder="描述">
+									${localAccount.description }
 									</textarea>
 								</div>
 							</div>

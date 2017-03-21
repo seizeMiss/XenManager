@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="../common/common.jsp"/>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/user.js"></script>
 <body>
@@ -104,27 +105,16 @@
 										</tr>
 									</thead>
 									<tbody>
-									<tr>
-										<td><input type="checkbox" name="checkbox"></td>
-										<td>Tanmay</td>
-										<td>Bangalore</td>
-										<td>560001</td>
-										<td>560001</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" name="checkbox"></td>
-										<td>Sachin</td>
-										<td>Mumbai</td>
-										<td>400003</td>
-										<td>400003</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" name="checkbox"></td>
-										<td>Uma</td>
-										<td>Pune</td>
-										<td>411027</td>
-										<td>411027</td>
-									</tr>
+									<c:forEach var="adminAccount" items="${accounts }">
+										<tr tid="${adminAccount.id }">
+											<td><input type="checkbox" name="checkbox"></td>
+											<td>${adminAccount.userName }</td>
+											<td>${adminAccount.email }</td>
+											<td>${adminAccount.realName }</td>
+											<td>${adminAccount.createTime }</td>
+											<td>${adminAccount.description }</td>
+										</tr>
+									</c:forEach>
 									</tbody>
 								</table>
 							</div>

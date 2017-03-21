@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <jsp:include page="../common/common.jsp"></jsp:include>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/user.js"></script>
 <script type="text/javascript">
 	$(function() {
 		$("#popover-pwd").webuiPopover({
@@ -77,7 +78,7 @@
 							<div class="form-group">
 								<label for="user_name" class="col-sm-2 control-label">账户名</label>
 								<div class="col-sm-10">
-									<span style="line-height: 27px;">chenbaolong</span>
+									<span style="line-height: 27px;">${localAccount.userName }</span>
 								</div>
 							</div>
 							<div class="form-group">
@@ -85,21 +86,24 @@
 									<span class="asterisk">*</span>密码
 								</label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control" id="user_psd" placeholder="请输入密码">
+									<input type="password" class="form-control" id="user_psd" placeholder="请输入密码">
 								</div>
 								<a id="popover-pwd" data-container="body" data-toggle="popover" 
 								data-placement="right" data-content="1.密码长度为6~18位<br>2.密码必须包含英文大写、英文小写、数字、特殊字符中的至少3类字符<br>3.密码中不能包含账户名和真实姓名" 
 								class="glyphicon glyphicon-info-sign"></a>
+								<div class="warming-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">密码不能为空！</label></span>
+								</div>
 							</div>
 							<div class="form-group">
 								<label for="user_psd_conf" class="col-sm-2 control-label"><span class="asterisk">*</span>确认密码</label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control" id="user_psd_conf" placeholder="确认密码">
+									<input type="password" class="form-control" id="user_psd_conf" placeholder="确认密码">
 								</div>
 							</div>
 							<div class="form-group operation">
 								<div class="col-sm-offset-2 col-sm-10">
-									<button type="button" class="btn btn-default ok-btn" style="margin-right: 30px;">
+									<button type="button" class="btn btn-default modify-password-btn" style="margin-right: 30px;">
 										确定
 									</button>
 									<button type="button" class="btn btn-default cancle-btn">

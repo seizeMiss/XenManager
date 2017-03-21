@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <jsp:include page="../common/common.jsp" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/user.js"></script>
 <script type="text/javascript">
 	$(function() {
 		$("#popover-pwd").webuiPopover({
