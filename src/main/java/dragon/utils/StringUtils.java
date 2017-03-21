@@ -4,6 +4,19 @@ import java.util.List;
 import java.util.UUID;
 
 public class StringUtils {
+	public static boolean isEmpty(Object ...objects){
+		boolean flag = false;
+		int count = 0;
+		for(Object object : objects){
+			if(isEmpty(object)){
+				count++;
+			}
+		}
+		if(count == objects.length){
+			flag = true;
+		}
+		return flag;
+	}
 	
 	public static boolean isEmpty(Object object){
 		boolean flag = false;
