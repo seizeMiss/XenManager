@@ -122,8 +122,8 @@ $(function() {
 			$(".show-selected").children("span").html(0);
 			$("#delete-admin-user").attr("disabled",true);
 		}
-		
 	});
+	//点击checkbox
 	$("input[name='checkbox']").click(function(){
 		var count = 0;
 		var len = $("input[name='checkbox']").length;
@@ -185,6 +185,7 @@ function setVMLineLeft(width){
 		$(".vm-line").css("left", "35%");
 	}
 }
+//监控checkBox被选中的个数
 function monitorCheckBox(){
 	var count = 0;
 	var len = $("input[name='checkbox']").length;
