@@ -19,6 +19,23 @@ public class Account {
 	private Date updateTime;
 	private String description;
 	
+	public Account(){
+		
+	}
+	
+	public Account(String id, String userName, String realName, String password, String email, Date createTime,
+			Date updateTime, String description) {
+		super();
+		this.id = id;
+		this.userName = userName;
+		this.realName = realName;
+		this.password = password;
+		this.email = email;
+		this.createTime = createTime;
+		this.updateTime = updateTime;
+		this.description = description;
+	}
+
 	@Id
 	public String getId() {
 		return id;
