@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+
 import main.java.dragon.pojo.Account;
 import main.java.dragon.service.IAccountService;
 import main.java.dragon.utils.StringUtils;
@@ -74,6 +76,7 @@ public class AccountController {
 	@RequestMapping("showLocalUser")
 	public String showLocalUser(HttpSession session,Model model){
 		Account account = (Account)session.getAttribute("account");
+		account = accountService.getAccountById(account.getId());
 		model.addAttribute("account", account);
 		return "/jsp/account/local_user";
 	}
@@ -85,8 +88,11 @@ public class AccountController {
 	@RequestMapping("showAdminUser")
 	public String showAdminUser(Model model){
 		List<Account> accounts = accountService.getAllAccount();
+		int size = 0;
 		if(!StringUtils.isEmpty(accounts)){
+			size = accounts.size();
 			model.addAttribute("accounts", accounts);
+			model.addAttribute("size", size);
 			System.out.println(model.toString());
 		}
 		return "/jsp/account/admin_user";
@@ -106,7 +112,12 @@ public class AccountController {
 		}
 		return "/jsp/account/modify_password";
 	}
-	
+	/**
+	 * 修改密码
+	 * @param session
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping("modifyPassword")
 	@ResponseBody
 	public Map<String, Object> modifyPassword(HttpSession session, HttpServletRequest request){
@@ -141,10 +152,39 @@ public class AccountController {
 	 */
 	@RequestMapping("editUser")
 	@ResponseBody
-	public Map<String, Object> edit(HttpServletRequest request){
+	public Map<String, Object> editUser(HttpServletRequest request,HttpSession session){
 		Map<String, Object> map = new HashMap<>();
 		String id = request.getParameter("id");
+		String realName = StringUtils.setEncodeString(request.getParameter("realName"));
+		String email = request.getParameter("email");
+		String description = StringUtils.setEncodeString(request.getParameter("description"));
+		Account account = accountService.getAccountById(id);
+		account.setRealName(realName);
+		account.setEmail(email);
+		account.setDescription(description);
+		account.setUpdateTime(new Date());
+		if(accountService.saveUser(account)){
+			Account localAccount = (Account)session.getAttribute("account");
+			if(localAccount.getId().equals(account.getId())){
+				map.put("data", 1);
+			}else{
+				map.put("data", 0);
+			}
+		}
+		return map;
+	}
+	
+	@RequestMapping("showAddUser")
+	public String showAddUser(){
+		return "jsp/account/add_user";
+	}
+	
+	@RequestMapping("addUser")
+	@ResponseBody
+	public Map<String, Object> addUser(HttpServletRequest request){
+		String userName = request.getParameter("userName");
 		String realName = request.getParameter("realName");
+		String password = request.getParameter("password");
 		String email = request.getParameter("email");
 		String description = "";
 		try {
@@ -153,15 +193,45 @@ public class AccountController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Account account = accountService.getAccountById(id);
-		account.setRealName(realName);
-		account.setEmail(email);
-		account.setDescription(description);
-		account.setUpdateTime(new Date());
-		if(accountService.saveUser(account)){
+		
+		Map<String,Object> map = new HashMap<>();
+		String uuid = StringUtils.generateUUID();
+		Account account = new Account(uuid, userName, realName, password, email, new Date(), new Date(), description);
+		if(accountService.addUser(account)){
 			map.put("data", "success");
 		}
 		return map;
+	}
+	/**
+	 * 删除用户信息
+	 * @param ids
+	 * @return
+	 */
+	@RequestMapping("deleteUsers")
+	@ResponseBody
+	public Map<String, Object> deleteUsers(@RequestParam(value="tid")String ids){
+		Map<String, Object> map = new HashMap<>();
+		if(accountService.deleteUsers(ids)){
+			map.put("data", "success");
+		}
+		return map;
+	}
+	
+	@RequestMapping("searchAccount")
+	public String searchAccount(Model model, HttpServletRequest request){
+		String name = request.getParameter("condition-name");
+		List<Account> accounts = accountService.getAccountsByCondition(name);
+		if(!StringUtils.isEmpty(accounts)){
+			model.addAttribute("accounts", accounts);
+			model.addAttribute("size", accounts.size());
+		}
+		return "jsp/account/admin_user";
+	}
+	
+	@RequestMapping("showAbout")
+	public String showAcount(){
+		
+		return "jsp/about";
 	}
 	
 }
