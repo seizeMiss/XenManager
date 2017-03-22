@@ -48,6 +48,37 @@ public class AccountServiceImpl implements IAccountService{
 		}
 		return false;
 	}
+
+	@Override
+	public boolean addUser(Account account) {
+		// TODO Auto-generated method stub
+		if(accountDao.insertAccount(account) > 0){
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean deleteUsers(String ids) {
+		// TODO Auto-generated method stub
+		String[] idArray = ids.split(",");
+		int size = 0;
+		for(String id : idArray){
+			if(accountDao.deleteAccount(id) > 0){
+				size++;
+			}
+		}
+		if(size == idArray.length){
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public List<Account> getAccountsByCondition(String name) {
+		// TODO Auto-generated method stub
+		return accountDao.selectAccountsByCondition(name);
+	}
 	
 	
 

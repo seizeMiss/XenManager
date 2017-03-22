@@ -9,5 +9,7 @@ public interface IAccountService {
 	public List<Account> getAllAccount();
 	public Account getAccountById(String id);
 	public boolean saveUser(Account account);
-
+	public boolean addUser(Account account);
+	public boolean deleteUsers(String ids);
+	public List<Account> getAccountsByCondition(String name);
 }
