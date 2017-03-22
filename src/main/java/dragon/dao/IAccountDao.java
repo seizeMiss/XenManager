@@ -11,5 +11,6 @@ public interface IAccountDao {
 	public Account selectAccountByUsernameAndPassword(Account account);
 	public List<Account> selectAllAccount();
 	public int deleteAccount(String id);
+	public List<Account> selectAccountsByCondition(String name);
 
 }

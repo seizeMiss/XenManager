@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.ejb.criteria.expression.SearchedCaseExpression;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ public class AccountDaoImpl extends HibernateUtils implements IAccountDao{
 			session = getSession();
 			session.beginTransaction();
 			session.save(account);
+			session.flush();
 			session.getTransaction().commit();
 			return 1;
 		} catch (Exception e) {
@@ -124,15 +126,37 @@ public class AccountDaoImpl extends HibernateUtils implements IAccountDao{
 			session.beginTransaction();
 			account = (Account) session.load(Account.class, id);
 			session.delete(account);
+			session.flush();
 			session.getTransaction().commit();
 			return 1;
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}finally {
-			
+			closeSession(session);
 		}
 		return 0;
+	}
+
+	@Override
+	public List<Account> selectAccountsByCondition(String name) {
+		Session session = null;
+		List<Account> accounts = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String hql = "from Account where userName like '" + name + "%'";
+			System.out.println(hql);
+			Query query = session.createQuery(hql);
+			accounts = query.list();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
+		return accounts;
 	}
 
 }
