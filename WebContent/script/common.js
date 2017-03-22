@@ -72,12 +72,17 @@ $(function() {
 			$(this).addClass("glyphicon-chevron-down");
 		}
 	});
-	
+	//选中下拉框的内容，赋值给input
 	$("#select-os li").click(function(){
 		$("#selected-os").val($(this).children("a").html());
+		$("#select-os").hide();
 	});
-	
-	
+	$("#selected-os").click(function(){
+		$("#select-os").show();
+	});
+	$(".show-os").click(function(){
+		$("#select-os").show();
+	});
 	
 	//使所有的textarea标签都是空值
 //	$("textarea").val("");
@@ -94,7 +99,15 @@ $(function() {
 		$(this).addClass("active");
 		$(this).css("background","#d2d0d0");
 		// $(this).children("div").css("display", "block");
-		$(this).children().children("i").toggleClass("glyphicon-chevron-down").css("color","white");
+		if($(this).children("div").length > 0){
+			$(this).children().children("i")
+					.css("color","white").addClass("glyphicon-chevron-down")
+					.removeClass("glyphicon-chevron-left");
+		}else{
+			$(this).children().children("i")
+					.css("color","white").addClass("glyphicon-chevron-left")
+					.removeClass("glyphicon-chevron-down");
+		}
 	});
 	
 	//点击全选，下面用户全部被选中
@@ -103,9 +116,11 @@ $(function() {
 		if ($(this).is(":checked")) {
 			$("input[name='checkbox']").prop("checked", true);
 			$(".show-selected").children("span").html(length);
+			$("#delete-admin-user").attr("disabled",false);
 		} else {
 			$("input[name='checkbox']").prop("checked", false);
 			$(".show-selected").children("span").html(0);
+			$("#delete-admin-user").attr("disabled",true);
 		}
 		
 	});
@@ -123,10 +138,14 @@ $(function() {
 			$("#all_cb").prop("checked", false);
 		}
 		$(".show-selected").children("span").html(count);
-		if(count != 1){
-			
+		if(count == 1){
+			$("#edit-admin-user").attr("disabled",false);
+			$("#delete-admin-user").attr("disabled",false);
 		}else{
-			
+			if(count == 0){
+				$("#delete-admin-user").attr("disabled",true);
+			}
+			$("#edit-admin-user").attr("disabled",true);
 		}
 	});
 	//重置
@@ -164,5 +183,24 @@ function setVMLineLeft(width){
 		$(".vm-line").css("left", "37%");
 	}else if(width > 1370){
 		$(".vm-line").css("left", "35%");
+	}
+}
+function monitorCheckBox(){
+	var count = 0;
+	var len = $("input[name='checkbox']").length;
+	$("input[name='checkbox']").each(function(){
+		if($(this).is(":checked")){
+			count++;
+		}
+	});
+	$(".show-selected").children("span").html(count);
+	if(count == 1){
+		$("#edit-admin-user").attr("disabled",false);
+		$("#delete-admin-user").attr("disabled",false);
+	}else{
+		if(count == 0){
+			$("#delete-admin-user").attr("disabled",true);
+		}
+		$("#edit-admin-user").attr("disabled",true);
 	}
 }

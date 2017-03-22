@@ -316,18 +316,47 @@ textarea{
 	color: white;
 }
 /*璀﹀憡鎻愰啋*/
-.warming-info{
+.warning-info{
 	position: relative;
 	top: -25px;
 	left: 104%;
 	display: none;
 }
-.warming-info span{
+.warning-info span{
 	color: red;
 	font-size: 14px;
 }
-
-/*鏄熷彿*/
+.username-warming-info{
+	position: absolute;
+	top: 130px;
+	left: 980px;
+	display: none;
+}
+.username-warming-info span{
+	color: red;
+	font-size: 14px;
+}
+.psd-warning-info{
+	position: absolute;
+	top: 180px;
+	left: 1000px;
+	display: none;
+}
+.psd-warning-info span{
+	color: red;
+	font-size: 14px;
+}
+.psd-conf-warming-info{
+	position: absolute;
+	top: 230px;
+	left: 1000px;
+	display: none;
+}
+.psd-conf-warming-info span{
+	color: red;
+	font-size: 14px;
+}
+/*星号*/
 .asterisk{
 	color:red;
 	margin-right: 10px;
@@ -339,7 +368,16 @@ textarea{
 	top: -18px;
 	left: 72%;
 }
-/* 鍏充簬鏈郴缁� */
+/* 查询没有数据  */
+.no-data td{
+	text-align: center;
+}
+/* 箭头标志*/
+.arrow-sign{
+	line-height: 16px;
+	color:white;
+}
+/* 关于*/
 .about-system{
 	width: 96%;
 	height: 100%;

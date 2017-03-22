@@ -36,6 +36,7 @@ $(function() {
 		}
 		jQuery.ajax({
 			dataType: "json",
+			cache:false,
 			url: "login",
 			data: {
 				userName: userName,

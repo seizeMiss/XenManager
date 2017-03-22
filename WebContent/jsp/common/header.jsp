@@ -12,7 +12,7 @@
 			<li><span id="head-user" class="glyphicon glyphicon-user"></span>
 				<a id="popover-local-user" href="#" data-container="body"
 				data-toggle="popover" data-placement="bottom"
-				data-content="<a href='local_user.html' style='color:#605757'>用户信息</a>">
+				data-content="<a href='showLocalUser' style='color:#605757'>用户信息</a>">
 					admin </a></li>
 			<li title="注销"><a href="loginOut"> <span id="loginout"
 					class="glyphicon glyphicon-log-out"></span>

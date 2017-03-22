@@ -24,32 +24,32 @@
 				<div class="left-nav">
 					<ul id="nav" class="nav nav-pills nav-stacked">
 						<li class="nav-li">
-							<a href="index.html" ><span class="glyphicon glyphicon-home left-nav-icon"></span>首页</a>
+							<a href="showIndex" ><span class="glyphicon glyphicon-home left-nav-icon"></span>首页</a>
 						</li>
 						<li class="nav-li">
-							<a href="colony_hostcomputer.html"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>集群和主机</a>
+							<a href="showClusterAndHost"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>集群和主机</a>
 						</li>
 						<li class="nav-li active">
-							<a href="image.html"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>镜像</a>
+							<a href="showImage"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>镜像</a>
 						</li>
 						<li class="nav-li">
-							<a href="virtual_machine.html"> <span class="glyphicon glyphicon-cloud left-nav-icon"></span> 虚拟机 </a>
+							<a href="showVM"> <span class="glyphicon glyphicon-cloud left-nav-icon"></span> 虚拟机 </a>
 						</li>
 						<li class="nav-li">
 							<a href="#user-child" data-toggle="collapse" data-parent="left-nav"> <span class="glyphicon glyphicon-cog left-nav-icon"></span> 用户管理 <i class="glyphicon glyphicon-chevron-left pull-right" style="line-height: 16px;"></i> </a>
 							<div id="user-child" class="panel-collapse collapse">
 								<ul class="nav nav-pills nav-stacked" style="width: auto;">
 									<li>
-										<a href="local_user.html"><span style="margin-left: 50px;">本地用户</span></a>
+										<a href="showLocalUser"><span style="margin-left: 50px;">本地用户</span></a>
 									</li>
 									<li>
-										<a href="admin_user.html"><span style="margin-left: 50px;">管理员</span></a>
+										<a href="showAdminUser"><span style="margin-left: 50px;">管理员</span></a>
 									</li>
 								</ul>
 							</div>
 						</li>
 						<li class="nav-li">
-							<a href="about.html"><span class="glyphicon glyphicon-stats left-nav-icon"></span>关于</a>
+							<a href="showAbout"><span class="glyphicon glyphicon-stats left-nav-icon"></span>关于</a>
 						</li>
 					</ul>
 				</div>

@@ -10,16 +10,16 @@
 				<div class="left-nav">
 					<ul id="nav" class="nav nav-pills nav-stacked">
 						<li class="nav-li active">
-							<a href="index.html" ><span class="glyphicon glyphicon-home left-nav-icon"></span>首页</a>
+							<a href="showIndex" ><span class="glyphicon glyphicon-home left-nav-icon"></span>首页</a>
 						</li>
 						<li class="nav-li">
-							<a href="colony_hostcomputer.html"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>集群和主机</a>
+							<a href="showClusterAndHost"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>集群和主机</a>
 						</li>
 						<li class="nav-li">
-							<a href="image.html"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>镜像</a>
+							<a href="showImage"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>镜像</a>
 						</li>
 						<li class="nav-li">
-							<a href="virtual_machine.html" >
+							<a href="showVM" >
 								<span class="glyphicon glyphicon-cloud left-nav-icon"></span>
 								虚拟机 
 							</a>
@@ -42,7 +42,7 @@
 							</div>
 						</li>
 						<li class="nav-li">
-							<a href="about.html"><span class="glyphicon glyphicon-stats left-nav-icon"></span>关于</a>
+							<a href="showAbout"><span class="glyphicon glyphicon-stats left-nav-icon"></span>关于</a>
 						</li>
 					</ul>
 				</div>

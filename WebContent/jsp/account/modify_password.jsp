@@ -28,32 +28,32 @@
 				<div class="left-nav">
 					<ul id="nav" class="nav nav-pills nav-stacked">
 						<li class="nav-li">
-							<a href="index.html" ><span class="glyphicon glyphicon-home left-nav-icon"></span>首页</a>
+							<a href="showIndex" ><span class="glyphicon glyphicon-home left-nav-icon"></span>首页</a>
 						</li>
 						<li class="nav-li">
-							<a href="colony_hostcomputer.html"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>集群和主机</a>
+							<a href="showClusterAndHost"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>集群和主机</a>
 						</li>
 						<li class="nav-li">
-							<a href="image.html"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>镜像</a>
+							<a href="showImage"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>镜像</a>
 						</li>
 						<li class="nav-li">
-							<a href="virtual_machine.html"> <span class="glyphicon glyphicon-cloud left-nav-icon"></span> 虚拟机  </a>
+							<a href="showVM"> <span class="glyphicon glyphicon-cloud left-nav-icon"></span> 虚拟机  </a>
 						</li>
 						<li class="nav-li">
 							<a href="#user-child" data-toggle="collapse" data-parent="left-nav"> <span class="glyphicon glyphicon-cog left-nav-icon"></span> 用户管理 <i class="glyphicon glyphicon-chevron-left pull-right" style="line-height: 16px;"></i> </a>
 							<div id="user-child" class="panel-collapse collapse in">
 								<ul class="nav nav-pills nav-stacked" style="width: auto;">
 									<li class="active">
-										<a href="local_user.html"><span style="margin-left: 50px;">本地用户</span></a>
+										<a href="showLocalUser"><span style="margin-left: 50px;">本地用户</span></a>
 									</li>
 									<li>
-										<a href="admin_user.html"><span style="margin-left: 50px;">管理员</span></a>
+										<a href="showAdminUser"><span style="margin-left: 50px;">管理员</span></a>
 									</li>
 								</ul>
 							</div>
 						</li>
 						<li class="nav-li">
-							<a href="about.html"><span class="glyphicon glyphicon-stats left-nav-icon"></span>关于</a>
+							<a href="showAbout"><span class="glyphicon glyphicon-stats left-nav-icon"></span>关于</a>
 						</li>
 					</ul>
 				</div>
@@ -91,7 +91,7 @@
 								<a id="popover-pwd" data-container="body" data-toggle="popover" 
 								data-placement="right" data-content="1.密码长度为6~18位<br>2.密码必须包含英文大写、英文小写、数字、特殊字符中的至少3类字符<br>3.密码中不能包含账户名和真实姓名" 
 								class="glyphicon glyphicon-info-sign"></a>
-								<div class="warming-info" style="float: left">
+								<div class="warning-info" style="float: left">
 									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">密码不能为空！</label></span>
 								</div>
 							</div>
