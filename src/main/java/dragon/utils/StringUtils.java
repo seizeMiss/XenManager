@@ -1,5 +1,6 @@
 package main.java.dragon.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +38,16 @@ public class StringUtils {
 		return uuid.toString();
 	}
 	
+	public static String setEncodeString(String str){
+		String transformStr = "";
+		try {
+			transformStr = new String(str.getBytes("iso-8859-1"),"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return transformStr;
+	}
 	
 
 }
