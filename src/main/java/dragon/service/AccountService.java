@@ -4,7 +4,7 @@ import java.util.List;
 
 import main.java.dragon.pojo.Account;
 
-public interface IAccountService {
+public interface AccountService {
 	public Account getByUserNameAndPassword(String userName,String password);
 	public List<Account> getAllAccount();
 	public Account getAccountById(String id);

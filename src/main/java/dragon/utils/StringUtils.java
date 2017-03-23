@@ -1,10 +1,19 @@
 package main.java.dragon.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 public class StringUtils {
+	
+	public static String double2String(double source){
+		String target = "";
+		BigDecimal format = new BigDecimal(source);
+		target = String.valueOf(format.setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
+		return target;
+	}
+	
 	public static boolean isEmpty(Object ...objects){
 		boolean flag = false;
 		int count = 0;

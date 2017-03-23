@@ -4,7 +4,7 @@ import java.util.List;
 
 import main.java.dragon.pojo.User;
 
-public interface IUserService {
+public interface UserService {
 	public boolean addUser(User user);
 	
 	public List<User> getAllUser();

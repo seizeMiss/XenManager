@@ -13,7 +13,7 @@
 				<a id="popover-local-user" href="#" data-container="body"
 				data-toggle="popover" data-placement="bottom"
 				data-content="<a href='showLocalUser' style='color:#605757'>用户信息</a>">
-					admin </a></li>
+					${account.userName } </a></li>
 			<li title="注销"><a href="loginOut"> <span id="loginout"
 					class="glyphicon glyphicon-log-out"></span>
 			</a></li>

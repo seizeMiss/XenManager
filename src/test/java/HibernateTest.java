@@ -4,12 +4,12 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import main.java.dragon.pojo.User;
-import main.java.dragon.service.IUserService;
+import main.java.dragon.service.UserService;
 
 public class HibernateTest {
 	
 	@Autowired
-	private IUserService userService;
+	private UserService userService;
 	
 	@Test
 	public void insertUser(){

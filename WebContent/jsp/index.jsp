@@ -1,6 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <jsp:include page="./common/common.jsp"></jsp:include>
+<script type="text/javascript">
+	var cpuUsedRate = "${cpuUsedRate }";
+	var memoryUsedRate = "${memoryUsedRate }";
+	var storageUsedRate = "${storageUsedRate }"
+</script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/radialIndicator.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/index.js"></script>
 <body>
@@ -51,13 +56,13 @@
 						<div class="vm-title"><span>虚拟机状态</span></div>
 						<div class="vm-number">
 							<div class="vm-close-number">
-								<a href="virtual_machine.html">0</a>
-								<h3>异常</h3>
+								<a href="showVM">${activeVmCount }</a>
+								<h3>已启动</h3>
 							</div>
 							<div class="vm-line"></div>
 							<div class="vm-open-number">
-								<a href="virtual_machine.html">0</a>
-								<h3>正常</h3>
+								<a href="showVM">${vmCount }</a>
+								<h3>总数</h3>
 							</div>
 						</div>
 					</div>
@@ -65,7 +70,7 @@
 						<div class="resource-name"><span>CPU使用率</span></div>
 						<div id="cpu-use-rate"></div>
 						<div class="show-percentage">
-							<a href="colony_hostcomputer.html"></a>
+							<a href="showClusterAndHost"></a>
 							<span>%</span>
 						</div>
 					</div>
@@ -73,7 +78,7 @@
 						<div class="resource-name"><span>内存使用率</span></div>
 						<div id="ram-use-rate"></div>
 						<div class="show-percentage">
-							<a href="colony_hostcomputer.html"></a>
+							<a href="showClusterAndHost"></a>
 							<span>%</span>
 						</div>
 					</div>
@@ -81,7 +86,7 @@
 						<div class="resource-name"><span>存储使用率</span></div>
 						<div id="storage-use-rate">
 						</div>
-						<span class="total-storage">总300G</span>
+						<span class="total-storage">总${storageTotal }G</span>
 					</div>
 				</div>
 			</div>

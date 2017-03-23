@@ -95,7 +95,6 @@ function deleteUser() {
 		}
 	});
 	return false;
-
 }
 function editUser() {
 	var id = $(".content-form").attr("tid");

@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import main.java.dragon.dao.IAccountDao;
 import main.java.dragon.pojo.Account;
-import main.java.dragon.service.IAccountService;
+import main.java.dragon.service.AccountService;
 
 @Service
 @Transactional
-public class AccountServiceImpl implements IAccountService{
+public class AccountServiceImpl implements AccountService{
 	
 	@Autowired
 	private IAccountDao accountDao;

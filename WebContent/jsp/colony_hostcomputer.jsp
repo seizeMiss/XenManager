@@ -54,12 +54,9 @@
 								<div class="show-total">
 									已展示数/总数:<span>1</span>/<span>1</span>
 								</div>
-								<div class="show-selected">
-									已选数:<span>0</span>
-								</div>
 							</div>
 							<div class="data-table-content">
-								<table class="table table-bordered">
+								<table class="table table-bordered table-hover">
 									<thead>
 										<tr>
 											<th>名称</th>
@@ -131,12 +128,9 @@
 								<div class="show-total">
 									已展示数/总数:<span>1</span>/<span>1</span>
 								</div>
-								<div class="show-selected">
-									已选数:<span>0</span>
-								</div>
 							</div>
 							<div class="data-table-content">
-								<table class="table table-bordered">
+								<table class="table table-bordered table-hover">
 									<thead>
 										<tr>
 											<th>名称</th>

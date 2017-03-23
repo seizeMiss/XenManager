@@ -19,14 +19,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 
 import main.java.dragon.pojo.Account;
-import main.java.dragon.service.IAccountService;
+import main.java.dragon.service.AccountService;
+import main.java.dragon.service.impl.ConnectionUtil;
+import main.java.dragon.service.impl.IndexService;
 import main.java.dragon.utils.StringUtils;
 
 @Controller
-public class AccountController {
-	@Autowired
-	private IAccountService accountService;
+public class AccountController{
 	
+	@Autowired
+	private AccountService accountService;
+	@Autowired
+	private IndexService indexService;
 	/**
 	 * 登录
 	 * @param session
@@ -64,6 +68,25 @@ public class AccountController {
 	 */
 	@RequestMapping("showIndex")
 	public String showInde(Model model){
+		try {
+			int vmCount = indexService.getVmCount();
+			int activeVmCount = indexService.getActiveVmCount();
+			String cpuUsedRate = indexService.getCpuUsedRate();
+			String memoryUsedRate = indexService.getMemoryUsedRate();
+			String storageUsedRate = indexService.getStorageUsedRate();
+			String storageTotal = indexService.getStorageTotal();
+			if(!StringUtils.isEmpty(vmCount,activeVmCount,cpuUsedRate,memoryUsedRate,storageTotal,storageUsedRate)){
+				model.addAttribute("vmCount", vmCount);
+				model.addAttribute("activeVmCount", activeVmCount);
+				model.addAttribute("cpuUsedRate", cpuUsedRate);
+				model.addAttribute("memoryUsedRate", memoryUsedRate);
+				model.addAttribute("storageUsedRate", storageUsedRate);
+				model.addAttribute("storageTotal", storageTotal);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return "/jsp/index";
 	}

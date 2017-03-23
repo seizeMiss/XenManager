@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import main.java.dragon.dao.IUserDao;
 import main.java.dragon.pojo.User;
-import main.java.dragon.service.IUserService;
+import main.java.dragon.service.UserService;
 
 @Service
 @Transactional
-public class UserServiceImpl implements IUserService{
+public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private IUserDao userDao;

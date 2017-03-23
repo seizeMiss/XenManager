@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import main.java.dragon.pojo.User;
-import main.java.dragon.service.IUserService;
+import main.java.dragon.service.UserService;
 
 @Controller
 public class UserController {
 	@Autowired
-	private IUserService userService;
+	private UserService userService;
 	
 	@RequestMapping("getUser")
 	public String getUserById(HttpSession session, Model model,HttpServletRequest request){
