@@ -1,6 +1,75 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <jsp:include page="./common/common.jsp" />
+<script type="text/javascript">
+	var clusterCpuUsedRate = "${cluster.cpuAverage }";
+	var clusterMemoryUsedRate = "${clusterMemoryUsedRate }";
+	var clusterStorageUserRate = "${clusterStorageUserRate };"
+	var hostCpuUsedRate = "${hostInstance.cpuAverage }"
+	var hostMemoryUsedRate = "${hostMemoryUsedRate }";
+	clusterMemoryUsedRate = parseInt(clusterMemoryUsedRate);
+	clusterCpuUsedRate = parseInt(clusterCpuUsedRate);
+	clusterStorageUserRate = parseInt(clusterStorageUserRate);
+	hostCpuUsedRate = parseInt(hostCpuUsedRate);
+	hostMemoryUsedRate = parseInt(hostMemoryUsedRate);
+	$(function(){
+		//集群内存使用率
+		if( clusterMemoryUsedRate > 70 && clusterMemoryUsedRate <= 90){
+			$(".cluster-memory-rate").css({
+				"width": clusterMemoryUsedRate+"%"}).toggleClass("progress-bar-warning");
+		}else if(clusterMemoryUsedRate > 90){
+			$(".cluster-memory-rate").css({
+				"width": clusterMemoryUsedRate+"%"}).toggleClass("progress-bar-danger");
+		}else{
+			$(".cluster-memory-rate").css({
+				"width": clusterMemoryUsedRate+"%"}).toggleClass("progress-bar-success");
+		}
+		//集群CPU使用率
+		if(clusterCpuUsedRate > 70 &&　clusterCpuUsedRate <= 90){
+			$(".cluster-cpu-rate").css({
+				"width": clusterCpuUsedRate+"%"}).toggleClass("progress-bar-warning");
+		}else if(clusterCpuUsedRate > 90){
+			$(".cluster-cpu-rate").css({
+				"width": clusterCpuUsedRate+"%"}).toggleClass("progress-bar-danger");
+		}else{
+			$(".cluster-cpu-rate").css({
+				"width": clusterCpuUsedRate+"%"}).toggleClass("progress-bar-success");
+		}
+		//集群存储使用率
+		if(clusterStorageUserRate > 70 && clusterStorageUserRate <= 90){
+			$(".cluster-storage-rate").css({
+				"width": clusterStorageUserRate+"%"}).toggleClass("progress-bar-warning");
+		}else if(clusterStorageUserRate > 90){
+			$(".cluster-storage-rate").css({
+				"width": clusterStorageUserRate+"%"}).toggleClass("progress-bar-danger");
+		}else{
+			$(".cluster-storage-rate").css({
+				"width": clusterStorageUserRate+"%"}).toggleClass("progress-bar-success");
+		}
+		//主机内存使用率
+		if( hostMemoryUsedRate > 70 && hostMemoryUsedRate <= 90){
+			$(".cluster-memory-rate").css({
+				"width": hostMemoryUsedRate+"%"}).toggleClass("progress-bar-warning");
+		}else if(hostMemoryUsedRate > 90){
+			$(".cluster-memory-rate").css({
+				"width": hostMemoryUsedRate+"%"}).toggleClass("progress-bar-danger");
+		}else{
+			$(".cluster-memory-rate").css({
+				"width": hostMemoryUsedRate+"%"}).toggleClass("progress-bar-success");
+		}
+		//主机CPU使用率
+		if( hostCpuUsedRate > 70 && hostCpuUsedRate <= 90){
+			$(".cluster-memory-rate").css({
+				"width": hostCpuUsedRate+"%"}).toggleClass("progress-bar-warning");
+		}else if(clusterMemoryUsedRate > 90){
+			$(".cluster-memory-rate").css({
+				"width": hostCpuUsedRate+"%"}).toggleClass("progress-bar-danger");
+		}else{
+			$(".cluster-memory-rate").css({
+				"width": hostCpuUsedRate+"%"}).toggleClass("progress-bar-success");
+		}
+	});
+</script>
 <body>
 		<div class="container">
 			<jsp:include page="./common/header.jsp"></jsp:include>
@@ -57,7 +126,7 @@
 							</div>
 							<div class="data-table-content">
 								<table class="table table-bordered table-hover">
-									<thead>
+									<thead class="data-thead">
 										<tr>
 											<th>名称</th>
 											<th>CPU使用率</th>
@@ -73,39 +142,39 @@
 									</thead>
 									<tbody>
 										<tr class="data-table-tr">
-											<td><span style="line-height: 50px;">Tanmay</span></td>
+											<td><span style="line-height: 50px;">${cluster.name }</span></td>
 											<td style="width: 180px;">
-											<div class="progress" style="width: 70%;margin-top: 15px;margin-bottom: 0;height: 15px;">
-												<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60"
-												aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
+											<div class="progress" style="width: 70%;margin-top: 15px;margin-bottom: 0;height: 15px;background:#c3bebe">
+												<div class="progress-bar progress-bar-success cluster-cpu-rate" role="progressbar" aria-valuenow="60"
+												aria-valuemin="0" aria-valuemax="100">
 													<span class="boyond-percent"></span>
 												</div>
-											</div><span class="progress-percent-cpu">10%</span></td>
+											</div><span class="progress-percent-cpu">${cluster.cpuAverage }%</span></td>
 											<td style="width: 180px;">
-												<div >100/128GB</div>
-												<div class="progress" style="width: 70%;margin-bottom: 0;height: 15px;">
-												<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60"
-												aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
+												<div >${cluster.memoryUsed }/${cluster.memoryTotal }GB</div>
+												<div class="progress" style="width: 70%;margin-bottom: 0;height: 15px;background:#c3bebe">
+												<div class="progress-bar progress-bar-success cluster-memory-rate" role="progressbar" aria-valuenow="60"
+												aria-valuemin="0" aria-valuemax="100">
 													<span class="boyond-percent"></span>
 												</div>
-											</div><span class="progress-percent-ram">10%</span></td>
+											</div><span class="progress-percent-ram">${clusterMemoryUsedRate }%</span></td>
 											<td style="width: 180px;">
-												<div class="">100/128GB</div>
-												<div class="progress" style="width: 70%;margin-bottom: 0;height: 15px;">
-												<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60"
-												aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+												<div class="">${cluster.storageUsed }/${cluster.storageTotal }GB</div>
+												<div class="progress" style="width: 70%;margin-bottom: 0;height: 15px;background:#c3bebe">
+												<div class="progress-bar progress-bar-success cluster-storage-rate" role="progressbar" aria-valuenow="60"
+												aria-valuemin="0" aria-valuemax="100">
 													<span class="boyond-percent"></span>
 												</div>
-											</div><span class="progress-percent-storage">60%</span></td>
-											<td><span style="line-height: 50px;">可用</span></td>
-											<td><span style="line-height: 50px;">1</span></td>
-											<td><span style="line-height: 50px;"><a href="virtual_machine.html" style="color: green">4</a></span></td>
-											<td><span style="line-height: 50px;">1</span></td>
-											<td><span style="line-height: 50px;">----</span></td>
+											</div><span class="progress-percent-storage">${clusterStorageUserRate }%</span></td>
+											<td><span style="line-height: 50px;">${cluster.status == 1 ? "可用" : "不可用" }</span></td>
+											<td><span style="line-height: 50px;">${cluster.hostCount}</span></td>
+											<td><span style="line-height: 50px;"><a href="showVM" style="color: green">${cluster.vmCount }</a></span></td>
+											<td><span style="line-height: 50px;">${cluster.storageCount }</span></td>
+											<td><span style="line-height: 50px;">${cluster.clusterIP }</span></td>
 											<td><span id="show-colony-details" class="glyphicon glyphicon-chevron-down" style="cursor:pointer;line-height: 50px;margin-left: 30px;color: #337ab7"></span></td>
 										</tr>
 										<tr id="hide-colony-details">
-											<td colspan="11">11</td>
+											<td colspan="11">${cluster.description == "" ? "无" : cluster.description}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -131,7 +200,7 @@
 							</div>
 							<div class="data-table-content">
 								<table class="table table-bordered table-hover">
-									<thead>
+									<thead class="data-thead">
 										<tr>
 											<th>名称</th>
 											<th>CPU使用率</th>
@@ -145,30 +214,30 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td><span style="line-height: 50px;">Tanmay</span></td>
+											<td><span style="line-height: 50px;">${hostInstance.name }</span></td>
 											<td style="width: 180px;">
-											<div class="progress" style="width: 70%;margin-top: 15px;margin-bottom: 0;height: 15px;">
+											<div class="progress" style="width: 70%;margin-top: 15px;margin-bottom: 0;height: 15px;background:#c3bebe">
 												<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60"
 												aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
 													<span class="boyond-percent"></span>
 												</div>
-											</div><span class="progress-percent-cpu">10%</span></td>
+											</div><span class="progress-percent-cpu">${hostInstance.cpuAverage }%</span></td>
 											<td style="width: 180px;">
-												<div >100/128GB</div>
-												<div class="progress" style="width: 70%;margin-bottom: 0;height: 15px;">
+												<div >${hostInstance.memoryUsed }/${hostInstance.memoryTotal }GB</div>
+												<div class="progress" style="width: 70%;margin-bottom: 0;height: 15px;background:#c3bebe">
 												<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60"
 												aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
 													<span class="boyond-percent"></span>
 												</div>
-											</div><span class="progress-percent-ram">10%</span></td>
-											<td><span style="line-height: 50px;">可用</span></td>
-											<td><span style="line-height: 50px;">1</span></td>
-											<td><span style="line-height: 50px;"><a href="virtual_machine.html" style="color: green">4</a></span></td>
-											<td><span style="line-height: 50px;"><a href="virtual_machine.html" style="color: green">4</a></span></td>
+											</div><span class="progress-percent-ram">${hostMemoryUsedRate }%</span></td>
+											<td><span style="line-height: 50px;">${hostInstance.status == 1 ? "可用" : "不可用" }</span></td>
+											<td><span style="line-height: 50px;">${clusterName }</span></td>
+											<td><span style="line-height: 50px;"><a href="showVM" style="color: green">${hostInstance.vmTotalCount }</a></span></td>
+											<td><span style="line-height: 50px;"><a href="showVM" style="color: green">${hostInstance.vmRunningCount }</a></span></td>
 											<td><span id="show-hostcomputer-details" class="glyphicon glyphicon-chevron-down" style="line-height: 50px;cursor:pointer;margin-left: 30px;color: #337ab7"></span></td>
 										</tr>
 										<tr id="hide-hostcomputer-details">
-											<td colspan="11">11</td>
+											<td colspan="11">${hostInstance.description }</td>
 										</tr>
 										
 									</tbody>

@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="host_instance")
-public class Host {
+public class HostInstance {
 	private String id;
 	private String name;
 	private String uuid;
@@ -24,7 +24,31 @@ public class Host {
 	private int vmTotalCount;
 	private int vmRunningCount;
 	private String description;
+	public HostInstance(){
+		
+	}
 	
+	public HostInstance(String id, String name, String uuid, String clusterId, int status, String powerStatus, int cpuUsed,
+			int cpuTotal, double cpuAverage, int memoryTotal, int memoryUsed, int diskTotal, int diskUsed,
+			int vmTotalCount, int vmRunningCount, String description) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.uuid = uuid;
+		this.clusterId = clusterId;
+		this.status = status;
+		this.powerStatus = powerStatus;
+		this.cpuUsed = cpuUsed;
+		this.cpuTotal = cpuTotal;
+		this.cpuAverage = cpuAverage;
+		this.memoryTotal = memoryTotal;
+		this.memoryUsed = memoryUsed;
+		this.diskTotal = diskTotal;
+		this.diskUsed = diskUsed;
+		this.vmTotalCount = vmTotalCount;
+		this.vmRunningCount = vmRunningCount;
+		this.description = description;
+	}
 	@Id
 	public String getId() {
 		return id;

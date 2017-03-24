@@ -4,7 +4,7 @@ import java.util.List;
 
 import main.java.dragon.pojo.Account;
 
-public interface IAccountDao {
+public interface AccountDao {
 	public int insertAccount(Account account);
 	public int updateAccount(Account account);
 	public Account selectAccountById(String id);

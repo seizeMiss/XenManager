@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import main.java.dragon.dao.IAccountDao;
+import main.java.dragon.dao.AccountDao;
 import main.java.dragon.pojo.Account;
 import main.java.dragon.service.AccountService;
 
@@ -15,7 +15,7 @@ import main.java.dragon.service.AccountService;
 public class AccountServiceImpl implements AccountService{
 	
 	@Autowired
-	private IAccountDao accountDao;
+	private AccountDao accountDao;
 
 	@Override
 	public Account getByUserNameAndPassword(String userName, String password) {

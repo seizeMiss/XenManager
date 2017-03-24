@@ -8,13 +8,13 @@ import org.hibernate.ejb.criteria.expression.SearchedCaseExpression;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import main.java.dragon.dao.IAccountDao;
+import main.java.dragon.dao.AccountDao;
 import main.java.dragon.pojo.Account;
 import main.java.dragon.utils.StringUtils;
 
 @Repository
 @Transactional
-public class AccountDaoImpl extends HibernateUtils implements IAccountDao{
+public class AccountDaoImpl extends HibernateUtils implements AccountDao{
 
 	@Override
 	public int insertAccount(Account account) {

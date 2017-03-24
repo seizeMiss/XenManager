@@ -7,12 +7,12 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import main.java.dragon.dao.IUserDao;
+import main.java.dragon.dao.UserDao;
 import main.java.dragon.pojo.User;
 
 @Repository
 @Transactional
-public class UserDaoImpl extends HibernateUtils implements IUserDao{
+public class UserDaoImpl extends HibernateUtils implements UserDao{
 	
 	@Override
 	public int insertUser(User user) {

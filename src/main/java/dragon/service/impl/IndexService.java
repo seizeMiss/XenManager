@@ -114,13 +114,13 @@ public class IndexService extends ConnectionUtil{
 	}
 	public String getMemoryUsedRate() throws Exception{
 		FetchDynamicData data = new FetchDynamicData();
-		String memoryRate = StringUtils.double2String((double)data.getIndexNeedInfoByParseXml().get("memory_used"));
+		String memoryRate = StringUtils.double2String((double)data.getIndexNeedInfo().get("memory_used"));
 		return memoryRate;
 	}
 	
 	public String getCpuUsedRate() throws Exception{
 		FetchDynamicData data = new FetchDynamicData();
-		String cpuRate = StringUtils.double2String((double)data.getIndexNeedInfoByParseXml().get("cpu_avg"));
+		String cpuRate = StringUtils.double2String((double)data.getIndexNeedInfo().get("cpu_avg"));
 		return cpuRate;
 	}
 

@@ -19,8 +19,30 @@ public class Cluster {
 	private int storageUsed;
 	private int storageCount;
 	private int hostCount;
+	private int vmCount;
 	private String description;
 	
+	public Cluster(){
+		
+	}
+	
+	public Cluster(String id, String name, String clusterIP, int status, double cpuAverage, int memoryTotal,
+			int memoryUsed, int storageTotal, int storageUsed, int storageCount, int hostCount, int vm_count, String description) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.clusterIP = clusterIP;
+		this.status = status;
+		this.cpuAverage = cpuAverage;
+		this.memoryTotal = memoryTotal;
+		this.memoryUsed = memoryUsed;
+		this.storageTotal = storageTotal;
+		this.storageUsed = storageUsed;
+		this.storageCount = storageCount;
+		this.hostCount = hostCount;
+		this.vmCount = vm_count;
+		this.description = description;
+	}
 	@Id
 	public String getId() {
 		return id;
@@ -98,6 +120,14 @@ public class Cluster {
 	public void setHostCount(int hostCount) {
 		this.hostCount = hostCount;
 	}
+	@Column(name="vm_count")
+	public int getVmCount() {
+		return vmCount;
+	}
+	public void setVmCount(int vmCount) {
+		this.vmCount = vmCount;
+	}
+	
 	@Column(name="description",length=256)
 	public String getDescription() {
 		return description;

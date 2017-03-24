@@ -76,6 +76,7 @@ public class FetchDynamicData extends ConnectionUtil {
 			double host_memory_free = 0.0d;
 			double host_memory_total = 0.0d;
 			double cpuAvg = 0.0d;
+			int cpuAccount = 0;
 			for(int j = 0; j < columnCount; j++){
 				String attr = metrics[j];
 				double val = 0.0d;
@@ -95,11 +96,14 @@ public class FetchDynamicData extends ConnectionUtil {
 						}
 					}else if(attr.equals(XenConstants.XEN_HOST_CPU_META)){
 						cpuAvg = val;
+					}else if(attr.startsWith("cpu")){
+						cpuAccount++;
 					}
 				}
 			}
 			map.put("cpu_avg", cpuAvg*100);
 			map.put("memory_used", NumberUtils.computerUsedRate(host_memory_total, host_memory_free, 0));
+			map.put("cpu_account", cpuAccount-1);
 			break;
 		}
 		is.close();
