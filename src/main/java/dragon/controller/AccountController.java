@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 
 import main.java.dragon.pojo.Account;
 import main.java.dragon.service.AccountService;
+import main.java.dragon.service.StorageService;
 import main.java.dragon.service.impl.ConnectionUtil;
 import main.java.dragon.service.impl.IndexService;
 import main.java.dragon.utils.StringUtils;
@@ -31,6 +32,9 @@ public class AccountController{
 	private AccountService accountService;
 	@Autowired
 	private IndexService indexService;
+	@Autowired
+	private StorageService storageService;
+	
 	/**
 	 * 登录
 	 * @param session
@@ -67,14 +71,15 @@ public class AccountController{
 	 * @return
 	 */
 	@RequestMapping("showIndex")
-	public String showInde(Model model){
+	public String showIndex(Model model){
 		try {
-			int vmCount = indexService.getVmCount();
-			int activeVmCount = indexService.getActiveVmCount();
+			int vmCount = indexService.getVmCount(false);
+			int activeVmCount = indexService.getVmCount(true);
 			String cpuUsedRate = indexService.getCpuUsedRate();
 			String memoryUsedRate = indexService.getMemoryUsedRate();
 			String storageUsedRate = indexService.getStorageUsedRate();
 			String storageTotal = indexService.getStorageTotal();
+//			storageService.addStorage();
 			if(!StringUtils.isEmpty(vmCount,activeVmCount,cpuUsedRate,memoryUsedRate,storageTotal,storageUsedRate)){
 				model.addAttribute("vmCount", vmCount);
 				model.addAttribute("activeVmCount", activeVmCount);

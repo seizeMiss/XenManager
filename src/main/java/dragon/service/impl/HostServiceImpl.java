@@ -32,7 +32,7 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	private HostInstance getHost(String id) throws Exception{
+	public HostInstance getHost(String id) throws Exception{
 		HostInstance hostInstance = null;
 		
 		int status = 0;
@@ -66,6 +66,8 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 			cpuAverage = (double)data.getIndexNeedInfoByParseXml().get("cpu_avg");
 			memoryTotal = hostAPI.getMemoryInHost(host).get(1);
 			memoryUsed = hostAPI.getMemoryInHost(host).get(0);
+			memoryTotal = (long) Math.ceil(memoryTotal*1.0/1024);
+			memoryUsed = (long)Math.ceil(memoryUsed*1.0/1024);
 			vmRunningCount = hostAPI.getVmCountInHost(host, true);
 			vmTotalCount = hostAPI.getVmCountInHost(host, false);
 		}
@@ -98,9 +100,20 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 	}
 
 	@Override
-	public HostInstance saveHost() {
+	public HostInstance saveHost(){
 		// TODO Auto-generated method stub
-		return null;
+		List<HostInstance> hostInstances = getAllHost();
+		HostInstance hostInstance = null;
+		if(!StringUtils.isEmpty(hostInstances)){
+			try {
+				hostInstance = getHost(hostInstances.get(0).getId());
+				hostDao.updateHost(hostInstance);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return hostInstance;
 	}
 	
 

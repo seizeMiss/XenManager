@@ -1,10 +1,13 @@
 package main.java.dragon.pojo;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -27,6 +30,37 @@ public class VmInstance {
 	private int cpu;
 	private int memory;
 	private int systemDisk;
+	private List<VmStorage> vmStorages;
+	private List<VmNetwork> vmNetWorks;
+	
+	public VmInstance() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	public VmInstance(String id, String clusterId, String hostId, String imageId, String storageId, String uuid,
+			String vmIp, int status, String powerStatus, Date createTime, Date updateTime, String osType, String osName,
+			int cpu, int memory, int systemDisk) {
+		super();
+		this.id = id;
+		this.clusterId = clusterId;
+		this.hostId = hostId;
+		this.imageId = imageId;
+		this.storageId = storageId;
+		this.uuid = uuid;
+		this.vmIp = vmIp;
+		this.status = status;
+		this.powerStatus = powerStatus;
+		this.createTime = createTime;
+		this.updateTime = updateTime;
+		this.osType = osType;
+		this.osName = osName;
+		this.cpu = cpu;
+		this.memory = memory;
+		this.systemDisk = systemDisk;
+	}
+
+
 	@Id
 	public String getId() {
 		return id;
@@ -139,13 +173,29 @@ public class VmInstance {
 	public void setSystemDisk(int systemDisk) {
 		this.systemDisk = systemDisk;
 	}
+	@OneToMany
+	@JoinColumn(name="vm_id")
+	public List<VmNetwork> getVmNetWorks() {
+		return vmNetWorks;
+	}
+	public void setVmNetWorks(List<VmNetwork> vmNetWorks) {
+		this.vmNetWorks = vmNetWorks;
+	}
+	@OneToMany
+	@JoinColumn(name="vm_id")
+	public List<VmStorage> getVmStorages() {
+		return vmStorages;
+	}
+	public void setVmStorages(List<VmStorage> vmStorages) {
+		this.vmStorages = vmStorages;
+	}
 	@Override
 	public String toString() {
 		return "VmInstance [id=" + id + ", clusterId=" + clusterId + ", hostId=" + hostId + ", imageId=" + imageId
 				+ ", storageId=" + storageId + ", uuid=" + uuid + ", vmIp=" + vmIp + ", status=" + status
 				+ ", powerStatus=" + powerStatus + ", createTime=" + createTime + ", updateTime=" + updateTime
 				+ ", osType=" + osType + ", osName=" + osName + ", cpu=" + cpu + ", memory=" + memory + ", systemDisk="
-				+ systemDisk + "]";
+				+ systemDisk + ", vmStorages=" + vmStorages + ", vmNetWorks=" + vmNetWorks + "]";
 	}
 	
 	

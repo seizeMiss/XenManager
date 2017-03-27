@@ -28,9 +28,8 @@ public class VMController {
 	
 	@RequestMapping("showClusterAndHost")
 	public String showClusterAndHost(Model model){
-		List<Cluster> clusters = clusterService.getAllCluster();
-		if(!StringUtils.isEmpty(clusters)){
-			Cluster cluster = clusters.get(0);
+		Cluster cluster = clusterService.saveCluster();
+		if(!StringUtils.isEmpty(cluster)){
 			cluster.setCpuAverage(Double.parseDouble(StringUtils.double2String(cluster.getCpuAverage())));
 			String clusterMemoryUsedRate = StringUtils.double2String(cluster.getMemoryUsed()*100.0/cluster.getMemoryTotal());
 			String clusterStorageUserRate = StringUtils.double2String(cluster.getStorageUsed()*100.0/cluster.getStorageTotal());
@@ -38,15 +37,14 @@ public class VMController {
 			model.addAttribute("clusterMemoryUsedRate", clusterMemoryUsedRate);
 			model.addAttribute("clusterStorageUserRate", clusterStorageUserRate);
 		}
-		List<HostInstance> hostInstances = hostService.getAllHost();
-		if(!StringUtils.isEmpty(hostInstances)){
-			HostInstance hostInstance = hostInstances.get(0);
+		HostInstance hostInstance = hostService.saveHost();
+		if(!StringUtils.isEmpty(hostInstance)){
 			hostInstance.setCpuAverage(Double.parseDouble(StringUtils.double2String(hostInstance.getCpuAverage())));
 			String hostMemoryUsedRate = StringUtils.double2String(hostInstance.getMemoryUsed()*100.0/hostInstance.getMemoryTotal());
 			model.addAttribute("hostInstance", hostInstance);
 			model.addAttribute("hostMemoryUsedRate", hostMemoryUsedRate);
-			Cluster cluster = clusterService.getClusterById(hostInstance.getClusterId());
-			model.addAttribute("clusterName",cluster.getName());
+			Cluster clusterByHost = clusterService.getClusterById(hostInstance.getClusterId());
+			model.addAttribute("clusterName",clusterByHost.getName());
 		}
 		return "jsp/colony_hostcomputer";
 	}

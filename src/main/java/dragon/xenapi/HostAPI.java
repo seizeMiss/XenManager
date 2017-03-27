@@ -34,7 +34,7 @@ public class HostAPI extends ConnectionUtil{
 		if(isRunning){
 			Set<VM> vms = host.getResidentVMs(connection);
 			for (VM vm : vms){
-				if(vm.getPowerState(connection).equals("Running")){
+				if(isAvailableVm(vm) && vm.getPowerState(connection).toString().equalsIgnoreCase("running")){
 					vmCount++;
 				}
 			}

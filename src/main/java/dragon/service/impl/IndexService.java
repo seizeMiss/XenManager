@@ -44,7 +44,7 @@ public class IndexService extends ConnectionUtil{
 		return defaultPool;
 	}
 	
-	public int getActiveVmCount() throws Exception{
+	public int getVmCount(boolean isRunning) throws Exception{
 		Set<VM> vms = VM.getAll(connection);
 		int count = 0;
 		for (VM vm : vms){
@@ -54,24 +54,13 @@ public class IndexService extends ConnectionUtil{
 					|| record.isATemplate || record.isSnapshotFromVmpp){
 				
 			}else{
-				if(record.powerState.toString().equals(VM_IS_RUNNING)){
+				if(isRunning){
+					if(record.powerState.toString().equals(VM_IS_RUNNING)){
+						count++;
+					}
+				}else{
 					count++;
 				}
-			}
-		}
-		return count;
-	}
-	public int getVmCount() throws Exception{
-		Set<VM> vms = VM.getAll(connection);
-		int count = 0;
-		for (VM vm : vms){
-			VM.Record record = vm.getRecord(connection);
-			//快照  控制主机 模板 
-			if(record.isASnapshot || record.isControlDomain 
-					|| record.isATemplate || record.isSnapshotFromVmpp){
-				
-			}else{
-				count++;
 			}
 		}
 		return count;

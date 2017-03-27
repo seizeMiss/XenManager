@@ -12,62 +12,31 @@
 	clusterStorageUserRate = parseInt(clusterStorageUserRate);
 	hostCpuUsedRate = parseInt(hostCpuUsedRate);
 	hostMemoryUsedRate = parseInt(hostMemoryUsedRate);
+	function setCircleProgressColorInRange(setObj, val){
+		debugger;
+		if( val > 70 && val <= 90){
+			$(setObj).css({
+				"width": val+"%"}).toggleClass("progress-bar-warning");
+		}else if(val > 90){
+			$(setObj).css({
+				"width": val+"%"}).toggleClass("progress-bar-danger");
+		}else{
+			$(setObj).css({
+				"width": val+"%"}).toggleClass("progress-bar-success");
+		}
+	}
 	$(function(){
 		//集群内存使用率
-		if( clusterMemoryUsedRate > 70 && clusterMemoryUsedRate <= 90){
-			$(".cluster-memory-rate").css({
-				"width": clusterMemoryUsedRate+"%"}).toggleClass("progress-bar-warning");
-		}else if(clusterMemoryUsedRate > 90){
-			$(".cluster-memory-rate").css({
-				"width": clusterMemoryUsedRate+"%"}).toggleClass("progress-bar-danger");
-		}else{
-			$(".cluster-memory-rate").css({
-				"width": clusterMemoryUsedRate+"%"}).toggleClass("progress-bar-success");
-		}
+		setCircleProgressColorInRange(".cluster-memory-rate",clusterMemoryUsedRate);
 		//集群CPU使用率
-		if(clusterCpuUsedRate > 70 &&　clusterCpuUsedRate <= 90){
-			$(".cluster-cpu-rate").css({
-				"width": clusterCpuUsedRate+"%"}).toggleClass("progress-bar-warning");
-		}else if(clusterCpuUsedRate > 90){
-			$(".cluster-cpu-rate").css({
-				"width": clusterCpuUsedRate+"%"}).toggleClass("progress-bar-danger");
-		}else{
-			$(".cluster-cpu-rate").css({
-				"width": clusterCpuUsedRate+"%"}).toggleClass("progress-bar-success");
-		}
+		setCircleProgressColorInRange(".cluster-cpu-rate", clusterCpuUsedRate);
 		//集群存储使用率
-		if(clusterStorageUserRate > 70 && clusterStorageUserRate <= 90){
-			$(".cluster-storage-rate").css({
-				"width": clusterStorageUserRate+"%"}).toggleClass("progress-bar-warning");
-		}else if(clusterStorageUserRate > 90){
-			$(".cluster-storage-rate").css({
-				"width": clusterStorageUserRate+"%"}).toggleClass("progress-bar-danger");
-		}else{
-			$(".cluster-storage-rate").css({
-				"width": clusterStorageUserRate+"%"}).toggleClass("progress-bar-success");
-		}
+		setCircleProgressColorInRange(".cluster-storage-rate", clusterStorageUserRate);
 		//主机内存使用率
-		if( hostMemoryUsedRate > 70 && hostMemoryUsedRate <= 90){
-			$(".cluster-memory-rate").css({
-				"width": hostMemoryUsedRate+"%"}).toggleClass("progress-bar-warning");
-		}else if(hostMemoryUsedRate > 90){
-			$(".cluster-memory-rate").css({
-				"width": hostMemoryUsedRate+"%"}).toggleClass("progress-bar-danger");
-		}else{
-			$(".cluster-memory-rate").css({
-				"width": hostMemoryUsedRate+"%"}).toggleClass("progress-bar-success");
-		}
+		setCircleProgressColorInRange(".host-memory-rate", hostMemoryUsedRate);
 		//主机CPU使用率
-		if( hostCpuUsedRate > 70 && hostCpuUsedRate <= 90){
-			$(".cluster-memory-rate").css({
-				"width": hostCpuUsedRate+"%"}).toggleClass("progress-bar-warning");
-		}else if(clusterMemoryUsedRate > 90){
-			$(".cluster-memory-rate").css({
-				"width": hostCpuUsedRate+"%"}).toggleClass("progress-bar-danger");
-		}else{
-			$(".cluster-memory-rate").css({
-				"width": hostCpuUsedRate+"%"}).toggleClass("progress-bar-success");
-		}
+		setCircleProgressColorInRange(".host-cpu-rate", hostCpuUsedRate);
+		
 	});
 </script>
 <body>
@@ -217,7 +186,7 @@
 											<td><span style="line-height: 50px;">${hostInstance.name }</span></td>
 											<td style="width: 180px;">
 											<div class="progress" style="width: 70%;margin-top: 15px;margin-bottom: 0;height: 15px;background:#c3bebe">
-												<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60"
+												<div class="progress-bar progress-bar-success host-cpu-rate" role="progressbar" aria-valuenow="60"
 												aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
 													<span class="boyond-percent"></span>
 												</div>
@@ -225,7 +194,7 @@
 											<td style="width: 180px;">
 												<div >${hostInstance.memoryUsed }/${hostInstance.memoryTotal }GB</div>
 												<div class="progress" style="width: 70%;margin-bottom: 0;height: 15px;background:#c3bebe">
-												<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60"
+												<div class="progress-bar progress-bar-success host-memory-rate" role="progressbar" aria-valuenow="60"
 												aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
 													<span class="boyond-percent"></span>
 												</div>

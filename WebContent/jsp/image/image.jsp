@@ -104,6 +104,9 @@
 							<button id="add-image" type="button" class="btn btn-default">
 								添加镜像
 							</button>
+							<button id="delete-image" type="button" class="btn btn-default">
+								删除镜像
+							</button>
 						</div>
 						<div class="data-table">
 							<div class="data-table-top">

@@ -6,6 +6,7 @@ import com.xensource.xenapi.Connection;
 import com.xensource.xenapi.Session;
 import com.xensource.xenapi.Task;
 import com.xensource.xenapi.Types;
+import com.xensource.xenapi.VM;
 
 public class XenApiUtil {
 
@@ -42,6 +43,15 @@ public class XenApiUtil {
 		while (task.getStatus(c) == Types.TaskStatusType.PENDING) {
 			System.out.println(task.getProgress(c));
 			Thread.sleep(delay);
+		}
+	}
+	
+	public static boolean isAvailableVm(VM vm) throws Exception{
+		VM.Record record = vm.getRecord(connection);
+		if (record.isASnapshot || record.isControlDomain || record.isATemplate || record.isSnapshotFromVmpp) {
+			return false;
+		} else {
+			return true;
 		}
 	}
 

@@ -13,6 +13,12 @@ public class StringUtils {
 		target = String.valueOf(format.setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
 		return target;
 	}
+	public static int double2int(double source){
+		int target = 0;
+		BigDecimal format = new BigDecimal(source);
+		target = format.setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+		return target;
+	}
 	
 	public static boolean isEmpty(Object ...objects){
 		boolean flag = false;

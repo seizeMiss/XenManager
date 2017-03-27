@@ -16,6 +16,18 @@ public class VmStorage {
 	private String storageId;
 	private String description;
 	
+	public VmStorage() {
+		super();
+	}
+	public VmStorage(String id, String name, String vmId, String storageType, String storageId, String description) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.vmId = vmId;
+		this.storageType = storageType;
+		this.storageId = storageId;
+		this.description = description;
+	}
 	@Id
 	public String getId() {
 		return id;

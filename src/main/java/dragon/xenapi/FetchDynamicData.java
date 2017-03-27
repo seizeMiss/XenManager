@@ -10,12 +10,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.junit.Test;
+
+import com.xensource.xenapi.VM;
 
 import main.java.dragon.service.impl.ConnectionUtil;
 import main.java.dragon.utils.NumberUtils;
@@ -28,6 +32,9 @@ public class FetchDynamicData extends ConnectionUtil {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	private static final String IP = "192.168.4.206";
+	private static final String HOST_NAME = "root";
+	private static final String HOST_PASSWORD = "centerm";
 
 	// 定义标签
 	private static final String RRD_META_STR = "meta";
@@ -63,6 +70,66 @@ public class FetchDynamicData extends ConnectionUtil {
 	private String[] uuids; // 记录uuid
 	private String[] metrics; // memory_target or others
 	
+	/*private boolean isAvailableVm(VM vm) throws Exception {
+		VM.Record record = vm.getRecord(connection);
+		if (record.isASnapshot || record.isControlDomain || record.isATemplate || record.isSnapshotFromVmpp) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	@Test
+	public void printInfo() throws Exception{
+		Set<VM> vms = VM.getAll(connection);
+		for(VM vm : vms){
+			if(isAvailableVm(vm) && vm.getNameLabel(connection).equals("IVYCloud-AD")){
+				System.out.println(vm.getUuid(connection));
+				getVmNeedInfoByParseXml(vm.getUuid(connection));
+			}
+		}
+	}*/
+	
+	public Map<String, Object> getVmNeedInfoByParseXml(String uuid) throws Exception{
+		Map<String, Object> map = new HashMap<String, Object>();
+		Document document = getDocById(uuid, "isVM", "vm");
+		Element root = document.getRootElement();
+		String[] metrics = getMetrics(document);
+		
+		List<Element> rraElements = root.elements("rra");
+		Element rraElement = rraElements.get(0);
+		Element dataElement = rraElement.element("database");
+		List<Element> rowElements = dataElement.elements("row");
+		Element rowElement = rowElements.get(0);
+		List<Element> vElements = rowElement.elements("v");
+		int size = metrics.length;
+		double memory_internal_free = 0.0d;
+		double memory_target = 0.0d;
+		double memory = 0.0d;
+		double cpu = 0.0d;
+		for(int i = 0; i < size; i++){
+			String attr = metrics[i];
+			Element element = vElements.get(i);
+			if (attr.equals("memory_internal_free")){
+				memory_internal_free = Double.parseDouble(element.getText())/1024;
+				System.out.println("memory_internal_free:" + memory_internal_free);
+			}else if(attr.equals("memory_target")){
+				memory_target = Double.parseDouble(element.getText())/1024/1024;
+				System.out.println("memory_target:" + memory_target);
+			}else if(attr.equals("memory")){
+				memory = Double.parseDouble(element.getText());
+				System.out.println("memory:" + memory/1024/1024);
+			}else if(attr.startsWith("cpu0")){
+				cpu = Double.parseDouble(element.getText());
+			}
+		}
+		System.out.println("cpu_avg:" + cpu*100);
+		map.put("cpu_avg", cpu);
+		map.put("memory_used", memory_target - memory_target);
+		map.put("memoty_total", memory_target);
+		return map;
+	}
+	
 	public Map<String, Object> getIndexNeedInfoByParseXml() throws Exception{
 		Map<String, Object> map = new HashMap<String, Object>();
 		File file = new File("E:\\update.xml");
@@ -86,14 +153,12 @@ public class FetchDynamicData extends ConnectionUtil {
 					val = latitudeValues[i][j];
 				}
 				if(objs[j].equals("host")){
-					if(attr.equals(XenConstants.XEN_HOST_MEMORY_FREE_KIB)){
-						if(val != XenConstants.XEN_METER_BAD_VALUE){
-							host_memory_free = val / 1024;
-						}
-					}else if(attr.equals(XenConstants.XEN_HOST_MEMORY_TOTAL_KIB)){
-						if(val != XenConstants.XEN_METER_BAD_VALUE){
-							host_memory_total = val / 1024;
-						}
+					if(attr.equals(XenConstants.XEN_HOST_MEMORY_FREE_KIB)
+							&& val != XenConstants.XEN_METER_BAD_VALUE){
+						host_memory_free = val / 1024;
+					}else if(attr.equals(XenConstants.XEN_HOST_MEMORY_TOTAL_KIB)
+							&& val != XenConstants.XEN_METER_BAD_VALUE){
+						host_memory_total = val / 1024;
 					}else if(attr.equals(XenConstants.XEN_HOST_CPU_META)){
 						cpuAvg = val;
 					}else if(attr.startsWith("cpu")){
@@ -133,14 +198,12 @@ public class FetchDynamicData extends ConnectionUtil {
 					val = latitudeValues[i][j];
 				}
 				if(objs[j].equals("host")){
-					if(attr.equals(XenConstants.XEN_HOST_MEMORY_FREE_KIB)){
-						if(val != XenConstants.XEN_METER_BAD_VALUE){
-							host_memory_free = val / 1024;
-						}
-					}else if(attr.equals(XenConstants.XEN_HOST_MEMORY_TOTAL_KIB)){
-						if(val != XenConstants.XEN_METER_BAD_VALUE){
-							host_memory_total = val / 1024;
-						}
+					if(attr.equals(XenConstants.XEN_HOST_MEMORY_FREE_KIB)
+							&& val != XenConstants.XEN_METER_BAD_VALUE){
+						host_memory_free = val / 1024;
+					}else if(attr.equals(XenConstants.XEN_HOST_MEMORY_TOTAL_KIB)
+							&& val != XenConstants.XEN_METER_BAD_VALUE){
+						host_memory_total = val / 1024;
 					}else if(attr.equals(XenConstants.XEN_HOST_CPU_META)){
 						cpuAvg = val;
 					}
@@ -154,6 +217,20 @@ public class FetchDynamicData extends ConnectionUtil {
 		return map;
 	}
 	
+	private String[] getMetrics(Document document){
+		Element rootElement = document.getRootElement();
+		List<Element> dsElements = rootElement.elements("ds");
+		int size = dsElements.size();
+		int count = 0;
+		String[] metrics = new String[size];
+		for(Element element : dsElements){
+			Element nameElement = element.element("name");
+			String name = nameElement.getText();
+			metrics[count] = name;
+			count++;
+		}
+		return metrics;
+	}
 	
 	public int computeHostOrVmCount(String[] uuids,String[] obj,String type){
 		Set<String> target = new HashSet<String>();
@@ -306,24 +383,21 @@ public class FetchDynamicData extends ConnectionUtil {
 	 */
 	private Document getDocById(String id, String type, String pathName){
 		Document  document = null;
-		String ip = "192.168.4.206";
 		Date date = new Date();
-		String admin = "root";
-		String password = "centerm";
 		String result = "";
 		String urlString = "";
 		long startTime = date.getTime() / 1000 - 3600 * 24 * 6 - 3600 * 23;
 		if(type.equals("isVM")){
-			urlString = "http://" + ip + "/vm_rrd?uuid="+ id;
+			urlString = "http://" + IP + "/vm_rrd?uuid="+ id;
 		}else if(type.equals("isHost")){
-			urlString = "http://" + ip +"/host_rrd";
+			urlString = "http://" + IP +"/host_rrd";
 		}else{
-			urlString = "http://" + ip + "/rrd_updates?host=true&cf=AVERAGE&interval=" + 60 + "&start=" + startTime;
+			urlString = "http://" + IP + "/rrd_updates?host=true&cf=AVERAGE&interval=" + 60 + "&start=" + startTime;
 		}
 		try {
 			URL url = new URL(urlString);
 			URLConnection urlConnection = url.openConnection();
-			String encoding = new BASE64Encoder().encode((admin + ":" + password).getBytes());
+			String encoding = new BASE64Encoder().encode((HOST_NAME + ":" + HOST_PASSWORD).getBytes());
 			urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
 			InputStream iStream = urlConnection.getInputStream();
 			result = IOUtils.toString(iStream);

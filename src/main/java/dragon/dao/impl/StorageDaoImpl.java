@@ -7,22 +7,21 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import main.java.dragon.dao.HostDao;
-import main.java.dragon.pojo.Cluster;
-import main.java.dragon.pojo.HostInstance;
+import main.java.dragon.dao.StorageDao;
+import main.java.dragon.pojo.Storage;
 
 @Repository
 @Transactional
-public class HostDaoImpl extends HibernateUtils implements HostDao {
+public class StorageDaoImpl extends HibernateUtils implements StorageDao {
 
 	@Override
-	public void insertHost(HostInstance host) {
+	public void insertStorage(Storage storage) {
 		// TODO Auto-generated method stub
 		Session session = null;
 		try {
 			session = getSession();
 			session.beginTransaction();
-			session.save(host);
+			session.save(storage);
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
@@ -32,17 +31,16 @@ public class HostDaoImpl extends HibernateUtils implements HostDao {
 		}finally{
 			closeSession(session);
 		}
-		
 	}
 
 	@Override
-	public void updateHost(HostInstance host) {
+	public void updateStorage(Storage storage) {
 		// TODO Auto-generated method stub
 		Session session = null;
 		try {
 			session = getSession();
 			session.beginTransaction();
-			session.update(host);
+			session.update(storage);
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
@@ -55,16 +53,16 @@ public class HostDaoImpl extends HibernateUtils implements HostDao {
 	}
 
 	@Override
-	public List<HostInstance> selectAllHost() {
+	public List<Storage> selectAllStorage() {
 		// TODO Auto-generated method stub
 		Session session = null;
-		List<HostInstance> hosts = null;
+		List<Storage> storages = null;
 		try {
 			session = getSession();
 			session.beginTransaction();
-			String hql = "from HostInstance";
+			String hql = "from Storage";
 			Query query = session.createQuery(hql);
-			hosts = query.list();
+			storages = query.list();
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -73,24 +71,24 @@ public class HostDaoImpl extends HibernateUtils implements HostDao {
 			closeSession(session);
 		}
 		
-		return hosts;
+		return storages;
 	}
 
 	@Override
-	public HostInstance selectHostById(String id) {
+	public Storage selectStorageById(String id) {
 		// TODO Auto-generated method stub
 		Session session = null;
-		HostInstance host = null;
+		Storage storage = null;
 		try {
 			session = getSession();
 			session.beginTransaction();
-			host = (HostInstance) session.get(Cluster.class, id);
+			storage = (Storage) session.get(Storage.class, id);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		return host;
+		return storage;
 	}
 
 }

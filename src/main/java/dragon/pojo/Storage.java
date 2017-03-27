@@ -18,6 +18,24 @@ public class Storage {
 	private int status;
 	private String ipAddress;
 	
+	public Storage() {
+		super();
+	}
+	
+	public Storage(String id, String uuid, String clusterId, String name, int storageTotal, int storageUsed,
+			String storageType, int status, String ipAddress) {
+		super();
+		this.id = id;
+		this.uuid = uuid;
+		this.clusterId = clusterId;
+		this.name = name;
+		this.storageTotal = storageTotal;
+		this.storageUsed = storageUsed;
+		this.storageType = storageType;
+		this.status = status;
+		this.ipAddress = ipAddress;
+	}
+
 	@Id
 	public String getId() {
 		return id;

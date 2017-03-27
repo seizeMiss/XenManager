@@ -137,6 +137,22 @@ public class Cluster {
 	}
 	
 	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		Cluster cluster = (Cluster)obj;
+		if(this.id.equals(cluster.getId()) 
+				&& this.cpuAverage == cluster.getCpuAverage() 
+				&& this.memoryTotal == cluster.getMemoryTotal() 
+				&& this.memoryUsed == cluster.getMemoryUsed() 
+				&& this.storageTotal == cluster.getStorageTotal() 
+				&& this.storageUsed == cluster.getStorageUsed()){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
 	public String toString() {
 		return "Cluster [id=" + id + ", name=" + name + ", clusterIP=" + clusterIP + ", status=" + status
 				+ ", cpuAverage=" + cpuAverage + ", memoryTotal=" + memoryTotal + ", memoryUsed=" + memoryUsed

@@ -15,6 +15,18 @@ public class VmNetwork {
 	private String networkName;
 	private String macAddress;
 	
+	public VmNetwork(String id, String uuid, String vmId, String networkId, String networkName, String macAddress) {
+		super();
+		this.id = id;
+		this.uuid = uuid;
+		this.vmId = vmId;
+		this.networkId = networkId;
+		this.networkName = networkName;
+		this.macAddress = macAddress;
+	}
+	public VmNetwork() {
+		super();
+	}
 	@Id
 	public String getId() {
 		return id;

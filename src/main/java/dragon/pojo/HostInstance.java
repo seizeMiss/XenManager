@@ -161,6 +161,20 @@ public class HostInstance {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		HostInstance hostInstance = (HostInstance)obj;
+		if(this.id.equals(hostInstance.getId()) 
+				&& this.cpuAverage == hostInstance.cpuAverage
+				&& this.memoryTotal == hostInstance.getMemoryTotal()
+				&& this.memoryUsed == hostInstance.getMemoryUsed()){
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public String toString() {
 		return "Host [id=" + id + ", name=" + name + ", uuid=" + uuid + ", clusterId=" + clusterId + ", status="
