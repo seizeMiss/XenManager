@@ -85,6 +85,8 @@ public class ClusterDaoImpl extends HibernateUtils implements ClusterDao{
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+		}finally {
+			closeSession(session);
 		}
 		return cluster;
 	}

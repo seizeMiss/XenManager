@@ -218,7 +218,7 @@ textarea{
 }
 .vm-close-number{
 	margin-left: 27%;
-	margin-top: 50px;
+	margin-top: 60px;
 	float: left;
 }
 .vm-close-number a{
@@ -232,19 +232,25 @@ textarea{
 	color: green;
 }
 .vm-line{
-	position: absolute;
+	position: relative;
 	width: 2px;
 	height: 60px;
-	left: 34%;
-	top: 180px;
+	left: 50%;
+	top: 70px;
 	background: gray;
 }
 .vm-open-number{
 	margin-right: 27%;
-	margin-top: 50px;
 	float: right;
 }
-/*娣诲姞铏氭嫙鏈�*/
+/* 显示vm的解释信息 */
+.vm-type, .vm-info, .vm-explain{
+	margin-top: 20px;
+	margin-left: 30px;
+}
+
+
+/*搜索*/
 .search-content{
 	margin-top: 15px;
 }
@@ -266,8 +272,14 @@ textarea{
 	float: left;
 	margin-top: 10px;
 }
-.add-disk-btn:focus{
-	background-color: #333;
+.storage-name{
+	display: block;
+}
+.storage-desc{
+	display: block;
+	font-style: italic;
+	margin-top:2px;
+	font-size:10px;
 }
 .disk-list{
 	list-style: none;
@@ -315,7 +327,7 @@ textarea{
 	background-color:#808080;
 	color: white;
 }
-/*璀﹀憡鎻愰啋*/
+/*提醒信息*/
 .warning-info{
 	position: relative;
 	top: -25px;
@@ -362,7 +374,7 @@ textarea{
 	margin-right: 10px;
 	font-size: 15px;
 }
-/*闆嗙兢鍜屼富鏈�*/
+/*cpu、内存、储存的使用率*/
 .progress-percent-cpu,.progress-percent-ram,.progress-percent-storage{
 	position: relative;
 	top: -18px;
@@ -397,3 +409,4 @@ textarea{
 	margin-left: 40px;
 	margin-top: 20px;
 }
+

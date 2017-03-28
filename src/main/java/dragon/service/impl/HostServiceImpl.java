@@ -115,6 +115,13 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 		}
 		return hostInstance;
 	}
+	@Override
+	public HostInstance getHostInstanceById(String id) {
+		// TODO Auto-generated method stub
+		HostInstance hostInstance = null;
+		hostInstance = hostDao.selectHostById(id);
+		return hostInstance;
+	}
 	
 
 }

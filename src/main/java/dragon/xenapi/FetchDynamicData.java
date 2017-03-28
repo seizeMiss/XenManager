@@ -107,10 +107,12 @@ public class FetchDynamicData extends ConnectionUtil {
 		double memory_target = 0.0d;
 		double memory = 0.0d;
 		double cpu = 0.0d;
+		int memoryFreeFlag = 0;
 		for(int i = 0; i < size; i++){
 			String attr = metrics[i];
 			Element element = vElements.get(i);
 			if (attr.equals("memory_internal_free")){
+				memoryFreeFlag++;
 				memory_internal_free = Double.parseDouble(element.getText())/1024;
 				System.out.println("memory_internal_free:" + memory_internal_free);
 			}else if(attr.equals("memory_target")){
@@ -125,8 +127,9 @@ public class FetchDynamicData extends ConnectionUtil {
 		}
 		System.out.println("cpu_avg:" + cpu*100);
 		map.put("cpu_avg", cpu);
-		map.put("memory_used", memory_target - memory_target);
-		map.put("memoty_total", memory_target);
+		map.put("memory_used", (memory_target - memory_internal_free)/1024);
+		map.put("memory_total", memory_target/1024);
+		map.put("memory_flag", memoryFreeFlag == 0 ? false : true);
 		return map;
 	}
 	

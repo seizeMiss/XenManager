@@ -8,5 +8,5 @@ public interface HostService {
 	public HostInstance addHost();
 	public List<HostInstance> getAllHost();
 	public HostInstance saveHost();
-
+	public HostInstance getHostInstanceById(String id);
 }

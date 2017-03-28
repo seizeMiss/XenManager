@@ -23,5 +23,10 @@ public class NumberUtils {
 		BigDecimal format = new BigDecimal(target);
 		return format.setScale(scal, BigDecimal.ROUND_HALF_UP).doubleValue();
 	}
+	
+	public static double setdoubleScal(double target){
+		BigDecimal format = new BigDecimal(target);
+		return format.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+	}
 
 }

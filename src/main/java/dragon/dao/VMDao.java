@@ -7,7 +7,7 @@ import main.java.dragon.pojo.VmNetwork;
 import main.java.dragon.pojo.VmStorage;
 
 public interface VMDao {
-	public void insertVm(VmStorage vmStorage, VmInstance vmInstance, VmNetwork vmNetwork);
+	public void insertVm(VmInstance vmInstance);
 	public void updateVm(VmStorage vmStorage, VmInstance vmInstance, VmNetwork vmNetwork);
 	public List<VmInstance> selectAllVm();
 	public VmInstance selectVmById(String id);

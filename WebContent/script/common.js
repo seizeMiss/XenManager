@@ -15,9 +15,9 @@ $(function() {
 	//点击选择cpu
 	$(".cpu-group .item").click(function(){
 		$(".cpu-group .item").each(function(){
-			$(this).children("img").attr("src", "../img/selectRadio.png");
+			$(this).children("img").attr("src", "/VMManager/img/selectRadio.png");
 		});
-		$(this).children("img").attr("src", "../img/selectedRadio.png");
+		$(this).children("img").attr("src", "/VMManager/img/selectedRadio.png");
 		if($(this).children("input").val() == "other"){
 			$("#cpu-number").show().focus();
 			
@@ -27,9 +27,9 @@ $(function() {
 	});
 	$(".ram-group .item").click(function(){
 		$(".ram-group .item").each(function(){
-			$(this).children("img").attr("src", "../img/selectRadio.png");
+			$(this).children("img").attr("src", "/VMManager/img/selectRadio.png");
 		});
-		$(this).children("img").attr("src", "../img/selectedRadio.png");
+		$(this).children("img").attr("src", "/VMManager/img/selectedRadio.png");
 		if($(this).children("input").val() == "other"){
 			$("#ram-number").show().focus();
 		}else{
@@ -37,7 +37,7 @@ $(function() {
 		}
 	});
 	
-	setVMLineLeft(width);
+//	setVMLineLeft(width);
 	
 	$("#hide-hostcomputer-details").hide();
 	$("#hide-colony-details").hide();
@@ -63,6 +63,13 @@ $(function() {
 	
 	$(".show-details").click(function(){
 		if($(this).closest("tr").next().css("display") == "none"){
+			$(".hidden-tr").each(function(){
+				if($(this).css("display") != "none"){
+					$(this).hide();
+					$(this).prev("tr").find(".show-details").removeClass("glyphicon-chevron-up");
+					$(this).prev("tr").find(".show-details").addClass("glyphicon-chevron-down");
+				}
+			});
 			$(this).closest("tr").next().show();
 			$(this).removeClass("glyphicon-chevron-down");
 			$(this).addClass("glyphicon-chevron-up");
@@ -78,10 +85,18 @@ $(function() {
 		$("#select-os").hide();
 	});
 	$("#selected-os").click(function(){
-		$("#select-os").show();
+		if($("#select-os").css("display") == "none"){
+			$("#select-os").show();
+		}else{
+			$("#select-os").hide();
+		}
 	});
 	$(".show-os").click(function(){
-		$("#select-os").show();
+		if($("#select-os").css("display") == "none"){
+			$("#select-os").show();
+		}else{
+			$("#select-os").hide();
+		}
 	});
 	
 	//使所有的textarea标签都是空值
@@ -117,10 +132,19 @@ $(function() {
 			$("input[name='checkbox']").prop("checked", true);
 			$(".show-selected").children("span").html(length);
 			$("#delete-admin-user").attr("disabled",false);
+			$("#delete-vm").attr("disabled",false);
 		} else {
 			$("input[name='checkbox']").prop("checked", false);
 			$(".show-selected").children("span").html(0);
 			$("#delete-admin-user").attr("disabled",true);
+			$("#delete-vm").attr("disabled",true);
+		}
+		if(length == 1){
+			$("#edit-admin-user").attr("disabled",false);
+			$("#launch-vm").attr("disabled",false);
+			$("#restart-vm").attr("disabled",false);
+			$("#close-vm").attr("disabled",false);
+			$("#edit-vm").attr("disabled",false);
 		}
 	});
 	//点击checkbox
@@ -141,10 +165,20 @@ $(function() {
 		if(count == 1){
 			$("#edit-admin-user").attr("disabled",false);
 			$("#delete-admin-user").attr("disabled",false);
+			$("#delete-vm").attr("disabled",false);
+			$("#launch-vm").attr("disabled",false);
+			$("#restart-vm").attr("disabled",false);
+			$("#close-vm").attr("disabled",false);
+			$("#edit-vm").attr("disabled",false);
 		}else{
 			if(count == 0){
 				$("#delete-admin-user").attr("disabled",true);
+				$("#delete-vm").attr("disabled",true);
 			}
+			$("#launch-vm").attr("disabled",true);
+			$("#restart-vm").attr("disabled",true);
+			$("#close-vm").attr("disabled",true);
+			$("#edit-vm").attr("disabled",true);
 			$("#edit-admin-user").attr("disabled",true);
 		}
 	});
@@ -178,13 +212,13 @@ $(function() {
 			content:"任务消息"
 	});
 });
-function setVMLineLeft(width){
+/*function setVMLineLeft(width){
 	if(width < 1370){
 		$(".vm-line").css("left", "37%");
 	}else if(width > 1370){
 		$(".vm-line").css("left", "35%");
 	}
-}
+}*/
 //监控checkBox被选中的个数
 function monitorCheckBox(){
 	var count = 0;
@@ -203,5 +237,18 @@ function monitorCheckBox(){
 			$("#delete-admin-user").attr("disabled",true);
 		}
 		$("#edit-admin-user").attr("disabled",true);
+	}
+}
+
+function setCircleProgressColorInRange(setObj, val){
+	if( val > 70 && val <= 90){
+		setObj.css({
+			"width": val+"%"}).toggleClass("progress-bar-warning");
+	}else if(val > 90){
+		setObj.css({
+			"width": val+"%"}).toggleClass("progress-bar-danger");
+	}else{
+		setObj.css({
+			"width": val+"%"}).toggleClass("progress-bar-success");
 	}
 }

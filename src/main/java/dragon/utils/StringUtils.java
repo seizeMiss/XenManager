@@ -13,6 +13,13 @@ public class StringUtils {
 		target = String.valueOf(format.setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
 		return target;
 	}
+	public static String double2StringKeepScal(double source){
+		String target = "";
+		BigDecimal format = new BigDecimal(source);
+		target = String.valueOf(format.setScale(1, BigDecimal.ROUND_HALF_UP));
+		return target;
+	}
+	
 	public static int double2int(double source){
 		int target = 0;
 		BigDecimal format = new BigDecimal(source);

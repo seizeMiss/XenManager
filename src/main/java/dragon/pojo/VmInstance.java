@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.websocket.OnClose;
 
 @Entity
 @Table(name="vm_instance")
@@ -20,6 +21,7 @@ public class VmInstance {
 	private String imageId;
 	private String storageId;
 	private String uuid;
+	private String name;
 	private String vmIp;
 	private int status;
 	private String powerStatus;
@@ -39,8 +41,8 @@ public class VmInstance {
 	
 	
 	public VmInstance(String id, String clusterId, String hostId, String imageId, String storageId, String uuid,
-			String vmIp, int status, String powerStatus, Date createTime, Date updateTime, String osType, String osName,
-			int cpu, int memory, int systemDisk) {
+			String name, String vmIp, int status, String powerStatus, Date createTime, Date updateTime, String osType,
+			String osName, int cpu, int memory, int systemDisk) {
 		super();
 		this.id = id;
 		this.clusterId = clusterId;
@@ -48,6 +50,7 @@ public class VmInstance {
 		this.imageId = imageId;
 		this.storageId = storageId;
 		this.uuid = uuid;
+		this.name = name;
 		this.vmIp = vmIp;
 		this.status = status;
 		this.powerStatus = powerStatus;
@@ -103,6 +106,15 @@ public class VmInstance {
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
+	@Column(name="name",length=20)
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
 	@Column(name="vm_ip",length=20)
 	public String getVmIp() {
 		return vmIp;
@@ -189,11 +201,13 @@ public class VmInstance {
 	public void setVmStorages(List<VmStorage> vmStorages) {
 		this.vmStorages = vmStorages;
 	}
+
+
 	@Override
 	public String toString() {
 		return "VmInstance [id=" + id + ", clusterId=" + clusterId + ", hostId=" + hostId + ", imageId=" + imageId
-				+ ", storageId=" + storageId + ", uuid=" + uuid + ", vmIp=" + vmIp + ", status=" + status
-				+ ", powerStatus=" + powerStatus + ", createTime=" + createTime + ", updateTime=" + updateTime
+				+ ", storageId=" + storageId + ", uuid=" + uuid + ", name=" + name + ", vmIp=" + vmIp + ", status="
+				+ status + ", powerStatus=" + powerStatus + ", createTime=" + createTime + ", updateTime=" + updateTime
 				+ ", osType=" + osType + ", osName=" + osName + ", cpu=" + cpu + ", memory=" + memory + ", systemDisk="
 				+ systemDisk + ", vmStorages=" + vmStorages + ", vmNetWorks=" + vmNetWorks + "]";
 	}

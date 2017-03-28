@@ -12,30 +12,17 @@
 	clusterStorageUserRate = parseInt(clusterStorageUserRate);
 	hostCpuUsedRate = parseInt(hostCpuUsedRate);
 	hostMemoryUsedRate = parseInt(hostMemoryUsedRate);
-	function setCircleProgressColorInRange(setObj, val){
-		debugger;
-		if( val > 70 && val <= 90){
-			$(setObj).css({
-				"width": val+"%"}).toggleClass("progress-bar-warning");
-		}else if(val > 90){
-			$(setObj).css({
-				"width": val+"%"}).toggleClass("progress-bar-danger");
-		}else{
-			$(setObj).css({
-				"width": val+"%"}).toggleClass("progress-bar-success");
-		}
-	}
 	$(function(){
 		//集群内存使用率
-		setCircleProgressColorInRange(".cluster-memory-rate",clusterMemoryUsedRate);
+		setCircleProgressColorInRange($(".cluster-memory-rate"),clusterMemoryUsedRate);
 		//集群CPU使用率
-		setCircleProgressColorInRange(".cluster-cpu-rate", clusterCpuUsedRate);
+		setCircleProgressColorInRange($(".cluster-cpu-rate"), clusterCpuUsedRate);
 		//集群存储使用率
-		setCircleProgressColorInRange(".cluster-storage-rate", clusterStorageUserRate);
+		setCircleProgressColorInRange($(".cluster-storage-rate"), clusterStorageUserRate);
 		//主机内存使用率
-		setCircleProgressColorInRange(".host-memory-rate", hostMemoryUsedRate);
+		setCircleProgressColorInRange($(".host-storage-rate"), hostMemoryUsedRate);
 		//主机CPU使用率
-		setCircleProgressColorInRange(".host-cpu-rate", hostCpuUsedRate);
+		setCircleProgressColorInRange($(".host-cpu-rate"), hostCpuUsedRate);
 		
 	});
 </script>

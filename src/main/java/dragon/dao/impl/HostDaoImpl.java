@@ -84,11 +84,13 @@ public class HostDaoImpl extends HibernateUtils implements HostDao {
 		try {
 			session = getSession();
 			session.beginTransaction();
-			host = (HostInstance) session.get(Cluster.class, id);
+			host = (HostInstance) session.get(HostInstance.class, id);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+		}finally{
+			closeSession(session);
 		}
 		return host;
 	}

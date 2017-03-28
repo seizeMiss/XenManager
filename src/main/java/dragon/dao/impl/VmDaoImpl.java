@@ -19,15 +19,19 @@ import main.java.dragon.utils.StringUtils;
 public class VmDaoImpl extends HibernateUtils implements VMDao{
 
 	@Override
-	public void insertVm(VmStorage vmStorage, VmInstance vmInstance, VmNetwork vmNetwork) {
+	public void insertVm(VmInstance vmInstance) {
 		// TODO Auto-generated method stub
 		Session session = null;
 		try {
 			session = getSession();
 			session.beginTransaction();
 			session.save(vmInstance);
-			session.save(vmStorage);
-			session.save(vmNetwork);
+			for(VmStorage vmStorage : vmInstance.getVmStorages()){
+				session.save(vmStorage);
+			}
+			for(VmNetwork vmNetwork : vmInstance.getVmNetWorks()){
+				session.save(vmNetwork);
+			}
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
@@ -95,6 +99,8 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+		}finally{
+			closeSession(session);
 		}
 		return vmInstance;
 	}
@@ -114,6 +120,8 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+		}finally{
+			closeSession(session);
 		}
 		return selectVmStorage;
 	}
@@ -133,6 +141,8 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+		}finally{
+			closeSession(session);
 		}
 		return selectVmNetworks;
 	}

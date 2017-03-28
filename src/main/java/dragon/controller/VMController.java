@@ -1,6 +1,9 @@
 package main.java.dragon.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,9 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import main.java.dragon.pojo.Cluster;
 import main.java.dragon.pojo.HostInstance;
+import main.java.dragon.pojo.Storage;
+import main.java.dragon.pojo.VmInstance;
+import main.java.dragon.pojo.VmNeedInfo;
 import main.java.dragon.service.ClusterService;
 import main.java.dragon.service.HostService;
+import main.java.dragon.service.StorageService;
+import main.java.dragon.service.VMService;
+import main.java.dragon.utils.NumberUtils;
 import main.java.dragon.utils.StringUtils;
+import main.java.dragon.xenapi.FetchDynamicData;
 
 @Controller
 public class VMController {
@@ -19,10 +29,59 @@ public class VMController {
 	private ClusterService clusterService;
 	@Autowired
 	private HostService hostService;
+	@Autowired
+	private VMService vmService;
+	@Autowired
+	private StorageService storageService;
 
 	@RequestMapping("showVM")
-	public String showVM(){
-		
+	public String showVM(Model model){
+		List<VmInstance> vmInstances = null;
+		List<VmNeedInfo> vmNeedInfos = new ArrayList<VmNeedInfo>();
+		boolean isShowMemoryRate = false;
+		try {
+			FetchDynamicData data = new FetchDynamicData();
+//			vmService.addVm(null, null, null);
+			vmInstances = vmService.getAllVm();
+			VmNeedInfo vmNeedInfo = null;
+			Cluster cluster = null;
+			HostInstance hostInstance = null;
+			double memoryTotal = 0.0d;
+			double memoryUsed = 0.0d;
+			double cpuRate = 0.0d;
+			double memoryRate = 0.0d;
+			for(VmInstance vmInstance : vmInstances){
+				cluster = clusterService.getClusterById(vmInstance.getClusterId());
+				hostInstance = hostService.getHostInstanceById(vmInstance.getHostId());
+				vmInstance.setMemory(vmInstance.getMemory()/1024);
+				if(vmInstance.getPowerStatus().equals("Running")){
+					Map<String, Object> map = data.getVmNeedInfoByParseXml(vmInstance.getUuid());
+					cpuRate = (double) map.get("cpu_avg")*100;
+					isShowMemoryRate = (boolean) map.get("memory_flag");
+					memoryUsed = (double)map.get("memory_used");
+					memoryTotal = (double)map.get("memory_total");
+				}
+				if(isShowMemoryRate){
+					memoryRate = NumberUtils.computerUsedRate(memoryTotal, memoryTotal-memoryUsed, 1);
+				}
+				if(StringUtils.isEmpty(cluster, hostInstance)){
+					vmNeedInfo = new VmNeedInfo(vmInstance, NumberUtils.setdoubleScal(cpuRate), 
+							memoryRate,"-","-",StringUtils.double2String(memoryTotal),
+							StringUtils.double2StringKeepScal(memoryUsed),isShowMemoryRate);
+				}else{
+					vmNeedInfo = new VmNeedInfo(vmInstance, NumberUtils.setdoubleScal(cpuRate), 
+							memoryRate,cluster.getName(),hostInstance.getName(),
+							StringUtils.double2String(memoryTotal),StringUtils.double2StringKeepScal(memoryUsed),isShowMemoryRate);
+				}
+				vmNeedInfos.add(vmNeedInfo);
+			}
+			model.addAttribute("vmNeedInfos", vmNeedInfos);
+			model.addAttribute("isShowMemoryRate", isShowMemoryRate ? 1 : 0);
+			model.addAttribute("vmCount", vmNeedInfos.size());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "jsp/vm/virtual_machine";
 	}
 	
@@ -47,5 +106,15 @@ public class VMController {
 			model.addAttribute("clusterName",clusterByHost.getName());
 		}
 		return "jsp/colony_hostcomputer";
+	}
+	@RequestMapping("showAddVm")
+	public String showAddVm(Model model){
+		List<Storage> storages = storageService.getAllStorage();
+		List<Cluster> clusters = clusterService.getAllCluster();
+		if(!StringUtils.isEmpty(storages) && !StringUtils.isEmpty(clusters)){
+			model.addAttribute("storages", storages);
+			model.addAttribute("clusters", clusters);
+		}
+		return "jsp/vm/add_vm";
 	}
 }

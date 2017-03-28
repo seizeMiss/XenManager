@@ -69,5 +69,14 @@ public class StorageServiceImpl extends ConnectionUtil implements StorageService
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public List<Storage> getAllStorage() {
+		// TODO Auto-generated method stub
+		List<Storage> storages = storageDao.selectAllStorage();
+		if(!StringUtils.isEmpty(storages)){
+			return storages;
+		}
+		return null;
+	}
 
 }
