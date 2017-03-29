@@ -164,4 +164,10 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	}
 
+	@Override
+	public List<VmInstance> getVmInstanceByName(String name) {
+		// TODO Auto-generated method stub
+		return vmDao.selectVmInstanceByName(name);
+	}
+
 }

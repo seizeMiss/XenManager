@@ -172,4 +172,26 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 		}
 	}
 
+	@Override
+	public List<VmInstance> selectVmInstanceByName(String name) {
+		// TODO Auto-generated method stub
+		Session session = null;
+		List<VmInstance> vmInstances = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String hql = "from VmInstance where name like '" + name + "%'";
+			System.out.println(hql);
+			Query query = session.createQuery(hql);
+			vmInstances = query.list();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
+		return vmInstances;
+	}
+
 }

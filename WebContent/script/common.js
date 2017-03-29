@@ -211,6 +211,30 @@ $(function() {
 			width: 150,
 			content:"任务消息"
 	});
+	//点击选择集群
+	$("#select-cluster li").click(function(){
+		$("#selected-cluster").val($(this).children("a").html());
+		$("#select-cluster").hide();
+	});
+	$(".show-cluster").click(function(){
+		if($("#select-cluster").css("display") == "none"){
+			$("#select-cluster").show();
+		}else{
+			$("#select-cluster").hide();
+		}
+	});
+	$("#selected-cluster").click(function(){
+		if($("#select-cluster").css("display") == "none"){
+			$("#select-cluster").show();
+		}else{
+			$("#select-cluster").hide();
+		}
+	});
+	//如果集群为一个默认被填入input
+	var clusterLen = $("#select-cluster").children("li").length;
+	if(clusterLen == 1){
+		$("#selected-cluster").val($("#select-cluster li").eq(0).children("a").html());
+	}
 });
 /*function setVMLineLeft(width){
 	if(width < 1370){

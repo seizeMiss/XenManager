@@ -257,10 +257,6 @@
 				if(storageLen == 1){
 					$("#selected-storage-place").val($(".storage-name").html());
 				}
-				var clusterLen = $("#select-cluster").children("li").length;
-				if(clusterLen == 1){
-					$("#selected-cluster").val($("#select-cluster li").eq(0).children("a").html());
-				}
 				//添加磁盘
 				$("#add-disk").click(function() {
 					$(".disk-list").append("<li><div class='disk-details'><span>用户磁盘:</span><input type='text' name='user-disk' value='40' /></div><div style='float: left;margin-left: 10px;line-height: 35px;'><span>GB</span></div><div class='disk-delete pull-right'><a></a></div></li>");

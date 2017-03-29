@@ -14,4 +14,5 @@ public interface VMDao {
 	public List<VmStorage> selectVmStorageByVmId(String id);
 	public List<VmNetwork> selectVmNetwrokByVmId(String id);
 	public void deleteVm(String id);
+	public List<VmInstance> selectVmInstanceByName(String name);
 }

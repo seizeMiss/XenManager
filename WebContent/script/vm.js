@@ -29,25 +29,6 @@ $(function(){
 		}
 	});
 	
-	$("#select-cluster li").click(function(){
-		$("#selected-cluster").val($(this).children("a").html());
-		$("#select-cluster").hide();
-	});
-	$(".show-cluster").click(function(){
-		if($("#select-cluster").css("display") == "none"){
-			$("#select-cluster").show();
-		}else{
-			$("#select-cluster").hide();
-		}
-	});
-	$("#selected-cluster").click(function(){
-		if($("#select-cluster").css("display") == "none"){
-			$("#select-cluster").show();
-		}else{
-			$("#select-cluster").hide();
-		}
-	});
-	
 	$("#delete-vm").click(function(){
 		$("input[name='checkbox']").each(function(){
 			if($(this).is(":checked")){

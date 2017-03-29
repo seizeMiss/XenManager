@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>	
 <jsp:include page="../common/common.jsp" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/image.js"></script>
 <script type="text/javascript">
 	$(function() {
 		$("#popover-image-name").webuiPopover({
@@ -75,7 +77,21 @@
 							<div class="form-group">
 								<label for="vm-colony" class="col-sm-2 control-label"> <span class="asterisk">*</span>集群 </label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control" id="vm-colony" value="Xen" disabled="disabled">
+								<div class="input-group" style="float: left;">
+									<input type="text" class="form-control" id="selected-cluster" readonly="readonly">
+									<div class="input-group-btn">
+												<button type="button" class="btn btn-default dropdown-toggle show-cluster" data-toggle="dropdown">
+													&nbsp;<span class="caret" style="font-size: 20px;"></span>
+												</button>
+												<ul id= "select-cluster" class="dropdown-menu pull-right" style="width: 580px;">
+													<c:forEach var="cluster" items="${clusters }">
+													<li>
+														<a href="#">${cluster.name }</a>
+													</li>
+													</c:forEach>
+												</ul>
+											</div>
+											</div>
 								</div>
 							</div>
 							
@@ -116,12 +132,14 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr>
+												<c:forEach var="vmInstance" items="${vmInstances }">
+												<tr vid="${vmInstance.uuid }">
 													<td>
-													<input type="radio" name="select-mirror" value="windows 7镜像"/>
+													<input type="radio" name="select-mirror" value="${vmInstance.name }"/>
 													</td>
-													<td>windows 7镜像</td>
+													<td>${vmInstance.name }</td>
 												</tr>
+												</c:forEach>
 											</tbody>
 										</table>
 									</div>

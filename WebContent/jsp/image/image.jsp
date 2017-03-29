@@ -1,13 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<jsp:include page="../common/common.jsp"></jsp:include>
-<script type="text/javascript">
-	$(function() {
-		$("#add-image").click(function() {
-			location.href = "add_image.html";
-		});
-	});
-</script>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>	
+<jsp:include page="../common/common.jsp" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/image.js"></script>
 <body>
 		<div class="container">
 			<jsp:include page="../common/header.jsp"></jsp:include>

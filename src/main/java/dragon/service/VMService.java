@@ -11,5 +11,5 @@ public interface VMService {
 	public void saveVm(VmInstance vmInstance, List<VmStorage> vmStorage, List<VmNetwork> vmNetwork);
 	public List<VmInstance> getAllVm();
 	public void deleteVm(String ids);
-
+	public List<VmInstance> getVmInstanceByName(String name);
 }

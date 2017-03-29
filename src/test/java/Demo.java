@@ -47,7 +47,7 @@ public class Demo extends ConnectionUtil {
 			System.out.println(sr.getNameLabel(connection));
 			if (sr.getPhysicalSize(connection) > 0) {
 				// 物理大小
-				System.out.println(sr.getPhysicalSize(connection) / 1024 / 1024 / 1024);
+				/*System.out.println(sr.getPhysicalSize(connection) / 1024 / 1024 / 1024);
 				// 使用大小
 				System.out.println(sr.getPhysicalUtilisation(connection) / 1024 / 1024 / 1024);
 				// 类型
@@ -59,7 +59,7 @@ public class Demo extends ConnectionUtil {
 				// 虚拟分配
 				System.out.println(sr.getVirtualAllocation(connection) / 1024 / 1024 / 1024);
 
-				System.out.println(sr.getNameDescription(connection));
+				System.out.println(sr.getNameDescription(connection));*/
 				System.out.println("---------------");
 				Set<PBD> pbds = sr.getPBDs(connection);
 				Set<VDI> vdis = sr.getVDIs(connection);
@@ -72,7 +72,7 @@ public class Demo extends ConnectionUtil {
 					System.out.println(vdi.getLocation(connection));
 					System.out.println(vdi.getPhysicalUtilisation(connection) / 1024 / 1024);
 					System.out.println(vdi.getType(connection));
-					System.out.println(vdi.getVirtualSize(connection));
+					System.out.println(vdi.getVirtualSize(connection)/1024/1024);
 					System.out.println(vdi.getXenstoreData(connection));
 					System.out.println("===============");
 				}

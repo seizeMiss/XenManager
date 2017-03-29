@@ -30,7 +30,6 @@ public class AccountServiceImpl implements AccountService{
 
 	@Override
 	public List<Account> getAllAccount() {
-		// TODO Auto-generated method stub
 		return accountDao.selectAllAccount();
 	}
 
@@ -42,7 +41,6 @@ public class AccountServiceImpl implements AccountService{
 
 	@Override
 	public boolean saveUser(Account account) {
-		// TODO Auto-generated method stub
 		if (accountDao.updateAccount(account) > 0){
 			return true;
 		}
@@ -51,7 +49,6 @@ public class AccountServiceImpl implements AccountService{
 
 	@Override
 	public boolean addUser(Account account) {
-		// TODO Auto-generated method stub
 		if(accountDao.insertAccount(account) > 0){
 			return true;
 		}
@@ -60,7 +57,6 @@ public class AccountServiceImpl implements AccountService{
 
 	@Override
 	public boolean deleteUsers(String ids) {
-		// TODO Auto-generated method stub
 		String[] idArray = ids.split(",");
 		int size = 0;
 		for(String id : idArray){
