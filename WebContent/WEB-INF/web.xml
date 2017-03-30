@@ -8,6 +8,7 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:spring-hibernate.xml</param-value>
   </context-param>
+  <!-- 避免懒加载异常 -->
   <filter>
     <filter-name>openSessionInViewFilter</filter-name>
     <filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
@@ -33,6 +34,7 @@
     <servlet-name>springMVC</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
+  <!-- 配置编码 -->
   <filter>
     <filter-name>encodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>

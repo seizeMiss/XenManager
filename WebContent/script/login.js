@@ -1,5 +1,5 @@
 $(function() {
-	
+	$("#input-username").focus();
 	//点击切换明文查看密码
 	$("#psw-label").click(function() {
 		//求换图标
@@ -27,10 +27,12 @@ $(function() {
 		if(!userName || !password){
 			if(!userName){
 				$(".login-error").html("用户名不能为空").show();
+				$("#input-username").focus();
 				return;
 			}
 			if(userName && !password){
 				$(".login-error").html("密码不能为空").show();
+				$("#input-psw").focus();
 				return;
 			}
 		}
@@ -47,6 +49,7 @@ $(function() {
 					window.location.href = "showIndex";
 				}else{
 					$(".login-error").html("登录失败，用户名或密码错误！").show();
+					$("#input-username").focus();
 				}
 			},
 			error: function(data){

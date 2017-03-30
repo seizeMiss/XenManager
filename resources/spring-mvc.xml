@@ -10,7 +10,7 @@
       http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 
 	<!-- 支持驱动注解 -->
-	<mvc:annotation-driven />
+	<!-- <mvc:annotation-driven /> -->
 	<!--自动装配DefaultAnnotationHandlerMapping和AnnotationMethodHandlerAdapter --> 
 	<mvc:default-servlet-handler/>
 	
@@ -41,4 +41,19 @@
 		<property name="suffix" value=".jsp" />            <!-- 视图文件类型 -->
 		<property name="prefix" value="/" />  <!-- 视图文件的文件夹路径 -->
 	</bean>
+	<!-- 返回json -->
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="false">
+			<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+            <bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <!-- 这里顺序不能反，一定先写text/html,不然ie下出现下载提示 -->
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
 </beans>

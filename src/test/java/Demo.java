@@ -65,15 +65,17 @@ public class Demo extends ConnectionUtil {
 				Set<VDI> vdis = sr.getVDIs(connection);
 				System.out.println(vdis.size());
 				for (VDI vdi : vdis) {
-					System.out.println(vdi.getUuid(connection));
-					System.out.println(vdi.getIsASnapshot(connection));
-					System.out.println(vdi.getNameLabel(connection));
-					System.out.println(vdi.getNameDescription(connection));
-					System.out.println(vdi.getLocation(connection));
-					System.out.println(vdi.getPhysicalUtilisation(connection) / 1024 / 1024);
-					System.out.println(vdi.getType(connection));
-					System.out.println(vdi.getVirtualSize(connection)/1024/1024);
-					System.out.println(vdi.getXenstoreData(connection));
+					if(vdi.getNameLabel(connection).equals("linux")){
+						System.out.println(vdi.getNameLabel(connection));
+						System.out.println(vdi.getUuid(connection));
+						System.out.println(vdi.getIsASnapshot(connection));
+						System.out.println(vdi.getNameDescription(connection));
+						System.out.println(vdi.getLocation(connection));
+						System.out.println(vdi.getPhysicalUtilisation(connection) / 1024 / 1024);
+						System.out.println(vdi.getType(connection));
+						System.out.println(vdi.getVirtualSize(connection)/1024/1024/1024);
+						System.out.println(vdi.getXenstoreData(connection));
+					}
 					System.out.println("===============");
 				}
 				// for(PBD pbd : pbds){
@@ -182,7 +184,7 @@ public class Demo extends ConnectionUtil {
 
 								System.out.println(vbd.getVM(connection).getNameLabel(connection));
 
-								if (vm.getNameLabel(connection).equals("IVYCloud-Server")) {
+								if (vm.getNameLabel(connection).equals("IVYCloud-AD")) {
 									VM.Record vmRecord = vm.getRecord(connection);
 									System.out.println("------record---------");
 									System.out.println("version:" + vmRecord.version);

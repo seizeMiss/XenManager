@@ -110,7 +110,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 				vmStorage.setId(StringUtils.generateUUID());
 				vmStorage.setName(vdi.getNameLabel(connection));
 				vmStorage.setStorageType(vdi.getType(connection).toString());
-				vmStorage.setVmId(vmId);
+//				vmStorage.setVmId(vmId);
 				vmStorage.setDescription(vdi.getNameDescription(connection));
 				vmStorage.setStorageId("44c9f5e8-9d29-43ac-b866-6079b440ce67");
 				vmStorages.add(vmStorage);
@@ -130,7 +130,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 			vmNetwork.setMacAddress(vif.getMAC(connection));
 			vmNetwork.setNetworkId(network.getUuid(connection));
 			vmNetwork.setNetworkName(network.getNameLabel(connection));
-			vmNetwork.setVmId(vmId);
+//			vmNetwork.setVmId(vmId);
 			vmNetworks.add(vmNetwork);
 		}
 		return vmNetworks;

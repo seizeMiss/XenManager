@@ -3,13 +3,15 @@ package main.java.dragon.pojo;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.websocket.OnClose;
+
 
 @Entity
 @Table(name="vm_instance")
@@ -185,16 +187,14 @@ public class VmInstance {
 	public void setSystemDisk(int systemDisk) {
 		this.systemDisk = systemDisk;
 	}
-	@OneToMany
-	@JoinColumn(name="vm_id")
+	@OneToMany(targetEntity=VmStorage.class,fetch=FetchType.LAZY,cascade=CascadeType.ALL)
 	public List<VmNetwork> getVmNetWorks() {
 		return vmNetWorks;
 	}
 	public void setVmNetWorks(List<VmNetwork> vmNetWorks) {
 		this.vmNetWorks = vmNetWorks;
 	}
-	@OneToMany
-	@JoinColumn(name="vm_id")
+	@OneToMany(targetEntity=VmStorage.class,fetch=FetchType.LAZY,cascade=CascadeType.ALL)
 	public List<VmStorage> getVmStorages() {
 		return vmStorages;
 	}

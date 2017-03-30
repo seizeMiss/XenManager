@@ -71,9 +71,6 @@
 					<div class="content-form">
 						<form class="form-horizontal" role="form">
 
-							
-
-
 							<div class="form-group">
 								<label for="vm-colony" class="col-sm-2 control-label"> <span class="asterisk">*</span>集群 </label>
 								<div class="col-sm-10">
@@ -85,13 +82,16 @@
 												</button>
 												<ul id= "select-cluster" class="dropdown-menu pull-right" style="width: 580px;">
 													<c:forEach var="cluster" items="${clusters }">
-													<li>
+													<li cid="${cluster.id }">
 														<a href="#">${cluster.name }</a>
 													</li>
 													</c:forEach>
 												</ul>
 											</div>
 											</div>
+								</div>
+								<div class="cluster-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">请选择集群！</label></span>
 								</div>
 							</div>
 							
@@ -103,6 +103,9 @@
 								<a id="popover-image-name" data-trigger="click" data-container="body" data-toggle="popover"
 								data-placement="right" data-content="镜像名只能由中英文、数字和横杠 (-) 构成，最长30字符"
 								class="glyphicon glyphicon-info-sign"></a>
+								<div class="image-name-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">名称不能为空！</label></span>
+								</div>
 							</div>
 							
 							<div class="form-group">
@@ -119,7 +122,7 @@
 									<div class="input-group">
 										<input type="text" class="form-control" id="search-content">
 										<span class="input-group-btn">
-											<button class="btn btn-default" type="button" id="search">
+											<button class="btn btn-default" type="button" id="search-vm">
 												搜索
 											</button> </span>
 									</div>
@@ -131,7 +134,7 @@
 													<th>虚拟机名称</th>
 												</tr>
 											</thead>
-											<tbody>
+											<tbody class="show-vm-info">
 												<c:forEach var="vmInstance" items="${vmInstances }">
 												<tr vid="${vmInstance.uuid }">
 													<td>
@@ -140,19 +143,25 @@
 													<td>${vmInstance.name }</td>
 												</tr>
 												</c:forEach>
+												<tr class="vm-no-data">
+													<td colspan="2">无数据</td>
+												<tr>
 											</tbody>
 										</table>
 									</div>
 								</div>
 								<a id="popover-select-vm" data-trigger="click" data-container="body" data-toggle="popover"
-								data-placement="right" data-content="选择 1 个可用虚拟机创建镜像；搜索框最多输入 127 个字符"
+								data-placement="right" data-content="选择 1 个可用虚拟机创建镜像；搜索框最多输入 20个字符"
 								class="glyphicon glyphicon-info-sign"></a>
+								<div class="search-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">内容够多，请重新输入！</label></span>
+								</div>
 							</div>
 
 
 							<div class="form-group operation">
 								<div class="col-sm-offset-2 col-sm-10">
-									<button type="submit" class="btn btn-default ok-btn" style="margin-right: 30px;">
+									<button type="button" class="btn btn-default add-image-btn" style="margin-right: 30px;">
 										确定
 									</button>
 									<button type="button" class="btn btn-default cancle-btn">

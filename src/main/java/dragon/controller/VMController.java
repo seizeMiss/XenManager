@@ -5,10 +5,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 
 import main.java.dragon.pojo.Cluster;
 import main.java.dragon.pojo.HostInstance;
@@ -116,5 +121,18 @@ public class VMController {
 			model.addAttribute("clusters", clusters);
 		}
 		return "jsp/vm/add_vm";
+	}
+	
+	@RequestMapping("searchVmByName")
+	@ResponseBody
+	public List<VmInstance> searchVmByName(Model model,HttpServletRequest request){
+		List<VmInstance> instances = null;
+		String name = request.getParameter("searchContent");
+		instances = vmService.getVmInstanceByName(name);
+		for(VmInstance vmInstance : instances){
+			vmInstance.setVmStorages(null);
+			vmInstance.setVmNetWorks(null);
+		}
+		return instances;
 	}
 }

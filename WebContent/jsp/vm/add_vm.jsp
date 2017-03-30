@@ -70,6 +70,9 @@
 								<a id="popover-name-rule" data-trigger="click" data-container="body" data-toggle="popover"
 								data-placement="right" data-content="虚拟机名只能由英文、数字和‘横杠 (-)’构成，最长 10 字符"
 								class="glyphicon glyphicon-info-sign"></a>
+								<div class="vm-rule-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">虚拟机的命名规则不能为空！</label></span>
+								</div>
 							</div>
 
 							<div class="form-group">
@@ -80,6 +83,9 @@
 								<a id="popover-vm-number" data-trigger="click" data-container="body" data-toggle="popover"
 								data-placement="right" data-content="支持批量创建 1 ~ 500 个虚拟机"
 								class="glyphicon glyphicon-info-sign"></a>
+								<div class="vm-number-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">请输入创建虚拟机的个数！</label></span>
+								</div>
 							</div>
 
 							<div class="form-group">
@@ -100,6 +106,9 @@
 												</ul>
 											</div>
 											</div>
+								</div>
+								<div class="cluster-name-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">集群不能为空！</label></span>
 								</div>
 							</div>
 
@@ -122,15 +131,20 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr>
+											<c:forEach var="image" items="${images }">
+												<tr iid="${image.id }">
 													<td>
-													<input type="radio" name="select-mirror" value="windows 7镜像"/>
+													<input type="radio" name="select-mirror" value="${image.name }"/>
 													</td>
-													<td>windows 7镜像</td>
+													<td>${image.name }</td>
 												</tr>
+											</c:forEach>
 											</tbody>
 										</table>
 									</div>
+								</div>
+								<div class="image-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">名称不能为空！</label></span>
 								</div>
 							</div>
 
@@ -160,6 +174,9 @@
 								<a id="popover-cpu-number" data-trigger="click" data-container="body" data-toggle="popover"
 								data-placement="right" data-content="每个虚拟机最多只能分配 16 个CPU核数"
 								class="glyphicon glyphicon-info-sign"></a>
+								<div class="cpu-number-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">请选择cpu分配的个数！</label></span>
+								</div>
 							</div>
 
 							<div class="form-group">
@@ -167,19 +184,19 @@
 								<div class="col-sm-10">
 									<div class="ram-group">
 										<label name="itemlabel" class="item" title="2GB"> <img src="${pageContext.request.contextPath}/img/selectRadio.png" />
-											<input type="radio" name="select-cpu" title="2GB" value="2" />
+											<input type="radio" name="select-ram" title="2GB" value="2" />
 											2GB </label>
 										<label name="itemlabel" class="item" title="4GB"> <img src="${pageContext.request.contextPath}/img/selectedRadio.png" />
-											<input type="radio" name="select-cpu" checked="checked" title="4GB" value="4" />
+											<input type="radio" name="select-ram" checked="checked" title="4GB" value="4" />
 											4GB </label>
 										<label name="itemlabel" class="item" title="8GB"> <img src="${pageContext.request.contextPath}/img/selectRadio.png" />
-											<input type="radio" name="select-cpu" title="8GB" value="8" />
+											<input type="radio" name="select-ram" title="8GB" value="8" />
 											8GB </label>
 										<label name="itemlabel" class="item" title="16GB"> <img src="${pageContext.request.contextPath}/img/selectRadio.png" />
-											<input type="radio" name="select-cpu" title="16GB" value="16" />
+											<input type="radio" name="select-ram" title="16GB" value="16" />
 											16GB </label>
 										<label name="itemlabel" class="item" title="其他"> <img src="${pageContext.request.contextPath}/img/selectRadio.png" />
-											<input type="radio" name="select-cpu" title="其他" value="other" />
+											<input type="radio" name="select-ram" title="其他" value="other" />
 											其他
 											<input type="text" id="ram-number" maxlength="2" min="1" max="16" style="display: none" name="specialInput"/>
 										</label>
@@ -188,6 +205,9 @@
 								<a id="popover-ram-number" data-trigger="click" data-container="body" data-toggle="popover"
 								data-placement="right" data-content="如果选择“其他”，内存量为 1 ~ 8 GB 时，最小步进 0.5 GB；内存量为 8 ~ 16 GB 时，最小步进 1 GB；<br>不支持为虚拟机分配超过 16 GB内存"
 								class="glyphicon glyphicon-info-sign"></a>
+								<div class="memory-number-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">请选择内存分配的个数！</label></span>
+								</div>
 							</div>
 
 							<div class="form-group">
@@ -203,7 +223,7 @@
 												</button>
 												<ul id= "select-storage" class="dropdown-menu pull-right" style="width: 490px;">
 													<c:forEach var="storage" items="${storages }">
-													<li>
+													<li sid="${storage.uuid }">
 														<a href="#">
 															<span class="storage-name">${storage.name }</span>
 															<span class="storage-desc">总大小:${storage.storageTotal }G  可用:${storage.storageTotal-storage.storageUsed }G</span>
@@ -218,7 +238,7 @@
 										<li>
 											<div class="disk-details">
 												<span>用户磁盘:</span>
-												<input type="text" id="user-disk-size" value="40"/>
+												<input type="text" name="user-disk-size" value="40"/>
 											</div>
 											<div style="float: left;margin-left: 10px;line-height: 35px;">
 												<span>GB</span>
@@ -231,11 +251,14 @@
 										<span class="glyphicon glyphicon-plus"></span><span style="margin-left: 10px;">添加磁盘</span>
 									</button>
 								</div>
+								<div class="storage-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">请选择内存分配的个数！</label></span>
+								</div>
 							</div>
 
 							<div class="form-group operation">
 								<div class="col-sm-offset-2 col-sm-10">
-									<button type="submit" class="btn btn-default ok-btn" style="margin-right: 30px;">
+									<button type="button" class="btn btn-default add-vm-btn" style="margin-right: 30px;">
 										确定
 									</button>
 									<button type="button" class="btn btn-default cancle-btn">

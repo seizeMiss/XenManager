@@ -1,8 +1,12 @@
 package main.java.dragon.pojo;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -14,6 +18,7 @@ public class VmNetwork {
 	private String networkId;
 	private String networkName;
 	private String macAddress;
+	private VmInstance vmInstance;
 	
 	public VmNetwork(String id, String uuid, String vmId, String networkId, String networkName, String macAddress) {
 		super();
@@ -68,6 +73,14 @@ public class VmNetwork {
 	}
 	public void setMacAddress(String macAddress) {
 		this.macAddress = macAddress;
+	}
+	
+	@ManyToOne(targetEntity=VmInstance.class,cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+	public VmInstance getVmInstance() {
+		return vmInstance;
+	}
+	public void setVmInstance(VmInstance vmInstance) {
+		this.vmInstance = vmInstance;
 	}
 	@Override
 	public String toString() {

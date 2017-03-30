@@ -354,17 +354,79 @@ textarea{
 	left: 1000px;
 	display: none;
 }
-.psd-warning-info span{
-	color: red;
-	font-size: 14px;
-}
+
 .psd-conf-warming-info{
 	position: absolute;
 	top: 230px;
 	left: 1000px;
 	display: none;
 }
-.psd-conf-warming-info span{
+.search-warning-info{
+	position: absolute;
+	top:43%;
+	left:1020px;
+	display:none;
+}
+.cluster-warning-info{
+	position: absolute;
+	top:16%;
+	left:980px;
+	display:none;
+}
+.image-name-warning-info{
+	position: absolute;
+	top:22.5%;
+	left:1010px;
+	display:none;
+}
+.image-warning-info{
+	position: absolute;
+	top:35%;
+	left:980px;
+	display: none;
+}
+.vm-number-warning-info{
+	position: absolute;
+	top:22.5%;
+	left:1010px;
+	display: none;
+}
+.cpu-number-warning-info{
+	position: absolute;
+	top:61.5%;
+	left:1010px;
+	display: none;
+}
+.vm-rule-warning-info{
+	position: absolute;
+	top:16%;
+	left:1010px;
+	display: none;
+}
+.memory-number-warning-info{
+	position: absolute;
+	top:68.5%;
+	left:1010px;
+	display: none;
+}
+.cluster-name-warning-info{
+	position: absolute;
+	top:29%;
+	left:980px;
+	display: none;
+}
+.storage-warning-info{
+	position: absolute;
+	top:75%;
+	left:980px;
+	display: none;
+}
+.psd-warning-info span,.psd-conf-warming-info span,.search-warning-info span,
+.cluster-warning-info span,.image-name-warning-info span,
+.cpu-number-warning-info span,.memory-number-warning-info span,
+.cluster-name-warning-info span,.image-warning-info span,
+.vm-number-warning-info span,.vm-rule-warning-info span,
+.storage-warning-info span{
 	color: red;
 	font-size: 14px;
 }
@@ -381,7 +443,10 @@ textarea{
 	left: 72%;
 }
 /* 查询没有数据  */
-.no-data td{
+.vm-no-data{
+	display:none;
+}
+.no-data td,.vm-no-data td{
 	text-align: center;
 }
 /* 箭头标志*/
