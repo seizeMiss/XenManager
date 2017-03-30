@@ -165,7 +165,10 @@
 	width: 16%;
 	margin-top: 15px;
 }
-
+#select-state{
+	overflow-y: scroll;
+	height: 110px;
+}
 textarea{
 	width: 570px;
 	height: 100px;

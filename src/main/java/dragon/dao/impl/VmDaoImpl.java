@@ -175,7 +175,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 
 	@Override
 	public List<VmInstance> selectVmInstanceByName(String name) {
-		// TODO Auto-generated method stub
 		Session session = null;
 		List<VmInstance> vmInstances = null;
 		try {

@@ -7,7 +7,7 @@ $(function(){
 		location.href = "showAddVm";
 	});
 	$("#edit-vm").click(function(){
-		location.href = "edit_vm.html";
+		location.href = "showEditVm";
 	});
 	//点击选择存储
 	$("#select-storage li").click(function(){
@@ -29,18 +29,47 @@ $(function(){
 		}
 	});
 	
-	$("#delete-vm").click(function(){
-		$("input[name='checkbox']").each(function(){
-			if($(this).is(":checked")){
-				var td = $(this).parent("td");
-				td.html("<img src='../img/load.gif'/>");
-				
-				td.html("<input type='checkbox' name='checkbox' checked>");
-			}
-		});
-	});
+//	$("#delete-vm").click(function(){
+//		$("input[name='checkbox']").each(function(){
+//			if($(this).is(":checked")){
+//				var td = $(this).parent("td");
+//				td.html("<img src='../img/load.gif'/>");
+//				
+//				td.html("<input type='checkbox' name='checkbox' checked>");
+//			}
+//		});
+//	});
+	$("#delete-vm").bind("click", deleteVms);
 	$(".add-vm-btn").bind("click", addVm);
+	$(".edit-vm-btn").bind("click", editVm);
+	$("#launch-vm").bind("click",launchVm);
+	$("#restart-vm").bind("click",restartVm);
+	$("#close-vm").bind("click",closeVm);
+	$("#search-image").bind("click",searchImage);
+	
 });
+function searchImage(){
+	var searchContent = $("#search-content").val();
+	if (searchContent.length > 20) {
+		$("#search-content").select();
+		$(".image-warning-info").show();
+		return false;
+	}
+	$(".image-warning-info").hide();
+	$.ajax({
+		dataType : "json",
+		url : "searchImageByName",
+		data : {
+			searchContent : searchContent
+		},
+		success : function(data) {
+			generateVMshowContent(data);
+		},
+		error : function(data) {
+		}
+	});
+	
+}
 function hideWarningInfo(...args){
 	for(var i = 0; i < args.length; i++){
 		if(i == 0){
@@ -148,13 +177,13 @@ function addVm(){
 function editVm(){
 	
 }
-function deleteVm(){
+function deleteVms(){
 	
 }
-function openVm(){
+function launchVm(){
 	
 }
-function rebootVm(){
+function restartVm(){
 	
 }
 function closeVm(){

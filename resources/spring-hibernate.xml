@@ -11,7 +11,7 @@
 						http://www.springframework.org/schema/aop/spring-aop-4.0.xsd    
 						http://www.springframework.org/schema/context      
 						http://www.springframework.org/schema/context/spring-context-4.0.xsd">
-	
+
 	<!-- 找到jdbc配置文件 -->
 	<context:property-placeholder location="classpath:jdbc.properties" />
 
@@ -55,5 +55,20 @@
 
 	<!-- 注解方式配置事物 -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="get*" propagation="REQUIRED" />
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config expose-proxy="true">
+		<!-- 只对业务逻辑层实施事务 -->
+		<aop:pointcut id="txPointcut" expression="execution(* main.java.dragon.service..*.*(..))" />
+		<!-- Advisor定义，切入点和通知分别为txPointcut、txAdvice -->
+		<aop:advisor pointcut-ref="txPointcut" advice-ref="txAdvice" />
+	</aop:config>
 
 </beans>

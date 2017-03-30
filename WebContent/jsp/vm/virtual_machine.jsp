@@ -65,6 +65,7 @@
 					</ol>
 				</div>
 				<div class="content-search">
+				<form action="searchVm" method="post">
 					<div class="content-search-condition pull-left">
 						<div class="search-condition">
 							<span>名称</span> <input id="condition-name" type="text" />
@@ -72,8 +73,39 @@
 					</div>
 					<div class="content-search-condition pull-left">
 						<div class="search-condition">
-							<span>状态</span> <input id="condition-state" type="text" />
-						</div>
+								<span style="float: left;">状态</span>
+								<div class="input-group" style="width: 200px;float: left;margin-left: 20px;">
+									<input type="text" id="selected-state" name="selected-state" readonly="readonly" data-toggle="dropdown" class="form-control dropdown-toggle" style="font-size: 18px;">
+									<div class="input-group-btn">
+										<button type="button" class="btn btn-default dropdown-toggle show-state" data-toggle="dropdown">
+											&nbsp;<span class="caret" style="font-size: 10px;"></span>
+										</button>
+										<ul id= "select-state" class="dropdown-menu pull-right" style="width: 190px;">
+											<li>
+												<a href="#">不可用</a>
+											</li>
+											<li>
+												<a href="#">可用</a>
+											</li>
+											<li>
+												<a href="#">开启</a>
+											</li>
+											<li>
+												<a href="#">关闭</a>
+											</li>
+											<li>
+												<a href="#">开启中</a>
+											</li>
+											<li>
+												<a href="#">关闭中</a>
+											</li>
+											<li>
+												<a href="#">重启中</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
 					</div>
 					<div class="content-search-condition pull-left">
 						<div class="search-condition">
@@ -90,18 +122,19 @@
 									</button>
 									<ul id="select-os" class="dropdown-menu pull-right"
 										style="width: 190px;">
-										<li><a href="#">Windows 7</a></li>
-										<li><a href="#">CentOS7</a></li>
-										<li><a href="#">Ubuntu 15</a></li>
+										<c:forEach var="vmOsType" items="${vmOsTypes }">
+											<li><a href="#">${vmOsType }</a></li>
+										</c:forEach>
 									</ul>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="content-search-submit pull-right">
-						<button type="button" class="btn btn-success">搜索</button>
+						<button type="submit" class="btn btn-success">搜索</button>
 						<button type="button" class="btn btn-danger">重置</button>
 					</div>
+					</form>
 				</div>
 				<div class="user">
 					<div class="user-operate">

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.junit.experimental.theories.suppliers.TestedOnSupplier;
+import org.junit.validator.PublicClassValidator;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.xensource.xenapi.Host;
@@ -65,7 +66,8 @@ public class Demo extends ConnectionUtil {
 				Set<VDI> vdis = sr.getVDIs(connection);
 				System.out.println(vdis.size());
 				for (VDI vdi : vdis) {
-					if(vdi.getNameLabel(connection).equals("linux")){
+					if(vdi.getNameLabel(connection).equals("image-test")){
+						System.out.println("----------------==========");
 						System.out.println(vdi.getNameLabel(connection));
 						System.out.println(vdi.getUuid(connection));
 						System.out.println(vdi.getIsASnapshot(connection));
@@ -75,8 +77,8 @@ public class Demo extends ConnectionUtil {
 						System.out.println(vdi.getType(connection));
 						System.out.println(vdi.getVirtualSize(connection)/1024/1024/1024);
 						System.out.println(vdi.getXenstoreData(connection));
+//						vdi.destroy(connection);
 					}
-					System.out.println("===============");
 				}
 				// for(PBD pbd : pbds){
 				// System.out.println(pbd.getUuid(connection));
@@ -257,6 +259,18 @@ public class Demo extends ConnectionUtil {
 			}
 		}
 		return defaultVIF;
+	}
+	@Test
+	public void testGetVm() throws Exception{
+		Set<VM> vms = VM.getAll(connection);
+		for(VM vm : vms){
+			if(vm.getNameLabel(connection).equals("Win7-32")){
+				System.out.println(vm.getUuid(connection));
+			}
+			if(vm.getUuid(connection) == "367e69eb-1875-4bb9-9fea-6a9fda592bc1"){
+				System.out.println("win 7");
+			}
+		}
 	}
 
 	private Pool getPoolByVM(VM vm) {

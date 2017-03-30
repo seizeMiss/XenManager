@@ -100,7 +100,7 @@
 												<ul id= "select-cluster" class="dropdown-menu pull-right" style="width: 580px;">
 													<c:forEach var="cluster" items="${clusters }">
 													<li>
-														<a href="#">${cluster.name }</a>
+														<a href="javacript:void(0)">${cluster.name }</a>
 													</li>
 													</c:forEach>
 												</ul>
@@ -118,7 +118,7 @@
 									<div class="input-group">
 										<input type="text" class="form-control" id="search-content">
 										<span class="input-group-btn">
-											<button class="btn btn-default" type="button" id="search">
+											<button class="btn btn-default" type="button" id="search-image">
 												搜索
 											</button> </span>
 									</div>
@@ -130,15 +130,18 @@
 													<th>镜像名称</th>
 												</tr>
 											</thead>
-											<tbody>
+											<tbody class="show-vm-info">
 											<c:forEach var="image" items="${images }">
 												<tr iid="${image.id }">
 													<td>
-													<input type="radio" name="select-mirror" value="${image.name }"/>
+													<input type="radio" name="select-image" value="${image.name }"/>
 													</td>
 													<td>${image.name }</td>
 												</tr>
 											</c:forEach>
+												<tr class="vm-no-data">
+													<td colspan="2">无数据</td>
+												<tr>
 											</tbody>
 										</table>
 									</div>
@@ -224,7 +227,7 @@
 												<ul id= "select-storage" class="dropdown-menu pull-right" style="width: 490px;">
 													<c:forEach var="storage" items="${storages }">
 													<li sid="${storage.uuid }">
-														<a href="#">
+														<a href="javacript:void(0)">
 															<span class="storage-name">${storage.name }</span>
 															<span class="storage-desc">总大小:${storage.storageTotal }G  可用:${storage.storageTotal-storage.storageUsed }G</span>
 														</a>

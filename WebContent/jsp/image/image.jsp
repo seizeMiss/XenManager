@@ -49,50 +49,64 @@
 						</ol>
 					</div>
 					<div class="content-search">
+					<form action="searchImageBycondition">
 						<div class="content-search-condition pull-left">
 							<div class="search-condition">
 								<span>名称</span>
-								<input id="condition-name" type="text" />
+								<input id="condition-name" name="condition-name" type="text" />
 							</div>
 						</div>
 						<div class="content-search-condition pull-left">
 							<div class="search-condition">
-								<span>状态</span>
-								<input id="condition-state" type="text" />
-							</div>
-						</div>
-						<div class="content-search-condition pull-left">
-							<div class="search-condition">
-								<span style="float: left;">操作系统</span>
+								<span style="float: left;">状态</span>
 								<div class="input-group" style="width: 200px;float: left;margin-left: 20px;">
-									<input type="text" id="selected-os" readonly="readonly" data-toggle="dropdown" class="form-control dropdown-toggle" style="font-size: 18px;">
+									<input type="text" id="selected-state" name="selected-state" readonly="readonly" data-toggle="dropdown" class="form-control dropdown-toggle" style="font-size: 18px;">
 									<div class="input-group-btn">
-										<button type="button" class="btn btn-default dropdown-toggle show-os" data-toggle="dropdown">
+										<button type="button" class="btn btn-default dropdown-toggle show-state" data-toggle="dropdown">
 											&nbsp;<span class="caret" style="font-size: 10px;"></span>
 										</button>
-										<ul id= "select-os" class="dropdown-menu pull-right" style="width: 190px;">
+										<ul id= "select-state" class="dropdown-menu pull-right" style="width: 190px;">
 											<li>
-												<a href="#">Windows 7</a>
+												<a href="#">可用</a>
 											</li>
 											<li>
-												<a href="#">CentOS7</a>
-											</li>
-											<li>
-												<a href="#">Ubuntu 15</a>
+												<a href="#">不可用</a>
 											</li>
 										</ul>
 									</div>
 								</div>
 							</div>
 						</div>
+						<div class="content-search-condition pull-left">
+						
+							<div class="search-condition">
+								<span style="float: left;">操作系统</span>
+								<div class="input-group" style="width: 200px;float: left;margin-left: 20px;">
+									<input type="text" id="selected-os" name="selected-os" readonly="readonly" data-toggle="dropdown" class="form-control dropdown-toggle" style="font-size: 18px;">
+									<div class="input-group-btn">
+										<button type="button" class="btn btn-default dropdown-toggle show-os" data-toggle="dropdown">
+											&nbsp;<span class="caret" style="font-size: 10px;"></span>
+										</button>
+										<ul id= "select-os" class="dropdown-menu pull-right" style="width: 190px;">
+											<c:forEach var="osType" items="${imageOsNames }">
+												<li>
+													<a href="#">${osType }</a>
+												</li>
+											</c:forEach>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
 						<div class="content-search-submit pull-right">
-							<button type="button" class="btn btn-success">
+							<button type="submit" class="btn btn-success" name="search-image">
 								搜索
 							</button>
 							<button type="button" class="btn btn-danger">
 								重置
 							</button>
 						</div>
+						</form>
 					</div>
 					<div class="user">
 						<div class="user-operate">
@@ -106,10 +120,7 @@
 						<div class="data-table">
 							<div class="data-table-top">
 								<div class="show-total">
-									已展示数/总数:<span>1</span>/<span>1</span>
-								</div>
-								<div class="show-selected">
-									已选数:<span>0</span>
+									已展示数/总数:<span>${imageCount == null ? 0 : imageCount }</span>/<span>${imageCount == null ? 0 : imageCount }</span>
 								</div>
 							</div>
 							<div class="data-table-content">
@@ -117,7 +128,6 @@
 									<thead class="data-thead">
 									<tr>
 										<th>
-										<input type="checkbox" id="all_cb">
 										</th>
 										<th>名称</th>
 										<th>操作系统</th>
@@ -128,23 +138,43 @@
 									</tr>
 								</thead>
 									<tbody class="data-table-tbody">
-										<tr>
-											<td>
-											<input type="checkbox" name="checkbox">
-											</td>
-											<td><span style="line-height: 50px;">Tanmay</span></td>
-											<td><span style="line-height: 50px;">Windows 7</span></td>
-											<td><span style="line-height: 50px;">可用</span></td>
-											<td><span style="line-height: 50px;">10GB</span></td>
-											<td><span style="line-height: 50px;">2017.03.15</span></td>
-											<td>
-												<span class="glyphicon glyphicon-chevron-down show-details" style="cursor:pointer;line-height: 50px;margin-left: 30px;color: #09f"></span>
-											</td>
-										</tr>
-										<tr class="hidden-tr">
-											<td colspan="10">11</td>
-										</tr>
-
+										<c:choose>
+											<c:when test="${images != null }">
+												<c:forEach var="image" items ="${images }">
+													<tr iid = "${image.id }">
+														<td>
+														<c:choose>
+															<c:when test="${image.status == 0 || image.status == 4 }"><img src="/VMManager/img/load.gif"/></c:when>
+															<c:otherwise><input type="radio" name="checkbox"></c:otherwise>
+														</c:choose>
+														</td>
+														<td><span style="line-height: 50px;">${image.name }</span></td>
+														<td><span style="line-height: 50px;">${image.osType }</span></td>
+														<td>
+															<span style="line-height: 50px;">
+																<c:if test="${image.status == -1 }">不可用</c:if>
+																<c:if test="${image.status == 0 }">创建中</c:if>
+																<c:if test="${image.status == 1 }">可用</c:if>
+																<c:if test="${image.status == 4 }">删除中</c:if>
+															</span>
+														</td>
+														<td><span style="line-height: 50px;">${image.imageSize }GB</span></td>
+														<td><span style="line-height: 50px;">${image.createTime }</span></td>
+														<td>
+															<span class="glyphicon glyphicon-chevron-down show-details" style="cursor:pointer;line-height: 50px;margin-left: 30px;color: #09f"></span>
+														</td>
+													</tr>
+													<tr class="hidden-tr">
+														<td colspan="10">${image.description }</td>
+													</tr>
+												</c:forEach>
+											</c:when>
+											<c:otherwise>
+												<tr class="no-data">
+													<td colspan="10">无数据</td>
+												</tr>
+											</c:otherwise>
+										</c:choose>
 									</tbody>
 									<tfoot></tfoot>
 								</table>

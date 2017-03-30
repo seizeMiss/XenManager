@@ -11,7 +11,6 @@ import com.xensource.xenapi.VBD;
 import com.xensource.xenapi.VDI;
 import com.xensource.xenapi.VM;
 
-import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.service.impl.ConnectionUtil;
 
 public class ImageAPI extends ConnectionUtil {

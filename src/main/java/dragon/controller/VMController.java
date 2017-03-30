@@ -2,8 +2,11 @@ package main.java.dragon.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,11 +20,13 @@ import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 
 import main.java.dragon.pojo.Cluster;
 import main.java.dragon.pojo.HostInstance;
+import main.java.dragon.pojo.Image;
 import main.java.dragon.pojo.Storage;
 import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.pojo.VmNeedInfo;
 import main.java.dragon.service.ClusterService;
 import main.java.dragon.service.HostService;
+import main.java.dragon.service.ImageService;
 import main.java.dragon.service.StorageService;
 import main.java.dragon.service.VMService;
 import main.java.dragon.utils.NumberUtils;
@@ -38,6 +43,8 @@ public class VMController {
 	private VMService vmService;
 	@Autowired
 	private StorageService storageService;
+	@Autowired
+	private ImageService imageService;
 
 	@RequestMapping("showVM")
 	public String showVM(Model model){
@@ -49,6 +56,7 @@ public class VMController {
 //			vmService.addVm(null, null, null);
 			vmInstances = vmService.getAllVm();
 			VmNeedInfo vmNeedInfo = null;
+			Set<String> vmOsTypes = new HashSet<>();
 			Cluster cluster = null;
 			HostInstance hostInstance = null;
 			double memoryTotal = 0.0d;
@@ -79,10 +87,12 @@ public class VMController {
 							StringUtils.double2String(memoryTotal),StringUtils.double2StringKeepScal(memoryUsed),isShowMemoryRate);
 				}
 				vmNeedInfos.add(vmNeedInfo);
+				vmOsTypes.add(vmInstance.getOsType());
 			}
 			model.addAttribute("vmNeedInfos", vmNeedInfos);
 			model.addAttribute("isShowMemoryRate", isShowMemoryRate ? 1 : 0);
 			model.addAttribute("vmCount", vmNeedInfos.size());
+			model.addAttribute("vmOsTypes", vmOsTypes);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -116,7 +126,10 @@ public class VMController {
 	public String showAddVm(Model model){
 		List<Storage> storages = storageService.getAllStorage();
 		List<Cluster> clusters = clusterService.getAllCluster();
-		if(!StringUtils.isEmpty(storages) && !StringUtils.isEmpty(clusters)){
+		List<Image> images = imageService.getAllImages();
+		if(!StringUtils.isEmpty(storages) && !StringUtils.isEmpty(clusters)
+				&& !StringUtils.isEmpty(images)){
+			model.addAttribute("images", images);
 			model.addAttribute("storages", storages);
 			model.addAttribute("clusters", clusters);
 		}
@@ -134,5 +147,13 @@ public class VMController {
 			vmInstance.setVmNetWorks(null);
 		}
 		return instances;
+	}
+	@RequestMapping("searchVm")
+	public Map<String, String> searchVmsByCondition(HttpServletRequest request){
+		
+		Map<String, String> map = new HashMap<>();
+		
+		return map;
+		
 	}
 }

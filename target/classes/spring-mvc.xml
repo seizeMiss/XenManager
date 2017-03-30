@@ -18,6 +18,7 @@
 	<!-- 扫描controller路由控制器  -->    
     <context:component-scan base-package="main.java.dragon.*"> 
     	<context:exclude-filter type="regex" expression=".*controller$"/>
+    	<!-- <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/> -->
     </context:component-scan>
     <!--  
     <bean name="/signIn" class="main.java.dragon.controller.LoginAction"></bean>

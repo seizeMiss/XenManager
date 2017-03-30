@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class HibernateUtils {
 	@Autowired
-	private SessionFactory sessionFactory;
+	protected SessionFactory sessionFactory;
 	
 	/**
 	 * 获得session

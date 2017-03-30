@@ -1,6 +1,6 @@
 $(function() {
 	$("#image_desc").val("");
-
+	
 	$("#add-image").click(function() {
 		location.href = "showAddImage";
 	});
@@ -22,12 +22,43 @@ $(function() {
 				generateVMshowContent(data);
 			},
 			error : function(data) {
-				alert(1);
 			}
 		});
 	});
 	$(".add-image-btn").bind("click",addImage);
+	$("#delete-image").bind("click", deleteImages);
 });
+function deleteImages(){
+	zeroModal.confirm({
+		content : "是否删除，删除后数据将丢失？",
+		ok : true,
+		okFn : function() {
+			var tid = "";
+			$("input[name='checkbox']").each(function() {
+				if ($(this).is(":checked")) {
+					tid = $(this).closest("tr").attr("iid");
+				}
+			});
+			jQuery.ajax({
+				dataType : "json",
+				url : "deleteImages",
+				data : {
+					tid : tid
+				},
+				success : function(data) {
+					if (data.data) {
+						location.href = "showImage"
+					}
+				},
+				error : function() {
+					alert("error");
+				}
+			});
+		}
+	});
+	return false;
+}
+
 function addImage(){
 	var clusterName = $("#selected-cluster").val();
 	var clusterId = "";
@@ -88,24 +119,4 @@ function addImage(){
 	});
 	
 }
-function generateVMshowContent(data) {
-	var $vmContentContainer = $(".show-vm-info");
-	$vmContentContainer.children("tr").each(function() {
-		if ($(this).attr("class") != "vm-no-data") {
-			$(this).remove();
-		}
-	});
-	if (data.length > 0) {
-		var vmInstancesJson = data;
-		for (var i = 0; i < vmInstancesJson.length; i++) {
-			$vmContentContainer.append("<tr vid='" + vmInstancesJson[i].id
-					+ "'><td><input type='radio' "
-					+ "name='select-mirror' value='" + vmInstancesJson[i].name
-					+ "'/></td><td>" + vmInstancesJson[i].name + "</td></tr>");
-		}
-		
-		$(".vm-no-data").hide();
-	} else {
-		$(".vm-no-data").show();
-	}
-}
+

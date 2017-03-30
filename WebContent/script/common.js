@@ -98,6 +98,25 @@ $(function() {
 			$("#select-os").hide();
 		}
 	});
+	//选中下拉框的内容，赋值给input
+	$("#select-state li").click(function(){
+		$("#selected-state").val($(this).children("a").html());
+		$("#select-state").hide();
+	});
+	$("#selected-state").click(function(){
+		if($("#select-state").css("display") == "none"){
+			$("#select-state").show();
+		}else{
+			$("#select-state").hide();
+		}
+	});
+	$(".show-state").click(function(){
+		if($("#select-state").css("display") == "none"){
+			$("#select-state").show();
+		}else{
+			$("#select-state").hide();
+		}
+	});
 	
 	//使所有的textarea标签都是空值
 //	$("textarea").val("");
@@ -184,7 +203,7 @@ $(function() {
 	});
 	//重置
 	$(".content-search-submit").children("button").eq(1).click(function(){
-		$(".search-condition").children("input").each(function(){
+		$(".search-condition").find("input").each(function(){
 			$(this).val("");
 		});
 		$("#selected-os").val("");
@@ -261,6 +280,28 @@ function monitorCheckBox(){
 			$("#delete-admin-user").attr("disabled",true);
 		}
 		$("#edit-admin-user").attr("disabled",true);
+	}
+}
+
+function generateVMshowContent(data) {
+	var $vmContentContainer = $(".show-vm-info");
+	$vmContentContainer.children("tr").each(function() {
+		if ($(this).attr("class") != "vm-no-data") {
+			$(this).remove();
+		}
+	});
+	if (data.length > 0) {
+		var vmInstancesJson = data;
+		for (var i = 0; i < vmInstancesJson.length; i++) {
+			$vmContentContainer.append("<tr vid='" + vmInstancesJson[i].uuid
+					+ "'><td><input type='radio' "
+					+ "name='select-mirror' value='" + vmInstancesJson[i].name
+					+ "'/></td><td>" + vmInstancesJson[i].name + "</td></tr>");
+		}
+		
+		$(".vm-no-data").hide();
+	} else {
+		$(".vm-no-data").show();
 	}
 }
 

@@ -9,4 +9,7 @@ public interface ImageDao {
 	public void saveImage(Image image);
 	public List<Image> selectAllImage();
 	public Image selectImageById(String id);
+	public List<Image> selectImageByCondition(String imageName, int status, String imageOsType);
+	public void deleteImage(String id);
+	public List<Image> selectImageByName(String name);
 }
