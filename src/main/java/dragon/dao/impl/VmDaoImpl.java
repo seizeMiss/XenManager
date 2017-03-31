@@ -45,15 +45,13 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 	}
 
 	@Override
-	public void updateVm(VmStorage vmStorage, VmInstance vmInstance, VmNetwork vmNetwork) {
+	public void updateVm(VmInstance vmInstance) {
 		// TODO Auto-generated method stub
 		Session session = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
-			session.save(vmStorage);
-			session.save(vmInstance);
-			session.save(vmNetwork);
+			session.update(vmInstance);
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
@@ -93,7 +91,7 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 		Session session = null;
 		VmInstance vmInstance = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
 			vmInstance = (VmInstance) session.get(VmInstance.class, id);
 			session.getTransaction().commit();
@@ -181,6 +179,34 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			session = getSession();
 			session.beginTransaction();
 			String hql = "from VmInstance where name like '" + name + "%'";
+			System.out.println(hql);
+			Query query = session.createQuery(hql);
+			vmInstances = query.list();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
+		return vmInstances;
+	}
+
+	@Override
+	public List<VmInstance> selectVmInstanceByCondition(String vmName, int status, String vmOsType) {
+		Session session = null;
+		List<VmInstance> vmInstances = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String hql = "";
+			if(status == 0){
+				hql = "from VmInstance where name like '" + vmName + "%' and "
+						+ "osType like '" + vmOsType + "%'";
+			}else{
+				hql = "from VmInstance where name like '" + vmName + "%' and "
+						+ "status =" + status + " and osType like '" + vmOsType + "%'";
+			}
 			System.out.println(hql);
 			Query query = session.createQuery(hql);
 			vmInstances = query.list();

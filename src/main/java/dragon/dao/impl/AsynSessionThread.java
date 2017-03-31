@@ -67,7 +67,7 @@ public class AsynSessionThread implements Runnable{
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			session.getTransaction().rollback();
+//			session.getTransaction().rollback();
 			e.printStackTrace();
 		}finally{
 			TransactionSynchronizationManager.unbindResource(sessionFactory);

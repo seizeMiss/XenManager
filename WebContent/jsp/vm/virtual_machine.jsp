@@ -68,7 +68,7 @@
 				<form action="searchVm" method="post">
 					<div class="content-search-condition pull-left">
 						<div class="search-condition">
-							<span>名称</span> <input id="condition-name" type="text" />
+							<span>名称</span> <input id="condition-name" name="condition-name" type="text" />
 						</div>
 					</div>
 					<div class="content-search-condition pull-left">
@@ -88,7 +88,7 @@
 												<a href="#">可用</a>
 											</li>
 											<li>
-												<a href="#">开启</a>
+												<a href="#">启动</a>
 											</li>
 											<li>
 												<a href="#">关闭</a>
@@ -102,6 +102,9 @@
 											<li>
 												<a href="#">重启中</a>
 											</li>
+											<li>
+												<a href="#">删除中</a>
+											</li>
 										</ul>
 									</div>
 								</div>
@@ -112,7 +115,7 @@
 							<span style="float: left;">操作系统</span>
 							<div class="input-group"
 								style="width: 200px; float: left; margin-left: 20px;">
-								<input type="text" id="selected-os" readonly="readonly"
+								<input type="text" id="selected-os" name="selected-os" readonly="readonly"
 									class="form-control" style="font-size: 18px;">
 								<div class="input-group-btn">
 									<button type="button"
@@ -140,15 +143,15 @@
 					<div class="user-operate">
 						<button id="add-vm" type="button"  class="btn btn-default">
 							添加虚拟机</button>
-						<button id="delete-vm" type="button" disabled="disabled" class="btn btn-default">
+						<button id="delete-vm" type="button" disabled="disabled" title="只能对状态为“不可用”的系统虚拟机或者状态为“关闭”|“不可用”的用户虚拟机执行此操作" class="btn btn-default">
 							删除</button>
-						<button id="launch-vm" type="button" disabled="disabled" class="btn btn-default">
+						<button id="launch-vm" type="button" disabled="disabled" title="只能对状态为“关闭”的用户虚拟机执行此操作" class="btn btn-default">
 							启动</button>
-						<button id="restart-vm" type="button" disabled="disabled" class="btn btn-default">
+						<button id="restart-vm" type="button" disabled="disabled" title="只能对状态为“启动”的用户虚拟机执行此操作" class="btn btn-default">
 							重启</button>
-						<button id="close-vm" type="button" disabled="disabled" class="btn btn-default">
+						<button id="close-vm" type="button" disabled="disabled" title="只能对状态为“启动”的用户虚拟机执行此操作" class="btn btn-default">
 							关闭</button>
-						<button id="edit-vm" type="button" disabled="disabled" class="btn btn-default">
+						<button id="edit-vm" type="button" disabled="disabled" title="只能对“关闭”状态的用户虚拟机执行此操作，一次只能修改一台" class="btn btn-default">
 							修改配置</button>
 					</div>
 					<div class="data-table">
@@ -178,30 +181,44 @@
 								</thead>
 								<tbody class="data-table-tbody">
 									<c:forEach var="vmNeedInfo" items="${vmNeedInfos }">
-										<tr>
-											<td><input type="checkbox" name="checkbox"></td>
+										<tr vid="${vmNeedInfo.vmInstance.id }">
+											<td>
+												<c:choose>
+													<c:when test="${vmNeedInfo.vmInstance.status == 2 || vmNeedInfo.vmInstance.status == 3 || vmNeedInfo.vmInstance.status == 4 || vmNeedInfo.vmInstance.status == 5 || vmNeedInfo.vmInstance.status == 8}">
+														<img src="/VMManager/img/load.gif"/>
+													</c:when>
+													<c:otherwise><input type="checkbox" name="checkbox"></c:otherwise>
+												</c:choose>
+											</td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.vmInstance.name }</span></td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.vmInstance.vmIp == "" ? "-" : vmNeedInfo.vmInstance.vmIp}</span></td>
-											<td><span style="line-height: 50px;">${vmNeedInfo.vmInstance.powerStatus == "Running" ? "启动" : "关闭" }</span></td>
+											<td><span style="line-height: 50px;" status="${vmNeedInfo.vmInstance.status }">${vmNeedInfo.vmInstance.powerStatus == "Running" ? "启动" : "关闭" }</span></td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.vmInstance.osType }</span></td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.clusterName }</span></td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.hostName }</span></td>
 											<c:choose>
 												<c:when
 													test="${vmNeedInfo.vmInstance.powerStatus == 'Running' }">
-													<td>
-														<div class="progress"
-															style="width: 70%; margin-top: 15px; margin-bottom: 0; height: 15px;">
-															<div
-																class="progress-bar progress-bar-success vm-cpu-used-rate"
-																role="progressbar" aria-valuenow="60" aria-valuemin="0"
-																aria-valuemax="100" style="width: 10%;">
-																<span class="boyond-percent"></span>
-															</div>
-														</div> <span class="progress-percent-cpu">${vmNeedInfo.cpuRate }%</span>
-													</td>
 													<c:choose>
-														<c:when test="${vmNeedInfo.memoryRate > 0}">
+														<c:when test="${vmNeedInfo.showCpuRate == 1}">
+														<td>
+															<div class="progress"
+																style="width: 70%; margin-top: 15px; margin-bottom: 0; height: 15px;">
+																<div
+																	class="progress-bar progress-bar-success vm-cpu-used-rate"
+																	role="progressbar" aria-valuenow="60" aria-valuemin="0"
+																	aria-valuemax="100" style="width: 10%;">
+																	<span class="boyond-percent"></span>
+																</div>
+															</div> <span class="progress-percent-cpu">${vmNeedInfo.cpuRate }%</span>
+														</td>
+														</c:when>
+														<c:otherwise>
+														<td>-</td>
+														</c:otherwise>
+													</c:choose>
+													<c:choose>
+														<c:when test="${vmNeedInfo.showMemoryRate == 1}">
 															<td>
 																<div>${vmNeedInfo.memoryUsed }/${vmNeedInfo.memoryTotal }GB
 																</div>
@@ -238,10 +255,18 @@
 												<div class="vm-info">CPU:${vmNeedInfo.vmInstance.cpu }核
 													&nbsp&nbsp内存:${vmNeedInfo.vmInstance.memory }GB &nbsp&nbsp
 													系统盘: ${vmNeedInfo.vmInstance.systemDisk }GB &nbsp&nbsp用户盘:无</div>
-												<div class="vm-explain">说明:无</div>
+												<div class="vm-explain">
+												说明:<c:if test="${vmNeedInfo.showMemoryRate == 1}">无</c:if>
+												<c:if test="${vmNeedInfo.showMemoryRate == 0}">未安装XenTools，无法查看内存使用率</c:if>
+												</div>
 											</td>
 										</tr>
 									</c:forEach>
+									<c:if test="${vmNeedInfos == null }">
+									<tr class="no-data">
+										<td colspan="10">无数据</td>
+									</tr>
+									</c:if>
 								</tbody>
 								<tfoot></tfoot>
 							</table>

@@ -46,7 +46,6 @@ $(function(){
 	$("#restart-vm").bind("click",restartVm);
 	$("#close-vm").bind("click",closeVm);
 	$("#search-image").bind("click",searchImage);
-	
 });
 function searchImage(){
 	var searchContent = $("#search-content").val();
@@ -92,7 +91,13 @@ function addVm(){
 	var imageName = $("input[name='select-mirror']:checked").val();
 	var imageUuid = $("input[name='select-mirror']:checked").closest("tr").attr("iid");
 	var cpuNumber = $("input[name='select-cpu']:checked").val();
+	if(cpuNumber && cpuNumber == "other"){
+		cpuNumber = $("input[name='select-cpu']:checked").parent().find("#cpu-number").val();
+	}
 	var memoryNumber = $("input[name='select-ram']:checked").val();
+	if(memoryNumber && memoryNumber == "other"){
+		memoryNumber = $("input[name='select-cpu']:checked").parent().find("#ram-number").val();
+	}
 	var storageLocation = $("#selected-storage-place").val();
 	var userDisk = "";
 	$("input[name='user-disk-size']").each(function(index){
@@ -138,6 +143,7 @@ function addVm(){
 				$(".cluster-name-warning-info"),$(".vm-rule-warning-info"),
 				$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
 				$(".storage-warning-info"));
+		$(".image-warning-info").find("label").html("请选择镜像！");
 		return false;
 	}
 	if(!cpuNumber){
@@ -145,6 +151,7 @@ function addVm(){
 				$(".cluster-name-warning-info"),$(".image-warning-info"),
 				$(".memory-number-warning-info"),$(".vm-rule-warning-info"),
 				$(".storage-warning-info"));
+		
 		return false;
 	}
 	if(!memoryNumber){
@@ -168,7 +175,7 @@ function addVm(){
 		data:params,
 		success:function(){
 			if(data.data){
-				
+				location.href = "showVM";
 			}
 		}
 	});
@@ -180,14 +187,78 @@ function editVm(){
 function deleteVms(){
 	
 }
+
 function launchVm(){
-	
+	zeroModal.confirm({
+		content : "确定要执行开机？",
+		ok : true,
+		okFn : function() {
+			var vid = getVmIdBySelected();
+			jQuery.ajax({
+				dataType : "json",
+				url : "openVmByselected",
+				data : {
+					vid : vid
+				},
+				success : function(data) {
+					var vmInstance = data;
+					updateVmInfoBySelect(vmInstance);
+				},
+				error : function() {
+					alert("error");
+				}
+			});
+		}
+	});
+	return false;
 }
 function restartVm(){
-	
+	zeroModal.confirm({
+		content : "确定要执行重启？",
+		ok : true,
+		okFn : function() {
+			var vid = getVmIdBySelected();
+			jQuery.ajax({
+				dataType : "json",
+				url : "restartVmByselected",
+				data : {
+					vid : vid
+				},
+				success : function(data) {
+					var vmInstance = data;
+					updateVmInfoBySelect(vmInstance);
+				},
+				error : function() {
+					alert("error");
+				}
+			});
+		}
+	});
+	return false;
 }
 function closeVm(){
-	
+	zeroModal.confirm({
+		content : "确定要执行关机？",
+		ok : true,
+		okFn : function() {
+			var vid = getVmIdBySelected();
+			jQuery.ajax({
+				dataType : "json",
+				url : "closeVmByselected",
+				data : {
+					vid : vid
+				},
+				success : function(data) {
+					var vmInstance = data;
+					updateVmInfoBySelect(vmInstance);
+				},
+				error : function() {
+					alert("error");
+				}
+			});
+		}
+	});
+	return false;
 }
 
 function setDataTableHeight(height){
@@ -196,4 +267,47 @@ function setDataTableHeight(height){
 	}else{
 		$(".data-table-content").css("height", "350px");
 	}
+}
+function updateVmInfoBySelect(data){
+	var vid = data.id;
+	var vmStatus = statusMapping(data.status);
+	$(".data-table-tbody").children("tr:not(.hidden-tr)").each(function(){
+		if($(this).attr("vid") == vid){
+			var td = $(this).children("td:first");
+			td.html("<img src='/VMManager/img/load.gif'/>");
+			$(this).children("td").eq(3).children().html(vmStatus);
+		}
+	});
+}
+function statusMapping(vmStatus){
+	if(vmStatus){
+		if(vmStatus == -1){
+			return "不可用";
+		}else if(vmStatus == 1){
+			return "可用";
+		}else if(vmStatus == 2){
+			return "创建中";
+		}else if(vmStatus == 3){
+			return "重启中";
+		}else if(vmStatus == 4){
+			return "关闭中";
+		}else if(vmStatus == 5){
+			return "删除中";
+		}else if(vmStatus == 6){
+			return "关闭";
+		}else if(vmStatus == 7){
+			return "启动";
+		}else if(vmStatus == 8){
+			return "启动中";
+		}
+	}
+}
+function getVmIdBySelected(){
+	var vid = "";
+	$(".data-table-tbody").children("tr:not(.hidden-tr)").each(function(){
+		if($(this).find("input[name='checkbox']").is(":checked")){
+			vid = $(this).attr("vid");
+		}
+	});
+	return vid;
 }

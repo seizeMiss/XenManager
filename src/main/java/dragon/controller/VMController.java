@@ -51,6 +51,7 @@ public class VMController {
 		List<VmInstance> vmInstances = null;
 		List<VmNeedInfo> vmNeedInfos = new ArrayList<VmNeedInfo>();
 		boolean isShowMemoryRate = false;
+		boolean isShowCpuRate = true;
 		try {
 			FetchDynamicData data = new FetchDynamicData();
 //			vmService.addVm(null, null, null);
@@ -73,24 +74,31 @@ public class VMController {
 					isShowMemoryRate = (boolean) map.get("memory_flag");
 					memoryUsed = (double)map.get("memory_used");
 					memoryTotal = (double)map.get("memory_total");
-				}
-				if(isShowMemoryRate){
-					memoryRate = NumberUtils.computerUsedRate(memoryTotal, memoryTotal-memoryUsed, 1);
+					if(Double.isNaN(memoryTotal) || Double.isNaN(memoryUsed)){
+						isShowMemoryRate = false;
+					}else{
+						memoryRate = NumberUtils.computerUsedRate(memoryTotal, memoryTotal-memoryUsed, 1);
+					}
+					if(Double.isNaN(cpuRate)){
+						isShowCpuRate = false;
+					}
 				}
 				if(StringUtils.isEmpty(cluster, hostInstance)){
-					vmNeedInfo = new VmNeedInfo(vmInstance, NumberUtils.setdoubleScal(cpuRate), 
+					vmNeedInfo = new VmNeedInfo(vmInstance, NumberUtils.setdoubleScal(Double.isNaN(cpuRate) ? 0.0d : cpuRate), 
 							memoryRate,"-","-",StringUtils.double2String(memoryTotal),
-							StringUtils.double2StringKeepScal(memoryUsed),isShowMemoryRate);
+							StringUtils.double2StringKeepScal(memoryUsed),isShowMemoryRate ? 1 : 0, isShowCpuRate ? 1 : 0);
 				}else{
-					vmNeedInfo = new VmNeedInfo(vmInstance, NumberUtils.setdoubleScal(cpuRate), 
+					vmNeedInfo = new VmNeedInfo(vmInstance, NumberUtils.setdoubleScal(Double.isNaN(cpuRate) ? 0.0d : cpuRate), 
 							memoryRate,cluster.getName(),hostInstance.getName(),
-							StringUtils.double2String(memoryTotal),StringUtils.double2StringKeepScal(memoryUsed),isShowMemoryRate);
+							StringUtils.double2String(memoryTotal),StringUtils.double2StringKeepScal(memoryUsed),
+							isShowMemoryRate ? 1 : 0, isShowCpuRate ? 1 : 0);
 				}
 				vmNeedInfos.add(vmNeedInfo);
 				vmOsTypes.add(vmInstance.getOsType());
 			}
 			model.addAttribute("vmNeedInfos", vmNeedInfos);
 			model.addAttribute("isShowMemoryRate", isShowMemoryRate ? 1 : 0);
+			model.addAttribute("isShowCpuRate", isShowCpuRate ? 1 : 0);
 			model.addAttribute("vmCount", vmNeedInfos.size());
 			model.addAttribute("vmOsTypes", vmOsTypes);
 		} catch (Exception e) {
@@ -148,12 +156,110 @@ public class VMController {
 		}
 		return instances;
 	}
+	private Set<String> getVmOsTypes(){
+		Set<String> vmOsTypes = new HashSet<>();
+		List<VmInstance> vmInstances = vmService.getAllVm();
+		if(!StringUtils.isEmpty(vmInstances)){
+			for(VmInstance vmInstance : vmInstances){
+				vmOsTypes.add(vmInstance.getOsType());
+			}
+		}
+		return vmOsTypes;
+	}
 	@RequestMapping("searchVm")
-	public Map<String, String> searchVmsByCondition(HttpServletRequest request){
+	public String searchVmsByCondition(HttpServletRequest request,Model model){
+		String vmName = request.getParameter("condition-name");
+		String vmStatus = request.getParameter("selected-state");
+		String vmOsType = request.getParameter("selected-os");
+		List<VmInstance> vmInstances = vmService.getVmInstanceByCondition(vmName, vmStatus, vmOsType);
+		List<VmNeedInfo> vmNeedInfos = null;
+		boolean isShowMemoryRate = false;
+		boolean isShowCpuRate = true;
+		try {
+			FetchDynamicData data = new FetchDynamicData();
+			VmNeedInfo vmNeedInfo = null;
+			Set<String> vmOsTypes = getVmOsTypes();
+			Cluster cluster = null;
+			HostInstance hostInstance = null;
+			double memoryTotal = 0.0d;
+			double memoryUsed = 0.0d;
+			double cpuRate = 0.0d;
+			double memoryRate = 0.0d;
+			if(!StringUtils.isEmpty(vmInstances)){
+				vmNeedInfos = new ArrayList<VmNeedInfo>();
+				for(VmInstance vmInstance : vmInstances){
+					cluster = clusterService.getClusterById(vmInstance.getClusterId());
+					hostInstance = hostService.getHostInstanceById(vmInstance.getHostId());
+					vmInstance.setMemory(vmInstance.getMemory()/1024);
+					if(vmInstance.getPowerStatus().equals("Running")){
+						Map<String, Object> map = data.getVmNeedInfoByParseXml(vmInstance.getUuid());
+						cpuRate = (double) map.get("cpu_avg")*100;
+						isShowMemoryRate = (boolean) map.get("memory_flag");
+						memoryUsed = (double)map.get("memory_used");
+						memoryTotal = (double)map.get("memory_total");
+						if(Double.isNaN(memoryTotal) || Double.isNaN(memoryUsed)){
+							isShowMemoryRate = false;
+						}else{
+							memoryRate = NumberUtils.computerUsedRate(memoryTotal, memoryTotal-memoryUsed, 1);
+						}
+						if(Double.isNaN(cpuRate)){
+							isShowCpuRate = false;
+						}
+					}
+					if(StringUtils.isEmpty(cluster, hostInstance)){
+						vmNeedInfo = new VmNeedInfo(vmInstance, NumberUtils.setdoubleScal(Double.isNaN(cpuRate) ? 0.0d : cpuRate), 
+								memoryRate,"-","-",StringUtils.double2String(memoryTotal),
+								StringUtils.double2StringKeepScal(memoryUsed),isShowMemoryRate ? 1 : 0, isShowCpuRate ? 1 : 0);
+					}else{
+						vmNeedInfo = new VmNeedInfo(vmInstance, NumberUtils.setdoubleScal(Double.isNaN(cpuRate) ? 0.0d : cpuRate), 
+								memoryRate,cluster.getName(),hostInstance.getName(),
+								StringUtils.double2String(memoryTotal),StringUtils.double2StringKeepScal(memoryUsed),
+								isShowMemoryRate ? 1 : 0, isShowCpuRate ? 1 : 0);
+					}
+					vmNeedInfos.add(vmNeedInfo);
+				}
+			}
+			model.addAttribute("vmNeedInfos", vmNeedInfos);
+			model.addAttribute("isShowMemoryRate", isShowMemoryRate ? 1 : 0);
+			model.addAttribute("isShowCpuRate", isShowCpuRate ? 1 : 0);
+			model.addAttribute("vmCount", vmNeedInfos == null ? 0 : vmNeedInfos.size());
+			model.addAttribute("vmOsTypes", vmOsTypes);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "jsp/vm/virtual_machine";
 		
-		Map<String, String> map = new HashMap<>();
-		
-		return map;
-		
+	}
+	
+	@RequestMapping("openVmByselected")
+	@ResponseBody
+	public VmInstance openVmByselected(HttpServletRequest request){
+		VmInstance vmInstance = null;
+		String id = request.getParameter("vid");
+		vmInstance = vmService.startVm(id);
+		vmInstance.setVmStorages(null);
+		vmInstance.setVmNetWorks(null);
+		return vmInstance;
+	}
+	@RequestMapping("restartVmByselected")
+	@ResponseBody
+	public VmInstance restartVmByselected(HttpServletRequest request){
+		VmInstance vmInstance = null;
+		String id = request.getParameter("vid");
+		vmInstance = vmService.restartVm(id);
+		vmInstance.setVmStorages(null);
+		vmInstance.setVmNetWorks(null);
+		return vmInstance;
+	}
+	@RequestMapping("closeVmByselected")
+	@ResponseBody
+	public VmInstance closeVmByselected(HttpServletRequest request){
+		VmInstance vmInstance = null;
+		String id = request.getParameter("vid");
+		vmInstance = vmService.closeVm(id);
+		vmInstance.setVmStorages(null);
+		vmInstance.setVmNetWorks(null);
+		return vmInstance;
 	}
 }

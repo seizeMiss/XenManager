@@ -8,7 +8,8 @@ public class VmNeedInfo {
 	private String hostName;
 	private String memoryTotal;
 	private String memoryUsed;
-	private boolean isXenTool;
+	private int showMemoryRate;
+	private int showCpuRate;
 	
 
 	public VmNeedInfo() {
@@ -16,7 +17,7 @@ public class VmNeedInfo {
 	}
 	
 	public VmNeedInfo(VmInstance vmInstance, double cpuRate, double memoryRate, String clusterName, String hostName,
-			String memoryTotal, String memoryUsed, boolean isXenTool) {
+			String memoryTotal, String memoryUsed, int isXenTool, int showCpuRate) {
 		super();
 		this.vmInstance = vmInstance;
 		this.cpuRate = cpuRate;
@@ -25,17 +26,34 @@ public class VmNeedInfo {
 		this.hostName = hostName;
 		this.memoryTotal = memoryTotal;
 		this.memoryUsed = memoryUsed;
-		this.isXenTool = isXenTool;
+		this.showMemoryRate = isXenTool;
+		this.showCpuRate = showCpuRate;
 	}
 	
 	
 
-	public boolean isXenTool() {
-		return isXenTool;
+	public int getShowMemoryRate() {
+		return showMemoryRate;
 	}
 
-	public void setXenTool(boolean isXenTool) {
-		this.isXenTool = isXenTool;
+	public void setShowMemoryRate(int showMemoryRate) {
+		this.showMemoryRate = showMemoryRate;
+	}
+
+	public int getShowCpuRate() {
+		return showCpuRate;
+	}
+
+	public void setShowCpuRate(int showCpuRate) {
+		this.showCpuRate = showCpuRate;
+	}
+
+	public int isXenTool() {
+		return showMemoryRate;
+	}
+
+	public void setXenTool(int isXenTool) {
+		this.showMemoryRate = isXenTool;
 	}
 
 	public String getMemoryTotal() {
@@ -92,7 +110,7 @@ public class VmNeedInfo {
 	public String toString() {
 		return "VmNeedInfo [vmInstance=" + vmInstance + ", cpuRate=" + cpuRate + ", memoryRate=" + memoryRate
 				+ ", clusterName=" + clusterName + ", hostName=" + hostName + ", memoryTotal=" + memoryTotal
-				+ ", memoryUsed=" + memoryUsed + ", isXenTool=" + isXenTool + "]";
+				+ ", memoryUsed=" + memoryUsed + ", isXenTool=" + showMemoryRate + "]";
 	}
 
 

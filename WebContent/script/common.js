@@ -160,21 +160,14 @@ $(function() {
 		}
 		if(length == 1){
 			$("#edit-admin-user").attr("disabled",false);
-			$("#launch-vm").attr("disabled",false);
-			$("#restart-vm").attr("disabled",false);
-			$("#close-vm").attr("disabled",false);
-			$("#edit-vm").attr("disabled",false);
+			setVmOperationShowSituation($(".data-table-tbody tr"));
 		}
 	});
 	//点击checkbox
 	$("input[name='checkbox']").click(function(){
-		var count = 0;
 		var len = $("input[name='checkbox']").length;
-		$("input[name='checkbox']").each(function(){
-			if($(this).is(":checked")){
-				count++;
-			}
-		});
+		var count = getSelectedCount();
+		var status;
 		if(count == len){
 			$("#all_cb").prop("checked", true);
 		}else{
@@ -184,15 +177,42 @@ $(function() {
 		if(count == 1){
 			$("#edit-admin-user").attr("disabled",false);
 			$("#delete-admin-user").attr("disabled",false);
-			$("#delete-vm").attr("disabled",false);
-			$("#launch-vm").attr("disabled",false);
-			$("#restart-vm").attr("disabled",false);
-			$("#close-vm").attr("disabled",false);
-			$("#edit-vm").attr("disabled",false);
+			//判断该点击事件是选中还是取消，若取消则选择唯一一个被选中的tr
+			if($(this).is(":checked")){
+				setVmOperationShowSituation($(this).closest("tr"));
+			}else{
+				setVmOperationShowSituation($("input[name='checkbox']:checked").closest("tr"));
+			}
 		}else{
 			if(count == 0){
 				$("#delete-admin-user").attr("disabled",true);
 				$("#delete-vm").attr("disabled",true);
+			}else{
+				//点击事件是被选中事件
+				if($(this).is(":checked")){
+					status = getStatusByTr($(this).closest("tr"));
+					status = parseInt(status);
+					if(status == -1 || status == 6){
+						$("#delete-vm").attr("disabled",false);
+					}else{
+						$("#delete-vm").attr("disabled",true);
+					}
+				}else{
+					count = 0;
+					var showDeleteCount = 0;//被选中的selectbox的虚拟机是“关闭”或者“不可用”状态的总个数
+					$("input[name='checkbox']:checked").each(function(){
+						count++;
+						status = parseInt(getStatusByTr($(this).closest("tr")));
+						if(status != -1 && status != 6){
+							$("#delete-vm").attr("disabled",true);
+						}else{
+							showDeleteCount++;
+						}
+					});
+					if(showDeleteCount == count){
+						$("#delete-vm").attr("disabled",false);
+					}
+				}
 			}
 			$("#launch-vm").attr("disabled",true);
 			$("#restart-vm").attr("disabled",true);
@@ -262,6 +282,8 @@ $(function() {
 		$(".vm-line").css("left", "35%");
 	}
 }*/
+
+
 //监控checkBox被选中的个数
 function monitorCheckBox(){
 	var count = 0;
@@ -315,5 +337,50 @@ function setCircleProgressColorInRange(setObj, val){
 	}else{
 		setObj.css({
 			"width": val+"%"}).toggleClass("progress-bar-success");
+	}
+}
+
+function getStatusByTr(tr){
+	return tr.children("td").eq(3).children().attr("status");
+}
+function getSelectedCount(){
+	var count = 0;
+	$("input[name='checkbox']").each(function(){
+		if($(this).is(":checked")){
+			count++;
+		}
+	});
+	return count;
+}
+function setVmOperationShowSituation(obj){
+	var status = getStatusByTr(obj);
+	status = parseInt(status);
+	switch (status) {
+	case -1: //不可用
+		$("#delete-vm").attr("disabled",false);
+		break;
+	case 1: //可用
+		break;
+	case 2: //创建中
+		break;
+	case 3: //重启中
+		break;
+	case 4: //关闭中
+		break;
+	case 5: //删除中
+		break;
+	case 6: //关闭
+		$("#delete-vm").attr("disabled",false);
+		$("#launch-vm").attr("disabled",false);
+		$("#edit-vm").attr("disabled",false);
+		break;
+	case 7: //启动
+		$("#close-vm").attr("disabled",false);
+		$("#restart-vm").attr("disabled",false);
+		break;
+	case 8: //启动中
+		break;
+	default:
+		break;
 	}
 }

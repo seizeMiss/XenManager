@@ -66,7 +66,7 @@ public class Demo extends ConnectionUtil {
 				Set<VDI> vdis = sr.getVDIs(connection);
 				System.out.println(vdis.size());
 				for (VDI vdi : vdis) {
-					if(vdi.getNameLabel(connection).equals("image-test")){
+					if(vdi.getNameLabel(connection).equals("win7-mirror")){
 						System.out.println("----------------==========");
 						System.out.println(vdi.getNameLabel(connection));
 						System.out.println(vdi.getUuid(connection));

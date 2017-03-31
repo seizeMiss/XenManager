@@ -30,6 +30,7 @@ import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.pojo.VmNetwork;
 import main.java.dragon.pojo.VmStorage;
 import main.java.dragon.service.VMService;
+import main.java.dragon.utils.CommonConstants;
 import main.java.dragon.utils.NumberUtils;
 import main.java.dragon.utils.StringUtils;
 import main.java.dragon.xenapi.FetchDynamicData;
@@ -43,13 +44,45 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	private ClusterDao clusterDao;
 	@Autowired
 	private VMDao vmDao;
-
+	
 	public VMServiceImpl() throws Exception {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	private int getStatusByVmStatus(String vmStatus){
+		int status = 0;
+		switch (vmStatus) {
+			case CommonConstants.VM_IS_CREATING:
+				status = CommonConstants.VM_CREATING_STATUS;
+				break;
+			case CommonConstants.VM_IS_RESTARTING:
+				status = CommonConstants.VM_RESTARTING_STATUS;
+				break;
+			case CommonConstants.VM_IS_CLOSING:
+				status = CommonConstants.VM_CLOSING_STATUS;
+				break;
+			case CommonConstants.VM_IS_DELETING:
+				status = CommonConstants.VM_DELETING_STATUS;
+				break;
+			case CommonConstants.VM_IS_NO_AVAILABEL:
+				status = CommonConstants.VM_NO_AVAILABEL_STATUS;
+				break;
+			case CommonConstants.VM_IS_AVAILABEL:
+				status = CommonConstants.VM_AVAILABEL_STATUS;
+				break;
+			case CommonConstants.VM_IS_OPEN:
+				status = CommonConstants.VM_OPEN_STATUS;
+				break;
+			case CommonConstants.VM_IS_CLOSE:
+				status = CommonConstants.VM_CLOSE_STATUS;
+				break;
+			default:
+				break;
+		}
+		return status;
+	}
 
-	private List<VmInstance> getVmInstance() throws Exception {
+ 	private List<VmInstance> getVmInstance() throws Exception {
 
 		String clusterId = "22f7d051-d8ea-4646-8692-7de4d189b8c4";
 		String hostId = "e120960b-d35b-405b-81c1-49ca8599edc0";
@@ -140,7 +173,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	@Override
 	public void saveVm(VmInstance vmInstance, List<VmStorage> vmStorage, List<VmNetwork> vmNetwork) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -153,32 +186,128 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	@Override
 	public void deleteVm(String ids) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public List<VmInstance> getVmInstanceByName(String name) {
-		// TODO Auto-generated method stub
 		return vmDao.selectVmInstanceByName(name);
 	}
+	
+	@Override
+	public List<VmInstance> getVmInstanceByCondition(String vmName, String vmStatus, String vmOsType) {
+		// TODO Auto-generated method stub
+		vmName = StringUtils.isEmpty(vmName) ? "" : vmName;
+		vmOsType = StringUtils.isEmpty(vmOsType) ? "" : vmOsType;
+		int status = 0;
+		if(!StringUtils.isEmpty(vmStatus)){
+			status = getStatusByVmStatus(vmStatus);
+		}
+		return vmDao.selectVmInstanceByCondition(vmName, status, vmOsType);
+	}
+	
+	@Override
+	public VmInstance startVm(String id) {
+		// TODO Auto-generated method stub
+		VmInstance vmInstance = vmDao.selectVmById(id);
+		vmInstance.setStatus(CommonConstants.VM_OPENING_STATUS);
+		vmInstance.setPowerStatus(CommonConstants.VM_POWER_START);
+		vmDao.updateVm(vmInstance);
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					openVm(id);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		return vmInstance;
+	}
+	
 
 	private void openVm(String id) throws Exception {
 		VM vm = getVmByVmInstanceId(id);
 		Task task = vm.startAsync(connection, false, false);
 		XenApiUtil.waitForTask(connection, task, 2000);
+		VmInstance vmInstance = vmDao.selectVmById(id);
+		vmInstance.setStatus(CommonConstants.VM_OPEN_STATUS);
+		vmDao.updateVm(vmInstance);
 	}
 
-	private void closeVm(String id) throws Exception {
+	@Override
+	public VmInstance closeVm(String id) {
+		// TODO Auto-generated method stub
+		VmInstance vmInstance = vmDao.selectVmById(id);
+		vmInstance.setStatus(CommonConstants.VM_CLOSING_STATUS);
+		vmInstance.setPowerStatus(CommonConstants.VM_POWER_CLOSED);
+		vmDao.updateVm(vmInstance);
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					shutdownVm(id);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		return vmInstance;
+	}
+	
+	private void shutdownVm(String id) throws Exception {
 		VM vm = getVmByVmInstanceId(id);
 		Task task = vm.shutdownAsync(connection);
 		XenApiUtil.waitForTask(connection, task, 2000);
+		VmInstance vmInstance = vmDao.selectVmById(id);
+		vmInstance.setStatus(CommonConstants.VM_CLOSE_STATUS);
+		vmDao.updateVm(vmInstance);
+	}
+	
+	@Override
+	public VmInstance restartVm(String id) {
+		// TODO Auto-generated method stub
+		VmInstance vmInstance = vmDao.selectVmById(id);
+		vmInstance.setStatus(CommonConstants.VM_RESTARTING_STATUS);
+		vmInstance.setPowerStatus(CommonConstants.VM_POWER_START);
+		vmDao.updateVm(vmInstance);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					rebootVm(id);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		return vmInstance;
 	}
 
 	private void rebootVm(String id) throws Exception {
 		VM vm = getVmByVmInstanceId(id);
 		Task task = vm.hardRebootAsync(connection);
 		XenApiUtil.waitForTask(connection, task, 2000);
+		VmInstance vmInstance = vmDao.selectVmById(id);
+		vmInstance.setStatus(CommonConstants.VM_OPEN_STATUS);
+		vmDao.updateVm(vmInstance);
 	}
+	
+	@Override
+	public List<VmInstance> deleteVms(String ids) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 
 	private void createVmByImage(String name, String imageName, 
 			long ram, long cpu) throws Exception {

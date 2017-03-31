@@ -17,6 +17,7 @@ import main.java.dragon.dao.ImageDao;
 import main.java.dragon.dao.impl.AsynSessionThread;
 import main.java.dragon.pojo.Image;
 import main.java.dragon.service.ImageService;
+import main.java.dragon.utils.CommonConstants;
 import main.java.dragon.utils.StringUtils;
 import main.java.dragon.xenapi.ImageAPI;
 import main.java.dragon.xenapi.VmAPI;
@@ -29,13 +30,6 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 	private ImageDao imageDao;
 	@Autowired
 	private AsynSessionThread sessionThread;
-	
-	private static int IMAGE_CREATING = 0;
-	private static int IMAGE_AVAILABLE = 1;
-	private static int IMAGE_NO_AVAILABEL = -1;
-	private static int IMAGE_DELETING = 4;
-	private static String AVAILABLE = "可用";
-	private static String NO_AVAILABEL = "不可用";
 	
 	private VM vm;
 	private String uuid;
@@ -57,7 +51,7 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 			image.setId(id);
 			image.setCreateTime(new Date());
 			image.setImageSize(0);
-			image.setStatus(IMAGE_CREATING);
+			image.setStatus(CommonConstants.IMAGE_CREATING_STATUS);
 			Map<String, String> map = vmAPI.getOsVersion(vm);
 			if(map != null){
 				image.setOsType(StringUtils.isEmpty(map.get("distro")) ? "" : map.get("distro"));
@@ -104,7 +98,12 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 	public List<Image> getImagesByCondition(String imageName, String imageStatus, String imageOsType) {
 		int status = 0;
 		if(!StringUtils.isEmpty(imageStatus)){
-			status = imageStatus.equals(AVAILABLE) ? 1 : -1;
+			if(imageStatus.equals(CommonConstants.IMAGE_AVAILABLE)){
+				status = 1;
+			}
+			if(imageStatus.equals(CommonConstants.IMAGE_NO_AVAILABEL)){
+				status = -1;
+			}
 		}
 		imageName = StringUtils.isEmpty(imageName) ? "" : imageName;
 		imageOsType = StringUtils.isEmpty(imageOsType) ?  "" : imageOsType;
@@ -118,7 +117,7 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 			return false;
 		}
 		uuid = image.getUuid();
-		image.setStatus(IMAGE_DELETING);
+		image.setStatus(CommonConstants.IMAGE_DELETING_STATUS);
 		imageDao.saveImage(image);
 		new Thread(new Runnable() {
 			public void run() {
