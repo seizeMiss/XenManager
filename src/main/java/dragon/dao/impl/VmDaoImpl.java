@@ -27,12 +27,43 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			session = getSession();
 			session.beginTransaction();
 			session.save(vmInstance);
-			for(VmStorage vmStorage : vmInstance.getVmStorages()){
-				session.save(vmStorage);
+			if(!StringUtils.isEmpty(vmInstance.getVmStorages())){
+				for(VmStorage vmStorage : vmInstance.getVmStorages()){
+					session.save(vmStorage);
+				}
 			}
-			for(VmNetwork vmNetwork : vmInstance.getVmNetWorks()){
-				session.save(vmNetwork);
+			if(!StringUtils.isEmpty(vmInstance.getVmNetWorks())){
+				for(VmNetwork vmNetwork : vmInstance.getVmNetWorks()){
+					session.save(vmNetwork);
+				}
 			}
+			session.flush();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			session.getTransaction().rollback();
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
+	}
+	@Override
+	public void updateVmAndInsertOther(VmInstance vmInstance) {
+		Session session = null;
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			if(!StringUtils.isEmpty(vmInstance.getVmStorages())){
+				for(VmStorage vmStorage : vmInstance.getVmStorages()){
+					session.save(vmStorage);
+				}
+			}
+			if(!StringUtils.isEmpty(vmInstance.getVmNetWorks())){
+				for(VmNetwork vmNetwork : vmInstance.getVmNetWorks()){
+					session.save(vmNetwork);
+				}
+			}
+			session.update(vmInstance);
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
@@ -219,5 +250,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 		}
 		return vmInstances;
 	}
+
 
 }

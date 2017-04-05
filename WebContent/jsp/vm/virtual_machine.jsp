@@ -192,7 +192,17 @@
 											</td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.vmInstance.name }</span></td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.vmInstance.vmIp == "" ? "-" : vmNeedInfo.vmInstance.vmIp}</span></td>
-											<td><span style="line-height: 50px;" status="${vmNeedInfo.vmInstance.status }">${vmNeedInfo.vmInstance.powerStatus == "Running" ? "启动" : "关闭" }</span></td>
+											<td>
+												<span style="line-height: 50px;" status="${vmNeedInfo.vmInstance.status }">
+													<c:if test="${vmNeedInfo.vmInstance.powerStatus == 'Running'}">启动</c:if>
+													<c:if test="${vmNeedInfo.vmInstance.powerStatus == 'Halted'}">关闭</c:if>
+													<c:if test="${vmNeedInfo.vmInstance.powerStatus == 'Creating'}">创建中</c:if>
+													<c:if test="${vmNeedInfo.vmInstance.powerStatus == 'Closing'}">关闭中</c:if>
+													<c:if test="${vmNeedInfo.vmInstance.powerStatus == 'Restarting'}">重启中</c:if>
+													<c:if test="${vmNeedInfo.vmInstance.powerStatus == 'Starting'}">启动中</c:if>
+													<c:if test="${vmNeedInfo.vmInstance.powerStatus == 'Deleting'}">删除中</c:if>
+												</span>
+											</td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.vmInstance.osType }</span></td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.clusterName }</span></td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.hostName }</span></td>

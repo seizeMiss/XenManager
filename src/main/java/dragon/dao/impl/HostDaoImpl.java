@@ -95,4 +95,25 @@ public class HostDaoImpl extends HibernateUtils implements HostDao {
 		return host;
 	}
 
+	@Override
+	public List<HostInstance> selectHostByClusterId(String id) {
+		Session session = null;
+		List<HostInstance> hosts = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String hql = "from HostInstance where clusterId = ?";
+			Query query = queryByParams(session, hql, id);
+			hosts = query.list();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
+		
+		return hosts;
+	}
+
 }

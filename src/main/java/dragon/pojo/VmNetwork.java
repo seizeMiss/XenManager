@@ -18,7 +18,7 @@ public class VmNetwork {
 	private String networkId;
 	private String networkName;
 	private String macAddress;
-	private VmInstance vmInstance;
+//	private VmInstance vmInstance;
 	
 	public VmNetwork(String id, String uuid, String vmId, String networkId, String networkName, String macAddress) {
 		super();
@@ -75,13 +75,13 @@ public class VmNetwork {
 		this.macAddress = macAddress;
 	}
 	
-	@ManyToOne(targetEntity=VmInstance.class,cascade=CascadeType.ALL,fetch=FetchType.LAZY)
-	public VmInstance getVmInstance() {
-		return vmInstance;
-	}
-	public void setVmInstance(VmInstance vmInstance) {
-		this.vmInstance = vmInstance;
-	}
+//	@ManyToOne(targetEntity=VmInstance.class,cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+//	public VmInstance getVmInstance() {
+//		return vmInstance;
+//	}
+//	public void setVmInstance(VmInstance vmInstance) {
+//		this.vmInstance = vmInstance;
+//	}
 	@Override
 	public String toString() {
 		return "VmNetwork [id=" + id + ", uuid=" + uuid + ", vmId=" + vmId + ", networkId=" + networkId

@@ -9,6 +9,7 @@ import main.java.dragon.pojo.VmStorage;
 public interface VMDao {
 	public void insertVm(VmInstance vmInstance);
 	public void updateVm(VmInstance vmInstance);
+	public void updateVmAndInsertOther(VmInstance vmInstance);
 	public List<VmInstance> selectAllVm();
 	public VmInstance selectVmById(String id);
 	public List<VmStorage> selectVmStorageByVmId(String id);

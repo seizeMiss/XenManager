@@ -14,6 +14,11 @@ public class CommonConstants {
 	
 	public static final String VM_POWER_START = "Running";
 	public static final String VM_POWER_CLOSED = "Halted";
+	public static final String VM_POWER_CREATING = "Creating";
+	public static final String VM_POWER_RESTARTING = "Restarting";
+	public static final String VM_POWER_CLOSING = "Closing";
+	public static final String VM_POWER_DELETING = "Deleting";
+	public static final String VM_POWER_STARTING = "Starting";
 	
 	public static final int VM_OPENING_STATUS = 8;
 	public static final int VM_CLOSE_STATUS = 6;//6

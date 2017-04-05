@@ -9,14 +9,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 
 import main.java.dragon.pojo.Cluster;
 import main.java.dragon.pojo.HostInstance;
@@ -85,12 +82,14 @@ public class VMController {
 				}
 				if(StringUtils.isEmpty(cluster, hostInstance)){
 					vmNeedInfo = new VmNeedInfo(vmInstance, NumberUtils.setdoubleScal(Double.isNaN(cpuRate) ? 0.0d : cpuRate), 
-							memoryRate,"-","-",StringUtils.double2String(memoryTotal),
-							StringUtils.double2StringKeepScal(memoryUsed),isShowMemoryRate ? 1 : 0, isShowCpuRate ? 1 : 0);
+							memoryRate,"-","-",StringUtils.double2String(Double.isNaN(memoryTotal) ? 0.0d : memoryTotal),
+							StringUtils.double2StringKeepScal(Double.isNaN(memoryUsed) ? 0.0d : memoryUsed),
+							isShowMemoryRate ? 1 : 0, isShowCpuRate ? 1 : 0);
 				}else{
 					vmNeedInfo = new VmNeedInfo(vmInstance, NumberUtils.setdoubleScal(Double.isNaN(cpuRate) ? 0.0d : cpuRate), 
 							memoryRate,cluster.getName(),hostInstance.getName(),
-							StringUtils.double2String(memoryTotal),StringUtils.double2StringKeepScal(memoryUsed),
+							StringUtils.double2String(Double.isNaN(memoryTotal) ? 0.0d : memoryTotal),
+							StringUtils.double2StringKeepScal(Double.isNaN(memoryUsed) ? 0.0d : memoryUsed),
 							isShowMemoryRate ? 1 : 0, isShowCpuRate ? 1 : 0);
 				}
 				vmNeedInfos.add(vmNeedInfo);
@@ -262,4 +261,48 @@ public class VMController {
 		vmInstance.setVmNetWorks(null);
 		return vmInstance;
 	}
+	
+	@RequestMapping("addVm")
+	@ResponseBody
+	public Map<String, String> addVm(HttpServletRequest request){
+		Map<String, String> map = new HashMap<>();
+		String vmName = request.getParameter("nameRule");
+//		String vmNumber = request.getParameter("vmNumber");
+		String clusterId = request.getParameter("clusterId");
+		String imageId = request.getParameter("imageId");
+		String cpuNumber = request.getParameter("cpuNumber");
+		String memorySize = request.getParameter("memoryNumber");
+		String storageId = request.getParameter("storageId");
+		String userDisk = request.getParameter("userDisk");
+		int backType = vmService.addVm(vmName, clusterId, imageId, cpuNumber, memorySize, storageId, userDisk);
+		if(backType == 1){
+			map.put("data", "success");
+		}else if(backType == 2){
+			map.put("data", "cpu-failure");
+		}else if(backType == 3){
+			map.put("data", "storage-failure");
+		}
+		return map;
+	}
+	
+	@RequestMapping("showEditVm")
+	public String showEditVm(Model model,HttpServletRequest request){
+		String vid = request.getParameter("vid");
+		VmInstance vmInstance = vmService.getVmInstanceById(vid);
+		if(!StringUtils.isEmpty(vmInstance)){
+			Image image = imageService.getImageById(vmInstance.getImageId());
+			model.addAttribute("vmInstance", vmInstance);
+			model.addAttribute("imageName", image.getName());
+		}
+		return "jsp/vm/edit_vm";
+	}
+	
+	@RequestMapping("editVmBySelected")
+	@ResponseBody
+	public Map<String, String> editVmBySelected(HttpServletRequest request){
+		Map<String, String> map = new HashMap<String, String>();
+		
+		return map;
+	}
+	
 }

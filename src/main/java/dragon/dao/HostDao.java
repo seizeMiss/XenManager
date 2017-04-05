@@ -9,5 +9,6 @@ public interface HostDao {
 	public void updateHost(HostInstance host);
 	public List<HostInstance> selectAllHost();
 	public HostInstance selectHostById(String id);
+	public List<HostInstance> selectHostByClusterId(String id);
 
 }

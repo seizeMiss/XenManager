@@ -261,15 +261,18 @@ textarea{
 	padding-top: 2px;
 }
 .item{
-	width: 110px;
+	width: 105px;
 	cursor: pointer;
 	font-size: 22px;
+}
+.last-item{
+	width:140px;
 }
 .item input[type='radio']{
 	display: none;
 }
 #cpu-number, #ram-number{
-	width: 32px;
+	width: 50px;
 }
 .add-disk-btn{
 	float: left;

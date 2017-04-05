@@ -9,5 +9,5 @@ public interface StorageDao {
 	public void updateStorage(Storage storage);
 	public List<Storage> selectAllStorage();
 	public Storage selectStorageById(String id);
-
+	public List<Storage> selectStorageByCluster(String clusterId);
 }

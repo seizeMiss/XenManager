@@ -19,7 +19,7 @@ public class VmStorage {
 	private String storageType;
 	private String storageId;
 	private String description;
-	private VmInstance vmInstance;
+//	private VmInstance vmInstance;
 	
 	public VmStorage() {
 		super();
@@ -76,13 +76,13 @@ public class VmStorage {
 		this.description = description;
 	}
 	
-	@ManyToOne(targetEntity=VmInstance.class,cascade=CascadeType.ALL,fetch=FetchType.LAZY)
-	public VmInstance getVmInstance() {
-		return vmInstance;
-	}
-	public void setVmInstance(VmInstance vmInstance) {
-		this.vmInstance = vmInstance;
-	}
+//	@ManyToOne(targetEntity=VmInstance.class,cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+//	public VmInstance getVmInstance() {
+//		return vmInstance;
+//	}
+//	public void setVmInstance(VmInstance vmInstance) {
+//		this.vmInstance = vmInstance;
+//	}
 	@Override
 	public String toString() {
 		return "VmStorage [id=" + id + ", name=" + name + ", vmId=" + vmId + ", storageType=" + storageType

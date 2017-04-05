@@ -4,30 +4,31 @@ $(function() {
 	$("#add-image").click(function() {
 		location.href = "showAddImage";
 	});
-	$("#search-vm").click(function() {
-		var searchContent = $("#search-content").val();
-		if (searchContent.length > 20) {
-			$("#search-content").select();
-			$(".search-warning-info").show();
-			return false;
-		}
-		$(".search-warning-info").hide();
-		$.ajax({
-			dataType : "json",
-			url : "searchVmByName",
-			data : {
-				searchContent : searchContent
-			},
-			success : function(data) {
-				generateVMshowContent(data);
-			},
-			error : function(data) {
-			}
-		});
-	});
+	$("#search-vm").bind("click", searchVmByName);
 	$(".add-image-btn").bind("click",addImage);
 	$("#delete-image").bind("click", deleteImages);
 });
+function searchVmByName(){
+	var searchContent = $("#search-content").val();
+	if (searchContent.length > 20) {
+		$("#search-content").select();
+		$(".search-warning-info").show();
+		return false;
+	}
+	$(".search-warning-info").hide();
+	$.ajax({
+		dataType : "json",
+		url : "searchVmByName",
+		data : {
+			searchContent : searchContent
+		},
+		success : function(data) {
+			generateVMshowContent(data);
+		},
+		error : function(data) {
+		}
+	});
+}
 function deleteImages(){
 	zeroModal.confirm({
 		content : "是否删除，删除后数据将丢失？",

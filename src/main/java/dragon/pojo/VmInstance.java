@@ -2,6 +2,7 @@ package main.java.dragon.pojo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -34,8 +35,8 @@ public class VmInstance {
 	private int cpu;
 	private int memory;
 	private int systemDisk;
-	private List<VmStorage> vmStorages;
-	private List<VmNetwork> vmNetWorks;
+	private Set<VmStorage> vmStorages;
+	private Set<VmNetwork> vmNetWorks;
 	
 	public VmInstance() {
 		// TODO Auto-generated constructor stub
@@ -187,18 +188,20 @@ public class VmInstance {
 	public void setSystemDisk(int systemDisk) {
 		this.systemDisk = systemDisk;
 	}
-	@OneToMany(targetEntity=VmStorage.class,fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-	public List<VmNetwork> getVmNetWorks() {
+	@OneToMany(targetEntity=VmNetwork.class,fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+	@JoinColumn(name="vm_id")
+	public Set<VmNetwork> getVmNetWorks() {
 		return vmNetWorks;
 	}
-	public void setVmNetWorks(List<VmNetwork> vmNetWorks) {
+	public void setVmNetWorks(Set<VmNetwork> vmNetWorks) {
 		this.vmNetWorks = vmNetWorks;
 	}
 	@OneToMany(targetEntity=VmStorage.class,fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-	public List<VmStorage> getVmStorages() {
+	@JoinColumn(name="vm_id")
+	public Set<VmStorage> getVmStorages() {
 		return vmStorages;
 	}
-	public void setVmStorages(List<VmStorage> vmStorages) {
+	public void setVmStorages(Set<VmStorage> vmStorages) {
 		this.vmStorages = vmStorages;
 	}
 

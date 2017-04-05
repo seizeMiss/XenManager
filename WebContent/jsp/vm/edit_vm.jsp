@@ -75,7 +75,7 @@
 							<div class="form-group">
 								<label for="name-rule" class="col-sm-2 control-label"><span class="asterisk">*</span>命名规则</label>
 								<div class="col-sm-10">
-									<span style="line-height: 35px;font-size: 20px;">vm-cbl</span>
+									<span style="line-height: 35px;font-size: 20px;">${vmInstance.name }</span>
 								</div>
 							</div>
 
@@ -83,7 +83,7 @@
 							<div class="form-group">
 								<label for="user_mirror" class="col-sm-2 control-label"><span class="asterisk">*</span>镜像</label>
 								<div class="col-sm-10">
-									<span style="line-height: 35px;font-size: 20px;">mirror</span>
+									<span style="line-height: 35px;font-size: 20px;">${imageName }</span>
 								</div>
 							</div>
 
@@ -91,22 +91,22 @@
 								<label for="vm-cpu" class="col-sm-2 control-label"><span class="asterisk">*</span>CPU</label>
 								<div class="col-sm-10">
 									<div class="cpu-group">
-										<label name="itemlabel" class="item" title="1核"> <img src="../img/selectRadio.png" />
+										<label name="itemlabel" class="item" title="1核"> <img src="/VMManager/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="1核" value="1" />
 											1核 </label>
-										<label name="itemlabel" class="item" title="2核"> <img src="../img/selectRadio.png" />
+										<label name="itemlabel" class="item" title="2核"> <img src="/VMManager/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="2核" value="2" />
 											2核 </label>
-										<label name="itemlabel" class="item" title="4核"> <img src="../img/selectRadio.png" />
+										<label name="itemlabel" class="item" title="4核"> <img src="/VMManager/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="4核" value="4" />
 											4核 </label>
-										<label name="itemlabel" class="item" title="8核"> <img src="../img/selectRadio.png" />
+										<label name="itemlabel" class="item" title="8核"> <img src="/VMManager/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="8核" value="8" />
 											8核 </label>
-										<label name="itemlabel" class="item" title="其他"> <img src="../img/selectRadio.png" />
+										<label name="itemlabel" class="item last-item" title="其他"> <img src="/VMManager/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="其他" value="other" />
 											其他
-											<input type="text" id="cpu-number" maxlength="2" min="1" max="16" style="display: none" name="specialInput"/>
+											<input type="number" id="cpu-number" maxlength="2" min="1" max="16" style="display: none" name="specialInput"/>
 										</label>
 									</div>
 								</div>
@@ -119,22 +119,22 @@
 								<label for="vm-ram" class="col-sm-2 control-label"><span class="asterisk">*</span>内存</label>
 								<div class="col-sm-10">
 									<div class="ram-group">
-										<label name="itemlabel" class="item" title="2GB"> <img src="../img/selectRadio.png" />
+										<label name="itemlabel" class="item" title="2GB"> <img src="/VMManager/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="2GB" value="2" />
 											2GB </label>
-										<label name="itemlabel" class="item" title="4GB"> <img src="../img/selectRadio.png" />
+										<label name="itemlabel" class="item" title="4GB"> <img src="/VMManager/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="4GB" value="4" />
 											4GB </label>
-										<label name="itemlabel" class="item" title="8GB"> <img src="../img/selectRadio.png" />
+										<label name="itemlabel" class="item" title="8GB"> <img src="/VMManager/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="8GB" value="8" />
 											8GB </label>
-										<label name="itemlabel" class="item" title="16GB"> <img src="../img/selectRadio.png" />
+										<label name="itemlabel" class="item" title="16GB"> <img src="/VMManager/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="16GB" value="16" />
 											16GB </label>
-										<label name="itemlabel" class="item" title="其他"> <img src="../img/selectRadio.png" />
+										<label name="itemlabel" class="item last-item" title="其他"> <img src="/VMManager/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="其他" value="other" />
 											其他
-											<input type="text" id="ram-number" maxlength="2" min="1" max="16" style="display: none" name="specialInput"/>
+											<input type="number" id="ram-number" maxlength="2" min="1" max="16" style="display: none" name="specialInput"/>
 										</label>
 									</div>
 								</div>
@@ -162,4 +162,34 @@
 			</div>
 		</div>
 	</body>
+	<script type="text/javascript">
+		var cpuCount = "${vmInstance.cpu }";
+		var memory = "${vmInstance.memory}";
+		memory = parseInt(memory)/1024 + "";
+		$(function(){
+			var flag = false;
+			$(".cpu-group").children().each(function(){
+				if($(this).find("input[name='select-cpu']").val() == cpuCount){
+					$(this).find("input[name='select-cpu']").attr("checked","checked");
+					$(this).find("img").attr("src","/VMManager/img/selectedRadio.png");
+					flag = true;
+				}
+			});
+			if(!flag){
+				$(".cpu-group").find("#cpu-number").show().val(cpuCount);
+			}
+			flag = false;
+			$(".cpu-group").children().each(function(){
+				if($(this).find("input[name='select-ram']").val() == memory){
+					$(this).find("input[name='select-ram']").attr("checked","checked");
+					$(this).find("img").attr("src","/VMManager/img/selectedRadio.png");
+					flag = true;
+				}
+			});
+			if(!flag){
+				$(".ram-group").find("#ram-number").show().val(memory);
+				$(".ram-group").find(".last-item").children("img").attr("src","/VMManager/img/selectedRadio.png");
+			}
+		});
+	</script>
 </html>

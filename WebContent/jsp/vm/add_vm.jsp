@@ -78,7 +78,7 @@
 							<div class="form-group">
 								<label for="vm-number" class="col-sm-2 control-label"> <span class="asterisk">*</span>虚拟机数量 </label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control" id="vm-number" placeholder="请输入虚拟机数量">
+									<input type="number" maxlength="3" class="form-control" id="vm-number" placeholder="请输入虚拟机数量">
 								</div>
 								<a id="popover-vm-number" data-trigger="click" data-container="body" data-toggle="popover"
 								data-placement="right" data-content="支持批量创建 1 ~ 500 个虚拟机"
@@ -99,7 +99,7 @@
 												</button>
 												<ul id= "select-cluster" class="dropdown-menu pull-right" style="width: 580px;">
 													<c:forEach var="cluster" items="${clusters }">
-													<li>
+													<li cid="${cluster.id }">
 														<a href="javacript:void(0)">${cluster.name }</a>
 													</li>
 													</c:forEach>
@@ -167,10 +167,10 @@
 										<label name="itemlabel" class="item" title="8核"> <img src="${pageContext.request.contextPath}/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="8核" value="8" />
 											8核 </label>
-										<label name="itemlabel" class="item" title="其他"> <img src="${pageContext.request.contextPath}/img/selectRadio.png" />
+										<label name="itemlabel" class="item last-item" title="其他"> <img src="${pageContext.request.contextPath}/img/selectRadio.png" />
 											<input type="radio" name="select-cpu" title="其他" value="other" />
 											其他
-											<input type="text" id="cpu-number" maxlength="2" min="1" max="16" style="display: none" name="specialInput"/>
+											<input type="number" id="cpu-number" maxlength="2" min="1" max="16" style="display: none" name="specialInput"/>
 										</label>
 									</div>
 								</div>
@@ -198,10 +198,10 @@
 										<label name="itemlabel" class="item" title="16GB"> <img src="${pageContext.request.contextPath}/img/selectRadio.png" />
 											<input type="radio" name="select-ram" title="16GB" value="16" />
 											16GB </label>
-										<label name="itemlabel" class="item" title="其他"> <img src="${pageContext.request.contextPath}/img/selectRadio.png" />
+										<label name="itemlabel" class="item last-item" title="其他"> <img src="${pageContext.request.contextPath}/img/selectRadio.png" />
 											<input type="radio" name="select-ram" title="其他" value="other" />
 											其他
-											<input type="text" id="ram-number" maxlength="2" min="1" max="16" style="display: none" name="specialInput"/>
+											<input type="number" id="ram-number" maxlength="2" min="1" max="16" style="display: none" name="specialInput"/>
 										</label>
 									</div>
 								</div>
@@ -226,7 +226,7 @@
 												</button>
 												<ul id= "select-storage" class="dropdown-menu pull-right" style="width: 490px;">
 													<c:forEach var="storage" items="${storages }">
-													<li sid="${storage.uuid }">
+													<li sid="${storage.id }">
 														<a href="javacript:void(0)">
 															<span class="storage-name">${storage.name }</span>
 															<span class="storage-desc">总大小:${storage.storageTotal }G  可用:${storage.storageTotal-storage.storageUsed }G</span>
@@ -241,7 +241,7 @@
 										<li>
 											<div class="disk-details">
 												<span>用户磁盘:</span>
-												<input type="text" name="user-disk-size" value="40"/>
+												<input type="number" maxlength="3" name="user-disk-size" value="40"/>
 											</div>
 											<div style="float: left;margin-left: 10px;line-height: 35px;">
 												<span>GB</span>
@@ -285,7 +285,7 @@
 				}
 				//添加磁盘
 				$("#add-disk").click(function() {
-					$(".disk-list").append("<li><div class='disk-details'><span>用户磁盘:</span><input type='text' name='user-disk' value='40' /></div><div style='float: left;margin-left: 10px;line-height: 35px;'><span>GB</span></div><div class='disk-delete pull-right'><a></a></div></li>");
+					$(".disk-list").append("<li><div class='disk-details'><span>用户磁盘:</span><input type='number' maxlength='3' name='user-disk-size' value='40' /></div><div style='float: left;margin-left: 10px;line-height: 35px;'><span>GB</span></div><div class='disk-delete pull-right'><a></a></div></li>");
 					
 					return false;
 				});

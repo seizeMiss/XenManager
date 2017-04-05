@@ -91,4 +91,25 @@ public class StorageDaoImpl extends HibernateUtils implements StorageDao {
 		return storage;
 	}
 
+	@Override
+	public List<Storage> selectStorageByCluster(String clusterId) {
+		Session session = null;
+		List<Storage> storages = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String hql = "from Storage where clusterId = ?";
+			Query query = queryByParams(session, hql, clusterId);
+			storages = query.list();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
+		
+		return storages;
+	}
+
 }

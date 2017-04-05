@@ -7,7 +7,8 @@ $(function(){
 		location.href = "showAddVm";
 	});
 	$("#edit-vm").click(function(){
-		location.href = "showEditVm";
+		var vid = getVmIdBySelected();
+		location.href = "showEditVm?vid=" + vid;
 	});
 	//点击选择存储
 	$("#select-storage li").click(function(){
@@ -78,9 +79,9 @@ function hideWarningInfo(...args){
 		}
 	}
 }
+
 function addVm(){
 	var nameRule = $("#name-rule").val();
-	var vmNumber = $("#vm-number").val();
 	var clusterName = $("#selected-cluster").val();
 	var clusterId = "";
 	$("#select-cluster").children("li").each(function(){
@@ -88,44 +89,47 @@ function addVm(){
 			clusterId = $(this).attr("cid");
 		}
 	});
-	var imageName = $("input[name='select-mirror']:checked").val();
-	var imageUuid = $("input[name='select-mirror']:checked").closest("tr").attr("iid");
+	var imageName = $("input[name='select-image']:checked").val();
+	var imageId = $("input[name='select-image']:checked").closest("tr").attr("iid");
 	var cpuNumber = $("input[name='select-cpu']:checked").val();
 	if(cpuNumber && cpuNumber == "other"){
 		cpuNumber = $("input[name='select-cpu']:checked").parent().find("#cpu-number").val();
 	}
 	var memoryNumber = $("input[name='select-ram']:checked").val();
 	if(memoryNumber && memoryNumber == "other"){
-		memoryNumber = $("input[name='select-cpu']:checked").parent().find("#ram-number").val();
+		memoryNumber = $("input[name='select-ram']:checked").parent().find("#ram-number").val();
 	}
 	var storageLocation = $("#selected-storage-place").val();
+	var storageId = "";
+	$("#select-storage").children("li").each(function(){
+		if($(this).children("a").children("span:first").html() == storageLocation){
+			storageId = $(this).attr("sid");
+		}
+	});
 	var userDisk = "";
 	$("input[name='user-disk-size']").each(function(index){
+		var userDiskSize = $(this).val();
+		if(!userDiskSize){
+			$(this).focus();
+			return false;
+		}
 		if(index == 0){
-			userDisk = $(this).val();
+			userDisk = userDiskSize;
 		}else{
-			userDisk = userDisk + ";" + $(this).val();
+			userDisk = userDisk + ";" + userDiskSize;
 		}
 	});
 	var params = {
 			nameRule:nameRule,
-			vmNumber:vmNumber,
 			clusterId:clusterId,
-			imageUuid:imageUuid,
+			imageId:imageId,
 			cpuNumber:cpuNumber,
 			memoryNumber:memoryNumber,
-			storageLocation:storageLocation,
+			storageId:storageId,
 			userDisk:userDisk
 	}
 	if(!nameRule){
 		hideWarningInfo($(".vm-rule-warning-info"),$(".vm-number-warning-info"),
-				$(".cluster-name-warning-info"),$(".image-warning-info"),
-				$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
-				$(".storage-warning-info"));
-		return false;
-	}
-	if(!vmNumber){
-		hideWarningInfo($(".vm-number-warning-info"),$(".vm-rule-warning-info"),
 				$(".cluster-name-warning-info"),$(".image-warning-info"),
 				$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
 				$(".storage-warning-info"));
@@ -151,15 +155,34 @@ function addVm(){
 				$(".cluster-name-warning-info"),$(".image-warning-info"),
 				$(".memory-number-warning-info"),$(".vm-rule-warning-info"),
 				$(".storage-warning-info"));
-		
 		return false;
+	}else{
+		cpuNumber = parseInt(cpuNumber);
+		if(cpuNumber > 16){
+			hideWarningInfo($(".cpu-number-warning-info"),$(".vm-number-warning-info"),
+					$(".cluster-name-warning-info"),$(".image-warning-info"),
+					$(".memory-number-warning-info"),$(".vm-rule-warning-info"),
+					$(".storage-warning-info"));
+			$(".cpu-number-warning-info").find("label").html("cpu个数够多，请看说明进行操作！");
+			return false;
+		}
 	}
 	if(!memoryNumber){
-		hideWarningInfo($(".memory-warning-info"),$(".vm-number-warning-info"),
+		hideWarningInfo($(".memory-number-warning-info"),$(".vm-number-warning-info"),
 				$(".cluster-name-warning-info"),$(".image-warning-info"),
 				$(".cpu-number-warning-info"),$(".vm-rule-warning-info"),
 				$(".vm-rule-warning-info"));
 		return false;
+	}else{
+		memoryNumber = parseInt(memoryNumber);
+		if(memoryNumber > 16){
+			hideWarningInfo($(".memory-number-warning-info"),$(".vm-number-warning-info"),
+					$(".cluster-name-warning-info"),$(".image-warning-info"),
+					$(".cpu-number-warning-info"),$(".vm-rule-warning-info"),
+					$(".vm-rule-warning-info"));
+			$(".memory-number-warning-info").find("label").html("内存不足，请看说明进行操作！");
+			return false;
+		}
 	}
 	if(!storageLocation){
 		hideWarningInfo($(".storage-warning-info"),$(".vm-number-warning-info"),
@@ -173,19 +196,227 @@ function addVm(){
 		dataType: "json",
 		url: "addVm",
 		data:params,
-		success:function(){
-			if(data.data){
-				location.href = "showVM";
+		success:function(data){
+			var result = data.data;
+			if(result){
+				if(result == "success"){
+					location.href = "showVM";
+				}else if(result == "cpu-failure"){
+					hideWarningInfo($(".cpu-number-warning-info"),$(".vm-number-warning-info"),
+							$(".cluster-name-warning-info"),$(".image-warning-info"),
+							$(".memory-number-warning-info"),$(".vm-rule-warning-info"),
+							$(".storage-warning-info"));
+					$(".cpu-number-warning-info").find("label").html("cpu个数够多，请看说明进行操作！");
+				}else{
+					hideWarningInfo($(".storage-warning-info"),$(".vm-number-warning-info"),
+							$(".cluster-name-warning-info"),$(".image-warning-info"),
+							$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
+							$(".vm-rule-warning-info"));
+					$(".storage-warning-info").find("label").html("储存不足，请重新输入！");
+				}
+			}
+		}
+	});
+}
+function addVmBatch(){
+	var nameRule = $("#name-rule").val();
+	var vmNumber = $("#vm-number").val();
+	var clusterName = $("#selected-cluster").val();
+	var clusterId = "";
+	$("#select-cluster").children("li").each(function(){
+		if($(this).children("a").html() == clusterName){
+			clusterId = $(this).attr("cid");
+		}
+	});
+	var imageName = $("input[name='select-image']:checked").val();
+	var imageId = $("input[name='select-image']:checked").closest("tr").attr("iid");
+	var cpuNumber = $("input[name='select-cpu']:checked").val();
+	if(cpuNumber && cpuNumber == "other"){
+		cpuNumber = $("input[name='select-cpu']:checked").parent().find("#cpu-number").val();
+	}
+	var memoryNumber = $("input[name='select-ram']:checked").val();
+	if(memoryNumber && memoryNumber == "other"){
+		memoryNumber = $("input[name='select-ram']:checked").parent().find("#ram-number").val();
+	}
+	var storageLocation = $("#selected-storage-place").val();
+	var storageId = "";
+	$("#select-storage").children("li").each(function(){
+		if($(this).children("a").html() == storageLocation){
+			storageId = $(this).attr("sid");
+		}
+	});
+	var userDisk = "";
+	$("input[name='user-disk-size']").each(function(index){
+		var userDiskSize = $(this).val();
+		if(!userDiskSize){
+			$(this).focus();
+			return false;
+		}
+		if(index == 0){
+			userDisk = userDiskSize;
+		}else{
+			userDisk = userDisk + ";" + userDiskSize;
+		}
+	});
+	var params = {
+			nameRule:nameRule,
+			vmNumber:vmNumber,
+			clusterId:clusterId,
+			imageId:imageId,
+			cpuNumber:cpuNumber,
+			memoryNumber:memoryNumber,
+			storageId:storageId,
+			userDisk:userDisk
+	}
+	if(!nameRule){
+		hideWarningInfo($(".vm-rule-warning-info"),$(".vm-number-warning-info"),
+				$(".cluster-name-warning-info"),$(".image-warning-info"),
+				$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
+				$(".storage-warning-info"));
+		return false;
+	}
+	if(!vmNumber){
+		hideWarningInfo($(".vm-number-warning-info"),$(".vm-rule-warning-info"),
+				$(".cluster-name-warning-info"),$(".image-warning-info"),
+				$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
+				$(".storage-warning-info"));
+		return false;
+	}else{
+		vmNumber = parseInt(vmNumber);
+		if(vmNumber > 500){
+			hideWarningInfo($(".vm-number-warning-info"),$(".vm-rule-warning-info"),
+					$(".cluster-name-warning-info"),$(".image-warning-info"),
+					$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
+					$(".storage-warning-info"));
+			$(".vm-number-warning-info").find("label").html("输入的虚拟机个数够多，请看说明进行操作！");
+			return false;
+		}
+	}
+	if(!clusterName){
+		hideWarningInfo($(".cluster-name-warning-info"),$(".vm-number-warning-info"),
+				$(".vm-rule-warning-info"),$(".image-warning-info"),
+				$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
+				$(".storage-warning-info"));
+		return false;
+	}
+	if(!imageName){
+		hideWarningInfo($(".image-warning-info"),$(".vm-number-warning-info"),
+				$(".cluster-name-warning-info"),$(".vm-rule-warning-info"),
+				$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
+				$(".storage-warning-info"));
+		$(".image-warning-info").find("label").html("请选择镜像！");
+		return false;
+	}
+	if(!cpuNumber){
+		hideWarningInfo($(".cpu-number-warning-info"),$(".vm-number-warning-info"),
+				$(".cluster-name-warning-info"),$(".image-warning-info"),
+				$(".memory-number-warning-info"),$(".vm-rule-warning-info"),
+				$(".storage-warning-info"));
+		return false;
+	}else{
+		cpuNumber = parseInt(cpuNumber);
+		if(cpuNumber > 16){
+			hideWarningInfo($(".cpu-number-warning-info"),$(".vm-number-warning-info"),
+					$(".cluster-name-warning-info"),$(".image-warning-info"),
+					$(".memory-number-warning-info"),$(".vm-rule-warning-info"),
+					$(".storage-warning-info"));
+			$(".cpu-number-warning-info").find("label").html("cpu个数够多，请看说明进行操作！");
+			return false;
+		}
+	}
+	if(!memoryNumber){
+		hideWarningInfo($(".memory-number-warning-info"),$(".vm-number-warning-info"),
+				$(".cluster-name-warning-info"),$(".image-warning-info"),
+				$(".cpu-number-warning-info"),$(".vm-rule-warning-info"),
+				$(".vm-rule-warning-info"));
+		return false;
+	}else{
+		memoryNumber = parseInt(memoryNumber);
+		if(memoryNumber > 16){
+			hideWarningInfo($(".memory-number-warning-info"),$(".vm-number-warning-info"),
+					$(".cluster-name-warning-info"),$(".image-warning-info"),
+					$(".cpu-number-warning-info"),$(".vm-rule-warning-info"),
+					$(".vm-rule-warning-info"));
+			$(".memory-number-warning-info").find("label").html("内存不足，请看说明进行操作！");
+			return false;
+		}
+	}
+	if(!storageId){
+		hideWarningInfo($(".storage-warning-info"),$(".vm-number-warning-info"),
+				$(".cluster-name-warning-info"),$(".image-warning-info"),
+				$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
+				$(".vm-rule-warning-info"));
+		return false;
+	}
+	
+	$.ajax({
+		dataType: "json",
+		url: "addVm",
+		data:params,
+		success:function(data){
+			var result = data.data;
+			if(result){
+				if(result == "success"){
+					location.href = "showVM";
+				}else if(result == "cpu-failure"){
+					hideWarningInfo($(".cpu-number-warning-info"),$(".vm-number-warning-info"),
+							$(".cluster-name-warning-info"),$(".image-warning-info"),
+							$(".memory-number-warning-info"),$(".vm-rule-warning-info"),
+							$(".storage-warning-info"));
+					$(".cpu-number-warning-info").find("label").html("cpu个数够多，请看说明进行操作！");
+				}else{
+					hideWarningInfo($(".storage-warning-info"),$(".vm-number-warning-info"),
+							$(".cluster-name-warning-info"),$(".image-warning-info"),
+							$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
+							$(".vm-rule-warning-info"));
+					$(".storage-warning-info").find("label").html("储存不足，请重新输入！");
+				}
 			}
 		}
 	});
 }
 
 function editVm(){
-	
+	var cpuNumber = $("input[name='select-cpu']:checked").val();
+	if(cpuNumber && cpuNumber == "other"){
+		cpuNumber = $("input[name='select-cpu']:checked").parent().find("#cpu-number").val();
+	}
+	var memoryNumber = $("input[name='select-ram']:checked").val();
+	if(memoryNumber && memoryNumber == "other"){
+		memoryNumber = $("input[name='select-ram']:checked").parent().find("#ram-number").val();
+	}
+	cpuNumber = parseInt(cpuNumber);
+	if(cpuNumber > 16){
+		$(".cpu-number-warning-info").find("label").html("cpu个数够多，请看说明进行操作！");
+		return false;
+	}
+	memoryNumber = parseInt(memoryNumber);
+	if(memoryNumber > 16){
+		hideWarningInfo($(".memory-number-warning-info"),$(".vm-number-warning-info"),
+				$(".cluster-name-warning-info"),$(".image-warning-info"),
+				$(".cpu-number-warning-info"),$(".vm-rule-warning-info"),
+				$(".vm-rule-warning-info"));
+		$(".memory-number-warning-info").find("label").html("内存不足，请看说明进行操作！");
+		return false;
+	}
+	jQuery.ajax({
+		dataType : "json",
+		url : "editVmBySelected",
+		data : {
+			cpuNumber : cpuNumber,
+			memoryNumber : memoryNumber
+		},
+		success : function(data) {
+			if(data.data){
+				location.href = "showVM";
+			}
+		},
+		error : function() {
+			alert("error");
+		}
+	});
 }
 function deleteVms(){
-	
 }
 
 function launchVm(){

@@ -78,7 +78,7 @@ public class ImageDaoImpl extends HibernateUtils implements ImageDao {
 		Session session = null;
 		Image image = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
 			image = (Image) session.get(Image.class, id);
 			session.getTransaction().commit();
