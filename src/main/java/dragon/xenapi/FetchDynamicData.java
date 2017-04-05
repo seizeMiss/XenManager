@@ -171,7 +171,7 @@ public class FetchDynamicData extends ConnectionUtil {
 			}
 			map.put("cpu_avg", cpuAvg*100);
 			map.put("memory_used", NumberUtils.computerUsedRate(host_memory_total, host_memory_free, 0));
-			map.put("cpu_account", cpuAccount-1);
+			map.put("cpu_account", cpuAccount);
 			break;
 		}
 		is.close();
@@ -214,6 +214,7 @@ public class FetchDynamicData extends ConnectionUtil {
 			}
 			map.put("cpu_avg", cpuAvg*100);
 			map.put("memory_used", NumberUtils.computerUsedRate(host_memory_total, host_memory_free, 0));
+			map.put("memory_free", host_memory_free/1024/1024);
 			break;
 		}
 		

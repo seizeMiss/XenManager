@@ -178,19 +178,23 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 	}
 
 	@Override
-	public void deleteVm(String id) {
+	public VmInstance deleteVm(String id) {
 		// TODO Auto-generated method stub
 		Session session = null;
 		VmInstance vmInstance = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
 			vmInstance = (VmInstance) session.load(Account.class, id);
+			session.delete(vmInstance);
 			List<VmStorage> vmStorages = selectVmStorageByVmId(id);
 			List<VmNetwork> vmNetworks = selectVmNetwrokByVmId(id);
-			session.delete(vmInstance);
-			session.delete(vmStorages);
-			session.delete(vmNetworks);
+			for(VmStorage vmStorage : vmStorages){
+				session.delete(vmStorage);
+			}
+			for(VmNetwork vmNetwork : vmNetworks){
+				session.delete(vmNetwork);
+			}
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
@@ -200,6 +204,7 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 		}finally {
 			closeSession(session);
 		}
+		return vmInstance;
 	}
 
 	@Override

@@ -427,12 +427,25 @@ textarea{
 	left:980px;
 	display: none;
 }
+.cpu-number-edit-warning-info{
+	position: absolute;
+	top:29%;
+	left:1020px;
+	display: none;
+}
+.memory-number-edit-warning-info{
+	position: absolute;
+	top:35%;
+	left:1020px;
+	display: none;
+}
 .psd-warning-info span,.psd-conf-warming-info span,.search-warning-info span,
 .cluster-warning-info span,.image-name-warning-info span,
 .cpu-number-warning-info span,.memory-number-warning-info span,
 .cluster-name-warning-info span,.image-warning-info span,
 .vm-number-warning-info span,.vm-rule-warning-info span,
-.storage-warning-info span{
+.storage-warning-info span,.memory-number-edit-warning-info span,
+.cpu-number-edit-warning-info span{
 	color: red;
 	font-size: 14px;
 }

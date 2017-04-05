@@ -164,7 +164,7 @@ $(function() {
 		}
 	});
 	//点击checkbox
-	$("input[name='checkbox']").click(function(){
+	$("input[name='checkbox']").on("click", function(){
 		var len = $("input[name='checkbox']").length;
 		var count = getSelectedCount();
 		var status;

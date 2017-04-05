@@ -168,7 +168,7 @@
 														</td>
 													</tr>
 													<tr class="hidden-tr">
-														<td colspan="10">${image.description }</td>
+														<td colspan="10">描述：${image.description }</td>
 													</tr>
 												</c:forEach>
 											</c:when>

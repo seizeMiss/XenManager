@@ -106,7 +106,7 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 		HostInstance hostInstance = null;
 		if(!StringUtils.isEmpty(hostInstances)){
 			try {
-				hostInstance = getHost(hostInstances.get(0).getId());
+				hostInstance = getHostInstanceById(hostInstances.get(0).getId());
 				hostDao.updateHost(hostInstance);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

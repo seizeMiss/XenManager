@@ -387,16 +387,14 @@ function editVm(){
 	}
 	cpuNumber = parseInt(cpuNumber);
 	if(cpuNumber > 16){
-		$(".cpu-number-warning-info").find("label").html("cpu个数够多，请看说明进行操作！");
+		$(".cpu-number-edit-warning-info").show().find("label").html("cpu个数不足，请看说明进行操作！");
+		$(".memory-number-edit-warning-info").hide();
 		return false;
 	}
 	memoryNumber = parseInt(memoryNumber);
 	if(memoryNumber > 16){
-		hideWarningInfo($(".memory-number-warning-info"),$(".vm-number-warning-info"),
-				$(".cluster-name-warning-info"),$(".image-warning-info"),
-				$(".cpu-number-warning-info"),$(".vm-rule-warning-info"),
-				$(".vm-rule-warning-info"));
-		$(".memory-number-warning-info").find("label").html("内存不足，请看说明进行操作！");
+		$(".memory-number-edit-warning-info").show().find("label").html("内存不足，请看说明进行操作！");
+		$(".cpu-number-edit-warning-info").hide();
 		return false;
 	}
 	jQuery.ajax({
@@ -407,8 +405,13 @@ function editVm(){
 			memoryNumber : memoryNumber
 		},
 		success : function(data) {
-			if(data.data){
-				location.href = "showVM";
+			var callbackResult = data.data;
+			if(callbackResult){
+				if(callbackResult == "success"){
+					location.href = "showVM";
+				}else if(callbackResult == "cpu_failure"){
+					$(".cpu-number-edit-warning-info").show().find("label").html("系统cpu个数不足！");
+				}
 			}
 		},
 		error : function() {
@@ -417,6 +420,30 @@ function editVm(){
 	});
 }
 function deleteVms(){
+	zeroModal.confirm({
+		content : "确定要删除数据，将无法恢复？",
+		ok : true,
+		okFn : function() {
+			var vid = getAllVmIdBySelected();
+			jQuery.ajax({
+				dataType : "json",
+				url : "deleteVms",
+				data : {
+					ids : vid
+				},
+				success : function(data) {
+					var vmInstances = data;
+					for(var i = 0; i < vmInstances.length; i++){
+						updateVmInfoBySelect(vmInstances[i]);
+					}
+				},
+				error : function() {
+					alert("error");
+				}
+			});
+		}
+	});
+	return false;
 }
 
 function launchVm(){
@@ -538,6 +565,21 @@ function getVmIdBySelected(){
 	$(".data-table-tbody").children("tr:not(.hidden-tr)").each(function(){
 		if($(this).find("input[name='checkbox']").is(":checked")){
 			vid = $(this).attr("vid");
+		}
+	});
+	return vid;
+}
+function getAllVmIdBySelected(){
+	var vid = "";
+	var count = 0;
+	$(".data-table-tbody").children("tr:not(.hidden-tr)").each(function(){
+		if($(this).find("input[name='checkbox']").is(":checked")){
+			if(count == 0){
+				vid = $(this).attr("vid");
+			}else{
+				vid = $(this).attr("vid") + ";" + vid;
+			}
+			count++;
 		}
 	});
 	return vid;

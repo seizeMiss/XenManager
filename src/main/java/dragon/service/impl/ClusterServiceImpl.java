@@ -114,7 +114,7 @@ public class ClusterServiceImpl extends ConnectionUtil implements ClusterService
 		List<Cluster> clusters = getAllCluster();
 		if (!StringUtils.isEmpty(clusters)) {
 			try {
-				Cluster cluster = getCluster(clusters.get(0).getId());
+				Cluster cluster = getClusterById(clusters.get(0).getId());
 				clusterDao.updateCluster(cluster);
 				return cluster;
 			} catch (Exception e) {

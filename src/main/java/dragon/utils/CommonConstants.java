@@ -29,6 +29,7 @@ public class CommonConstants {
 	public static final int VM_DELETING_STATUS = 5;//5
 	public static final int VM_AVAILABEL_STATUS = 1;//1
 	public static final int VM_NO_AVAILABEL_STATUS = -1;//-1
+	public static final int VM_DELETED_STATUS = 9;
 	
 	public static final int IMAGE_CREATING_STATUS = 0;
 	public static final int IMAGE_AVAILABLE_STATUS = 1;

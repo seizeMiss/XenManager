@@ -113,6 +113,9 @@
 								<a id="popover-cpu-number" data-trigger="hover" data-container="body" data-toggle="popover"
 								data-placement="right" data-content="每个虚拟机最多只能分配 16 个CPU核数"
 								class="glyphicon glyphicon-info-sign"></a>
+								<div class="cpu-number-edit-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">请选择cpu分配的个数！</label></span>
+								</div>
 							</div>
 
 							<div class="form-group">
@@ -120,19 +123,19 @@
 								<div class="col-sm-10">
 									<div class="ram-group">
 										<label name="itemlabel" class="item" title="2GB"> <img src="/VMManager/img/selectRadio.png" />
-											<input type="radio" name="select-cpu" title="2GB" value="2" />
+											<input type="radio" name="select-ram" title="2GB" value="2" />
 											2GB </label>
 										<label name="itemlabel" class="item" title="4GB"> <img src="/VMManager/img/selectRadio.png" />
-											<input type="radio" name="select-cpu" title="4GB" value="4" />
+											<input type="radio" name="select-ram" title="4GB" value="4" />
 											4GB </label>
 										<label name="itemlabel" class="item" title="8GB"> <img src="/VMManager/img/selectRadio.png" />
-											<input type="radio" name="select-cpu" title="8GB" value="8" />
+											<input type="radio" name="select-ram" title="8GB" value="8" />
 											8GB </label>
 										<label name="itemlabel" class="item" title="16GB"> <img src="/VMManager/img/selectRadio.png" />
-											<input type="radio" name="select-cpu" title="16GB" value="16" />
+											<input type="radio" name="select-ram" title="16GB" value="16" />
 											16GB </label>
 										<label name="itemlabel" class="item last-item" title="其他"> <img src="/VMManager/img/selectRadio.png" />
-											<input type="radio" name="select-cpu" title="其他" value="other" />
+											<input type="radio" name="select-ram" title="其他" value="other" />
 											其他
 											<input type="number" id="ram-number" maxlength="2" min="1" max="16" style="display: none" name="specialInput"/>
 										</label>
@@ -141,11 +144,14 @@
 								<a id="popover-ram-number" data-trigger="hover" data-container="body" data-toggle="popover"
 								data-placement="right" data-content="如果选择“其他”，内存量为 1 ~ 8 GB 时，最小步进 0.5 GB；内存量为 8 ~ 16 GB 时，最小步进 1 GB；<br>不支持为虚拟机分配超过 16 GB内存"
 								class="glyphicon glyphicon-info-sign"></a>
+								<div class="memory-number-edit-warning-info" style="float: left">
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">请选择内存分配的个数！</label></span>
+								</div>
 							</div>
 
 							<div class="form-group operation">
 								<div class="col-sm-offset-2 col-sm-10">
-									<button type="submit" class="btn btn-default" style="margin-right: 30px;">
+									<button type="button" class="btn btn-default edit-vm-btn" style="margin-right: 30px;">
 										确定
 									</button>
 									<button type="button" class="btn btn-default cancle-btn">
@@ -170,7 +176,7 @@
 			var flag = false;
 			$(".cpu-group").children().each(function(){
 				if($(this).find("input[name='select-cpu']").val() == cpuCount){
-					$(this).find("input[name='select-cpu']").attr("checked","checked");
+					$(this).find("input[name='select-cpu']").attr("checked",true);
 					$(this).find("img").attr("src","/VMManager/img/selectedRadio.png");
 					flag = true;
 				}
@@ -179,15 +185,16 @@
 				$(".cpu-group").find("#cpu-number").show().val(cpuCount);
 			}
 			flag = false;
-			$(".cpu-group").children().each(function(){
+			$(".ram-group").children().each(function(){
 				if($(this).find("input[name='select-ram']").val() == memory){
-					$(this).find("input[name='select-ram']").attr("checked","checked");
+					$(this).find("input[name='select-ram']").attr("checked", true);
 					$(this).find("img").attr("src","/VMManager/img/selectedRadio.png");
 					flag = true;
 				}
 			});
 			if(!flag){
 				$(".ram-group").find("#ram-number").show().val(memory);
+				$(".ram-group").find(".last-item").children("input").attr("checked", true);
 				$(".ram-group").find(".last-item").children("img").attr("src","/VMManager/img/selectedRadio.png");
 			}
 		});

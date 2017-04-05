@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.xmlrpc.XmlRpcException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import com.xensource.xenapi.Network;
 import com.xensource.xenapi.SR;
 import com.xensource.xenapi.Task;
 import com.xensource.xenapi.Types;
+import com.xensource.xenapi.Types.XenAPIException;
 import com.xensource.xenapi.VBD;
 import com.xensource.xenapi.VDI;
 import com.xensource.xenapi.VIF;
@@ -36,14 +38,13 @@ import main.java.dragon.pojo.VmStorage;
 import main.java.dragon.service.VMService;
 import main.java.dragon.utils.CommonConstants;
 import main.java.dragon.utils.StringUtils;
+import main.java.dragon.xenapi.FetchDynamicData;
 import main.java.dragon.xenapi.VolumeAPI;
 import main.java.dragon.xenapi.XenApiUtil;
 
 @Service
 @Transactional
 public class VMServiceImpl extends ConnectionUtil implements VMService {
-	@Autowired
-	private ClusterDao clusterDao;
 	@Autowired
 	private VMDao vmDao;
 	@Autowired
@@ -128,7 +129,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 					VmInstance vmInstance = new VmInstance(id, clusterId, hostId, imageId, storageId, uuid, name, vmIp,
 							status, powerStatus, createTime, updateTime, osType, osName, cpu, memory, systemDisk);
 					vmInstance.setVmNetWorks(getVmNetwork(vm, id));
-//					vmInstance.setVmStorages(getVmStorage(vm, id));
+					// vmInstance.setVmStorages(getVmStorage(vm, id));
 					vmInstances.add(vmInstance);
 				}
 			}
@@ -202,7 +203,13 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	@Override
 	public List<VmInstance> getVmInstanceByName(String name) {
-		return vmDao.selectVmInstanceByName(name);
+		List<VmInstance> vmInstances = new ArrayList<VmInstance>();
+		for(VmInstance vmInstance : vmDao.selectVmInstanceByName(name)){
+			if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS){
+				vmInstances.add(vmInstance);
+			}
+		}
+		return vmInstances;
 	}
 
 	@Override
@@ -314,8 +321,35 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	@Override
 	public List<VmInstance> deleteVms(String ids) {
-		// TODO Auto-generated method stub
-		return null;
+		List<VmInstance> vmInstances = new ArrayList<VmInstance>();
+		String[] selectedIds = ids.split(";");
+		for(String id : selectedIds){
+			VmInstance vmInstance = vmDao.selectVmById(id);
+			vmInstance.setStatus(CommonConstants.VM_DELETING_STATUS);
+			vmInstances.add(vmInstance);
+			vmDao.updateVm(vmInstance);
+			new Thread(new Runnable() {
+				public void run() {
+					VM vm = null;
+					try {
+						vm = VM.getByUuid(connection, vmInstance.getUuid());
+						deleteVm(vm,vmInstance);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}).start();
+			
+		}
+		return vmInstances;
+	}
+
+	// 删除虚拟机
+	public synchronized void deleteVm(VM vm, VmInstance vmInstance) throws Exception {
+		vm.destroy(connection);
+		vmInstance.setPowerStatus("已删除");
+		vmInstance.setStatus(CommonConstants.VM_DELETED_STATUS);
+		vmDao.updateVm(vmInstance);
 	}
 
 	private void createVmByImage(VmInstance vmInstance, String userDisk, SR sr) throws Exception {
@@ -331,10 +365,10 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		VDI srcVDI = VDI.getByUuid(connection, image.getUuid());
 
 		VDI newVdi = volAPI.cloneNewVDI(srcVDI, name + "_COPY");
-		
+
 		attachVDI(newVM, newVdi, true);
 		// 添加用户磁盘
-		if(!StringUtils.isEmpty(userDisk)){
+		if (!StringUtils.isEmpty(userDisk)) {
 			String[] userDisks = userDisk.split(";");
 			for (int i = 0; i < userDisks.length; i++) {
 				int diskSize = Integer.parseInt(userDisks[i]);
@@ -502,23 +536,6 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		}
 		throw new Exception("vm can't find valid user_device position");
 	}
-	// 修改虚拟机配置
-		public void modfiyVmConfig(VM vm, long memory, long cpu) throws Exception {
-
-			long memorySize = memory * 1024 * 1024;
-			vm.setMemoryLimits(connection, memorySize, memorySize, memorySize,
-					memorySize);
-			VM.Record record = vm.getRecord(connection);
-
-			// 修改CPU配置时，需要对CPU的个数进行判断，并确定配置的先后顺序。
-			if (record.VCPUsAtStartup > cpu) {
-				vm.setVCPUsAtStartup(connection, cpu);
-				vm.setVCPUsMax(connection, cpu);
-			} else {
-				vm.setVCPUsMax(connection, cpu);
-				vm.setVCPUsAtStartup(connection, cpu);
-			}
-		}
 
 	@Override
 	public int addVm(String vmName, String clusterId, String imageId, String cpuNumber, String memorySize,
@@ -536,7 +553,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		if (storage < userDiskTotal) {
 			return backType = 3;// 存储大小不够
 		}
-		initVmInstance(vmName, clusterId, imageId, cpuCount, memoryAlloSize,storageId);
+		initVmInstance(vmName, clusterId, imageId, cpuCount, memoryAlloSize, storageId);
 		vmDao.insertVm(vmInstance);
 		new Thread(new Runnable() {
 			@Override
@@ -571,7 +588,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		if (storage < userDiskTotal) {
 			return backType = 3;// 存储大小不够
 		}
-		initVmInstance(vmName, clusterId, imageId, cpuCount, memoryAlloSize,storageId);
+		initVmInstance(vmName, clusterId, imageId, cpuCount, memoryAlloSize, storageId);
 		for (int i = 0; i < vmCount; i++) {
 			vmDao.insertVm(vmInstance);
 			new Thread(new Runnable() {
@@ -594,7 +611,8 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		return backType;
 	}
 
-	private void initVmInstance(String name, String clusterId, String imageId, int cpuCount, int memorySize,String storageId) {
+	private void initVmInstance(String name, String clusterId, String imageId, int cpuCount, int memorySize,
+			String storageId) {
 		vmInstance = new VmInstance();
 		vmInstance.setId(StringUtils.generateUUID());
 		vmInstance.setClusterId(clusterId);
@@ -613,7 +631,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		vmInstance.setOsName(image.getOsName());
 		vmInstance.setOsType(image.getOsType());
 		vmInstance.setCpu(cpuCount);
-		vmInstance.setMemory(memorySize*1024);
+		vmInstance.setMemory(memorySize * 1024);
 		vmInstance.setSystemDisk(image.getImageSize());
 	}
 
@@ -634,7 +652,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	private int getUserDiskTotal(String userDisk) {
 		int userDiskTotal = 0;
-		if(!StringUtils.isEmpty(userDisk)){
+		if (!StringUtils.isEmpty(userDisk)) {
 			String[] userDisks = userDisk.split(";");
 			for (String diskSize : userDisks) {
 				userDiskTotal += Integer.parseInt(diskSize);
@@ -647,6 +665,81 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	public VmInstance getVmInstanceById(String id) {
 		// TODO Auto-generated method stub
 		return vmDao.selectVmById(id);
+	}
+
+	// 修改虚拟机配置
+	private void modfiyVmConfig(VM vm, long memory, long cpu, VmInstance vmInstance) throws Exception {
+
+		long memorySize = memory * 1024 * 1024 * 1024;
+		vm.setMemoryLimits(connection, memorySize, memorySize, memorySize, memorySize);
+		VM.Record record = vm.getRecord(connection);
+
+		// 修改CPU配置时，需要对CPU的个数进行判断，并确定配置的先后顺序。
+		if (record.VCPUsAtStartup > cpu) {
+			vm.setVCPUsAtStartup(connection, cpu);
+			vm.setVCPUsMax(connection, cpu);
+		} else {
+			vm.setVCPUsMax(connection, cpu);
+			vm.setVCPUsAtStartup(connection, cpu);
+		}
+		vmInstance.setStatus(CommonConstants.VM_CLOSE_STATUS);
+		vmInstance.setCpu((int) cpu);
+		vmInstance.setMemory((int) memory * 1024);
+		vmDao.updateVm(vmInstance);
+	}
+
+	@Override
+	public int modifyVm(String cpu, String memory, VmInstance modifiedVm) {
+		int result = 0;
+		long cpuNumber = Long.parseLong(cpu);
+		long memorySize = Long.parseLong(memory);
+		if (cpuNumber > getClusterCpuCount(modifiedVm.getClusterId())) {
+			result = -1;
+			return result;
+		}
+		try {
+			modifiedVm.setStatus(0);
+			vmDao.updateVm(modifiedVm);
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					VM vm;
+					try {
+						vm = VM.getByUuid(connection, modifiedVm.getUuid());
+						modfiyVmConfig(vm, memorySize, cpuNumber, modifiedVm);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}).start();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	private double getClusterMemoryFreeSize() throws Exception {
+		FetchDynamicData data = new FetchDynamicData();
+		double memoryFreeSize = 0;
+		memoryFreeSize = (double) data.getIndexNeedInfo().get("memory_free");
+		return memoryFreeSize;
+	}
+
+	@Override
+	public List<VmInstance> getVmInstancesByIds(String ids) {
+		List<VmInstance> vmInstances = new ArrayList<VmInstance>();
+		String[] selectedIds = ids.split(";");
+		for(String id : selectedIds){
+			VmInstance vmInstance = vmDao.selectVmById(id);
+			if(!StringUtils.isEmpty(vmInstance)){
+				vmInstances.add(vmInstance);
+			}
+		}
+		return vmInstances;
 	}
 
 }

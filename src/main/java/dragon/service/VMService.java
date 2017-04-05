@@ -20,4 +20,6 @@ public interface VMService {
 	public VmInstance closeVm(String id);
 	public List<VmInstance> deleteVms(String ids);
 	public VmInstance getVmInstanceById(String id);
+	public int modifyVm(String cpu, String memory, VmInstance modifyVm);
+	public List<VmInstance> getVmInstancesByIds(String ids);
 }
