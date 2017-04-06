@@ -111,11 +111,15 @@ public class VMController {
 		List<VmInstance> instances = null;
 		String name = request.getParameter("searchContent");
 		instances = vmService.getVmInstanceByName(name);
+		List<VmInstance> filterVmInstances = new ArrayList<VmInstance>();
 		for (VmInstance vmInstance : instances) {
-			vmInstance.setVmStorages(null);
-			vmInstance.setVmNetWorks(null);
+			if(vmInstance.getPowerStatus().equals(CommonConstants.VM_POWER_CLOSED)){
+				vmInstance.setVmStorages(null);
+				vmInstance.setVmNetWorks(null);
+				filterVmInstances.add(vmInstance);
+			}
 		}
-		return instances;
+		return filterVmInstances;
 	}
 
 	private Set<String> getVmOsTypes() {
@@ -283,6 +287,7 @@ public class VMController {
 				cluster = clusterService.getClusterById(vmInstance.getClusterId());
 				hostInstance = hostService.getHostInstanceById(vmInstance.getHostId());
 				vmInstance.setMemory(vmInstance.getMemory() / 1024);
+				int userDiskSize = vmService.getUserDiskSize(vmInstance.getId());
 				if (vmInstance.getPowerStatus().equals("Running")) {
 					double memoryRate = 0.0d;
 					Map<String, Object> map = data.getVmNeedInfoByParseXml(vmInstance.getUuid());
@@ -303,11 +308,11 @@ public class VMController {
 					}
 					vmNeedInfo = new VmNeedInfo(vmInstance, NumberUtils.setdoubleScal(cpuRate), memoryRate, cluster.getName(), hostInstance.getName(),
 							StringUtils.double2String(memoryTotal), StringUtils.double2StringKeepScal(memoryUsed),
-							isShowMemoryRate ? 1 : 0, isShowCpuRate ? 1 : 0);
+							isShowMemoryRate ? 1 : 0, isShowCpuRate ? 1 : 0, userDiskSize);
 					
 				} else {
 					vmNeedInfo = new VmNeedInfo(vmInstance, 0.0d, 0.0d, cluster.getName(), hostInstance.getName(), "", "",
-							0, 0);
+							0, 0, userDiskSize);
 				}
 				vmNeedInfos.add(vmNeedInfo);
 			}

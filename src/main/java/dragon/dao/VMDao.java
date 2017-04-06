@@ -1,6 +1,7 @@
 package main.java.dragon.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.pojo.VmNetwork;
@@ -17,4 +18,6 @@ public interface VMDao {
 	public VmInstance deleteVm(String id);
 	public List<VmInstance> selectVmInstanceByName(String name);
 	public List<VmInstance> selectVmInstanceByCondition(String vmName, int status, String vmOsType);
+	public List<VmInstance> selectVmInstanceByClusterId(String clusterId);
+	public List<VmInstance> selectVmInstanceByHostId(String hostId);
 }

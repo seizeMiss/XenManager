@@ -1,5 +1,6 @@
 package main.java.dragon.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +22,7 @@ import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.service.ClusterService;
 import main.java.dragon.service.ImageService;
 import main.java.dragon.service.VMService;
+import main.java.dragon.utils.CommonConstants;
 import main.java.dragon.utils.StringUtils;
 
 @Controller
@@ -47,9 +49,15 @@ public class ImageController {
 	public String showAddImage(Model model){
 		List<Cluster> clusters = clusterService.getAllCluster();
 		List<VmInstance> vmInstances = vmService.getAllVm();
+		List<VmInstance> filterVmInstances = new ArrayList<VmInstance>();
 		if(!StringUtils.isEmpty(clusters,vmInstances)){
+			for(VmInstance vmInstance : vmInstances){
+				if(vmInstance.getPowerStatus().equals(CommonConstants.VM_POWER_CLOSED)){
+					filterVmInstances.add(vmInstance);
+				}
+			}
 			model.addAttribute("clusters", clusters);
-			model.addAttribute("vmInstances", vmInstances);
+			model.addAttribute("vmInstances", filterVmInstances);
 		}
 		return "jsp/image/add_image";
 	}
@@ -111,6 +119,16 @@ public class ImageController {
 	public List<Image> searchImageByName(@RequestParam("searchContent")String searchContent){
 		List<Image> imagesByName = imageService.getImagesByName(searchContent);
 		return imagesByName;
+	}
+	
+	@RequestMapping("refreshImageData")
+	@ResponseBody
+	public List<Image> refreshImageData(@RequestParam("ids")String ids){
+		List<Image> images = null;
+		if(!StringUtils.isEmpty(ids)){
+			images = imageService.getImagesByIds(ids);
+		}
+		return images;
 	}
 
 }

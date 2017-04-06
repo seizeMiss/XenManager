@@ -1,7 +1,7 @@
 //定时刷新
 setInterval(() => {
 	refreshData();
-}, 10000);
+}, 5000);
 function refreshData() {
 	var vid = "";
 	var count = 0;

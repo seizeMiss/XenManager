@@ -2,7 +2,6 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>	
 <jsp:include page="../common/common.jsp" />
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/image.js"></script>
 <body>
 		<div class="container">
 			<jsp:include page="../common/header.jsp"></jsp:include>
@@ -190,5 +189,7 @@
 
 			</div>
 		</div>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/script/image.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/script/imagetimer.js"></script>
 	</body>
 </html>

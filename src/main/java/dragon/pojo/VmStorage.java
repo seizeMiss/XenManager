@@ -17,6 +17,7 @@ public class VmStorage {
 	private String name;
 	private String vmId;
 	private String storageType;
+	private int size;
 	private String storageId;
 	private String description;
 //	private VmInstance vmInstance;
@@ -24,11 +25,12 @@ public class VmStorage {
 	public VmStorage() {
 		super();
 	}
-	public VmStorage(String id, String name, String vmId, String storageType, String storageId, String description) {
+	public VmStorage(String id, String name, String vmId, int size, String storageType, String storageId, String description) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.vmId = vmId;
+		this.size = size;
 		this.storageType = storageType;
 		this.storageId = storageId;
 		this.description = description;
@@ -53,6 +55,14 @@ public class VmStorage {
 	}
 	public void setVmId(String vmId) {
 		this.vmId = vmId;
+	}
+	
+	@Column(name="size")
+	public int getSize() {
+		return size;
+	}
+	public void setSize(int size) {
+		this.size = size;
 	}
 	@Column(name="storage_type",length=20)
 	public String getStorageType() {

@@ -123,8 +123,8 @@
 .data-thead{
 	background: gray;
 }
-.data-table-tbody{
-	
+.data-table-tbody tr{
+	height: 30px;
 }
 
 /* 淇敼瀵嗙爜*/

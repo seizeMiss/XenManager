@@ -1,5 +1,6 @@
 package main.java.dragon.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +29,7 @@ import main.java.dragon.xenapi.XenApiUtil;
 public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 	@Autowired
 	private ImageDao imageDao;
-	@Autowired
-	private AsynSessionThread sessionThread;
 	
-	private VM vm;
-	private String uuid;
-
 	public ImageServiceImpl() throws Exception {
 		super();
 	}
@@ -46,7 +42,7 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 			imageAPI = new ImageAPI();
 			vmAPI = new VmAPI();
 			String uuid = image.getUuid();
-			vm = imageAPI.getVmByUuid(uuid);
+			VM vm = imageAPI.getVmByUuid(uuid);
 			String id = StringUtils.generateUUID();
 			image.setId(id);
 			image.setCreateTime(new Date());
@@ -55,11 +51,28 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 			Map<String, String> map = vmAPI.getOsVersion(vm);
 			if(map != null){
 				image.setOsType(StringUtils.isEmpty(map.get("distro")) ? "" : map.get("distro"));
-				image.setOsName(StringUtils.isEmpty(map.get("name")) ? "" : map.get("name").split(" |")[0]);
+				image.setOsName(StringUtils.isEmpty(map.get("name")) ? "" : map.get("name").split("\\|")[0]);
 			}
 			imageDao.insertImage(image);
-			AsynSessionThread updateImageThread = new AsynSessionThread(vm, image, connection, sessionThread.getSessionFactory());
-			new Thread(updateImageThread).start();
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						VDI copyVdi = createImageByVm(vm, image.getName());
+						if(!copyVdi.isNull()){
+							image.setImageSize((int)(copyVdi.getVirtualSize(connection)/1024/1024/1024));
+							image.setUuid(copyVdi.getUuid(connection));
+							image.setStatus(CommonConstants.IMAGE_AVAILABLE_STATUS);
+							imageDao.saveImage(image);
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}).start();
 			return true;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -86,7 +99,13 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 
 	@Override
 	public List<Image> getAllImages() {
-		return imageDao.selectAllImage();
+		List<Image> images = new ArrayList<Image>();
+		for(Image image : imageDao.selectAllImage()){
+			if(image.getStatus() != CommonConstants.IMAGE_DELETED_STATUS){
+				images.add(image);
+			}
+		}
+		return images;
 	}
 
 	@Override
@@ -107,7 +126,13 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 		}
 		imageName = StringUtils.isEmpty(imageName) ? "" : imageName;
 		imageOsType = StringUtils.isEmpty(imageOsType) ?  "" : imageOsType;
-		return imageDao.selectImageByCondition(imageName, status, imageOsType);
+		List<Image> images = new ArrayList<Image>();
+		for(Image image : imageDao.selectImageByCondition(imageName, status, imageOsType)){
+			if(image.getStatus() != CommonConstants.IMAGE_DELETED_STATUS){
+				images.add(image);
+			}
+		}
+		return images;
 	}
 
 	@Override
@@ -116,13 +141,13 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 		if(StringUtils.isEmpty(image)){
 			return false;
 		}
-		uuid = image.getUuid();
+		String uuid = image.getUuid();
 		image.setStatus(CommonConstants.IMAGE_DELETING_STATUS);
 		imageDao.saveImage(image);
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					deleteImage(uuid,ids);
+					deleteImage(uuid,image);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -132,18 +157,37 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 		return true;
 	}
 	
-	private boolean deleteImage(String uuid,String id) throws Exception{
+	private boolean deleteImage(String uuid,Image image) throws Exception{
 		VDI vdi = VDI.getByUuid(connection, uuid);
 		Task task = vdi.destroyAsync(connection);
 		XenApiUtil.waitForTask(connection, task, 2000);
-		imageDao.deleteImage(id);
+		image.setStatus(CommonConstants.IMAGE_DELETED_STATUS);
+		imageDao.saveImage(image);
 		return true;
 	}
 
 	@Override
 	public List<Image> getImagesByName(String name) {
 		// TODO Auto-generated method stub
-		return imageDao.selectImageByName(name);
+		List<Image> images = new ArrayList<Image>();
+		for(Image image : imageDao.selectImageByName(name)){
+			if(image.getStatus() != CommonConstants.IMAGE_DELETED_STATUS){
+				images.add(image);
+			}
+		}
+		return images;
+	}
+
+	@Override
+	public List<Image> getImagesByIds(String ids) {
+		// TODO Auto-generated method stub
+		List<Image> images = new ArrayList<Image>();
+		String[] selectedIds = ids.split(";");
+		for(String id : selectedIds){
+			Image image = imageDao.selectImageById(id);
+			images.add(image);
+		}
+		return images;
 	}
 	
 

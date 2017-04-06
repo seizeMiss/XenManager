@@ -23,6 +23,7 @@ import com.xensource.xenapi.VMGuestMetrics;
 import com.xensource.xenapi.VMMetrics;
 
 import main.java.dragon.dao.ClusterDao;
+import main.java.dragon.dao.VMDao;
 import main.java.dragon.pojo.Cluster;
 import main.java.dragon.service.ClusterService;
 import main.java.dragon.utils.StringUtils;
@@ -34,6 +35,8 @@ import main.java.dragon.xenapi.HostAPI;
 public class ClusterServiceImpl extends ConnectionUtil implements ClusterService {
 	@Autowired
 	private ClusterDao clusterDao;
+	@Autowired
+	private VMDao vmDao;
 
 	public ClusterServiceImpl() throws Exception {
 		super();
@@ -89,7 +92,7 @@ public class ClusterServiceImpl extends ConnectionUtil implements ClusterService
 		storageTotal = hostAPI.getStorageInHost(host).get(1);
 		storageUsed = hostAPI.getStorageInHost(host).get(2);
 		hostCount = 1;
-		vmCount = hostAPI.getVmCountInHost(host, false);
+		vmCount = vmDao.selectVmInstanceByClusterId(id) != null ? vmDao.selectVmInstanceByClusterId(id).size() : 0;
 		description = pool.getNameDescription(connection);
 		cluster = new Cluster(id, name, ipAddress, status, cpuAverage, memoryTotal.intValue(), memoryUsed.intValue(),
 				storageTotal, storageUsed, storageCount, hostCount, vmCount, description);
@@ -114,7 +117,7 @@ public class ClusterServiceImpl extends ConnectionUtil implements ClusterService
 		List<Cluster> clusters = getAllCluster();
 		if (!StringUtils.isEmpty(clusters)) {
 			try {
-				Cluster cluster = getClusterById(clusters.get(0).getId());
+				Cluster cluster = getCluster(clusters.get(0).getId());
 				clusterDao.updateCluster(cluster);
 				return cluster;
 			} catch (Exception e) {

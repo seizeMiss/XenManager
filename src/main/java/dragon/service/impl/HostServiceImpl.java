@@ -1,6 +1,7 @@
 package main.java.dragon.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,12 @@ import com.xensource.xenapi.Pool;
 
 import main.java.dragon.dao.ClusterDao;
 import main.java.dragon.dao.HostDao;
+import main.java.dragon.dao.VMDao;
 import main.java.dragon.pojo.Cluster;
 import main.java.dragon.pojo.HostInstance;
+import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.service.HostService;
+import main.java.dragon.utils.CommonConstants;
 import main.java.dragon.utils.StringUtils;
 import main.java.dragon.xenapi.FetchDynamicData;
 import main.java.dragon.xenapi.HostAPI;
@@ -27,6 +31,9 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 	
 	@Autowired
 	private ClusterDao clusterDao;
+	
+	@Autowired
+	private VMDao vmDao;
 
 	public HostServiceImpl() throws Exception {
 		super();
@@ -60,16 +67,24 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 		String uuid = host.getUuid(connection);
 		String name = host.getNameLabel(connection);
 		if(host.getEnabled(connection)){
+			List<VmInstance> vmInstances  = vmDao.selectVmInstanceByHostId(id);
+			Map<String, Object> dataMap = data.getIndexNeedInfoByParseXml();
 			status = 1;
 			powerStatus = "running";
-			cpuTotal = (int)data.getIndexNeedInfoByParseXml().get("cpu_account");
-			cpuAverage = (double)data.getIndexNeedInfoByParseXml().get("cpu_avg");
+			cpuTotal = (int)dataMap.get("cpu_account");
+			cpuAverage = (double)dataMap.get("cpu_avg");
 			memoryTotal = hostAPI.getMemoryInHost(host).get(1);
 			memoryUsed = hostAPI.getMemoryInHost(host).get(0);
 			memoryTotal = (long) Math.ceil(memoryTotal*1.0/1024);
 			memoryUsed = (long)Math.ceil(memoryUsed*1.0/1024);
-			vmRunningCount = hostAPI.getVmCountInHost(host, true);
-			vmTotalCount = hostAPI.getVmCountInHost(host, false);
+			if(!StringUtils.isEmpty(vmInstances)){
+				for(VmInstance vmInstance : vmInstances){
+					if(vmInstance.getPowerStatus().equals(CommonConstants.VM_POWER_START)){
+						vmRunningCount++;
+					}
+				}
+				vmTotalCount = vmInstances.size();
+			}
 		}
 		description = host.getNameDescription(connection);
 		hostInstance = new HostInstance(id, name, uuid, clusterId, status, powerStatus, 
@@ -106,7 +121,7 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 		HostInstance hostInstance = null;
 		if(!StringUtils.isEmpty(hostInstances)){
 			try {
-				hostInstance = getHostInstanceById(hostInstances.get(0).getId());
+				hostInstance = getHost(hostInstances.get(0).getId());
 				hostDao.updateHost(hostInstance);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

@@ -179,6 +179,17 @@ public class Demo extends ConnectionUtil {
 					System.out.println(sr.getNameDescription(connection));
 					Set<VDI> vdis = sr.getVDIs(connection);
 					for (VDI vdi : vdis) {
+						System.out.println("----------------==========");
+						System.out.println(vdi.getNameLabel(connection));
+						System.out.println(vdi.getUuid(connection));
+						System.out.println(vdi.getIsASnapshot(connection));
+						System.out.println(vdi.getNameDescription(connection));
+						System.out.println(vdi.getLocation(connection));
+						System.out.println(vdi.getPhysicalUtilisation(connection) / 1024 / 1024);
+						System.out.println(vdi.getType(connection));
+						System.out.println(vdi.getVirtualSize(connection)/1024/1024/1024);
+						System.out.println(vdi.getXenstoreData(connection));
+						
 						Set<VBD> vbds = vdi.getVBDs(connection);
 						for (VBD vbd : vbds) {
 							VM vm = vbd.getVM(connection);
@@ -186,13 +197,15 @@ public class Demo extends ConnectionUtil {
 
 								System.out.println(vbd.getVM(connection).getNameLabel(connection));
 
-								if (vm.getNameLabel(connection).equals("IVYCloud-AD")) {
+								if (vm.getNameLabel(connection).equals("vm-win7")) {
+									
 									VM.Record vmRecord = vm.getRecord(connection);
 									System.out.println("------record---------");
 									System.out.println("version:" + vmRecord.version);
 									System.out.println("VCPUsParams:" + vmRecord.VCPUsParams);
 									// 获得虚拟机所在的主机
-									System.out.println("host:" + vmRecord.residentOn.getNameLabel(connection));
+									Host host2 = vmRecord.residentOn;
+//									System.out.println("host:" + vmRecord.residentOn.getNameLabel(connection));
 									// 获得虚拟机的运行状态
 									System.out.println("powerState:" + vmRecord.powerState.toString());
 									// 特殊平台
@@ -236,8 +249,18 @@ public class Demo extends ConnectionUtil {
 									VMGuestMetrics vmGuestMetrics = vm.getGuestMetrics(connection);
 									System.out.println("disk:" + vmGuestMetrics.getDisks(connection));
 									System.out.println("memory:" + vmGuestMetrics.getMemory(connection));
+									System.out.println(vmGuestMetrics.getOsVersion(connection).get("name"));
 									System.out.println("osVersion" + vmGuestMetrics.getOsVersion(connection));
 									System.out.println("network:" + vmGuestMetrics.getNetworks(connection));
+									Map<String, String> networkInfo = vmGuestMetrics.getNetworks(connection);
+									Set<VIF> vifs = vm.getVIFs(connection);
+									for(VIF vif : vifs){
+										VIF.Record record = vif.getRecord(connection);
+										if(networkInfo != null && networkInfo.size() > 0){
+											String ipKey = record.device + "/ip";
+											System.out.println(networkInfo.get(ipKey));
+										}
+									}
 
 								}
 

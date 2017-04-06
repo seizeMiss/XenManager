@@ -100,7 +100,7 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 		Session session = null;
 		List<VmInstance> vmInstances = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
 			String hql = "from VmInstance";
 			Query query = session.createQuery(hql);
@@ -245,6 +245,45 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			}
 			System.out.println(hql);
 			Query query = session.createQuery(hql);
+			vmInstances = query.list();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
+		return vmInstances;
+	}
+	@Override
+	public List<VmInstance> selectVmInstanceByClusterId(String clusterId) {
+		Session session = null;
+		List<VmInstance> vmInstances = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String hql = "from VmInstance where clusterId = ?";
+			System.out.println(hql);
+			Query query = queryByParams(session, hql, clusterId);
+			vmInstances = query.list();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
+		return vmInstances;
+	}
+	@Override
+	public List<VmInstance> selectVmInstanceByHostId(String hostId) {
+		Session session = null;
+		List<VmInstance> vmInstances = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String hql = "from VmInstance where hostId = ?";
+			Query query = queryByParams(session, hql, hostId);
 			vmInstances = query.list();
 			session.getTransaction().commit();
 		} catch (Exception e) {

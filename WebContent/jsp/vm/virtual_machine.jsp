@@ -158,7 +158,7 @@
 								<tbody class="data-table-tbody">
 									<c:forEach var="vmNeedInfo" items="${vmNeedInfos }">
 										<tr vid="${vmNeedInfo.vmInstance.id }">
-											<td><c:choose>
+											<td class="select-td"><c:choose>
 													<c:when
 														test="${vmNeedInfo.vmInstance.status == 0 || vmNeedInfo.vmInstance.status == 2 || vmNeedInfo.vmInstance.status == 3 || vmNeedInfo.vmInstance.status == 4 || vmNeedInfo.vmInstance.status == 5 || vmNeedInfo.vmInstance.status == 8}">
 														<img src="/VMManager/img/load.gif" />
@@ -247,7 +247,10 @@
 											<td colspan="10">
 												<div class="vm-info">CPU:${vmNeedInfo.vmInstance.cpu }核
 													&nbsp&nbsp内存:${vmNeedInfo.vmInstance.memory }GB &nbsp&nbsp
-													系统盘: ${vmNeedInfo.vmInstance.systemDisk }GB &nbsp&nbsp用户盘:无</div>
+													系统盘: ${vmNeedInfo.vmInstance.systemDisk }GB &nbsp&nbsp用户盘:
+													<c:if test="${vmNeedInfo.userDiskSize == 0}">无</c:if>
+													<c:if test="${vmNeedInfo.userDiskSize > 0}">${vmNeedInfo.userDiskSize  }GB</c:if>
+													</div>
 												<div class="vm-explain">
 													说明:
 													<c:if test="${vmNeedInfo.showMemoryRate == 1}">无</c:if>
@@ -274,7 +277,7 @@
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/script/vm.js"></script>
 	<script type="text/javascript"
-		src="${pageContext.request.contextPath}/script/timer.js"></script>
+		src="${pageContext.request.contextPath}/script/vmtimer.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			var vmCpuUsedRate = "";

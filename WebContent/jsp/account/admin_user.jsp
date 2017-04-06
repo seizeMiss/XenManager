@@ -106,7 +106,7 @@
 										<c:when test="${accounts != null }">
 											<c:forEach var="adminAccount" items="${accounts }">
 												<tr tid="${adminAccount.id }">
-													<td><input type="checkbox" name="checkbox"></td>
+													<td class="select-td"><input type="checkbox" name="checkbox"></td>
 													<td>${adminAccount.userName }</td>
 													<td>${adminAccount.email }</td>
 													<td>${adminAccount.realName }</td>

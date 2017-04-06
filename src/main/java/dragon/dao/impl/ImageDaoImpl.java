@@ -17,7 +17,7 @@ public class ImageDaoImpl extends HibernateUtils implements ImageDao {
 		// TODO Auto-generated method stub
 		Session session = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
 			session.save(image);
 			session.flush();
@@ -36,7 +36,7 @@ public class ImageDaoImpl extends HibernateUtils implements ImageDao {
 		// TODO Auto-generated method stub
 		Session session = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
 			session.update(image);
 			session.flush();
@@ -56,7 +56,7 @@ public class ImageDaoImpl extends HibernateUtils implements ImageDao {
 		Session session = null;
 		List<Image> images = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
 			String hql = "from Image";
 			Query query = session.createQuery(hql);

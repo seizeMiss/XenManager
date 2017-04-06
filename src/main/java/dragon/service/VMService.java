@@ -22,4 +22,7 @@ public interface VMService {
 	public VmInstance getVmInstanceById(String id);
 	public int modifyVm(String cpu, String memory, VmInstance modifyVm);
 	public List<VmInstance> getVmInstancesByIds(String ids);
+	public List<VmInstance> getVmCountByClusterId(String clusterId);
+	public List<VmInstance> getVmCountByHostId(String hostId);
+	public int getUserDiskSize(String vmId);
 }

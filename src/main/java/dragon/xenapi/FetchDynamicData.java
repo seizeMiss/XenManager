@@ -70,26 +70,7 @@ public class FetchDynamicData extends ConnectionUtil {
 	private String[] uuids; // 记录uuid
 	private String[] metrics; // memory_target or others
 	
-	/*private boolean isAvailableVm(VM vm) throws Exception {
-		VM.Record record = vm.getRecord(connection);
-		if (record.isASnapshot || record.isControlDomain || record.isATemplate || record.isSnapshotFromVmpp) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
-	@Test
-	public void printInfo() throws Exception{
-		Set<VM> vms = VM.getAll(connection);
-		for(VM vm : vms){
-			if(isAvailableVm(vm) && vm.getNameLabel(connection).equals("IVYCloud-AD")){
-				System.out.println(vm.getUuid(connection));
-				getVmNeedInfoByParseXml(vm.getUuid(connection));
-			}
-		}
-	}*/
-	
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> getVmNeedInfoByParseXml(String uuid) throws Exception{
 		Map<String, Object> map = new HashMap<String, Object>();
 		Document document = getDocById(uuid, "isVM", "vm");
@@ -221,6 +202,7 @@ public class FetchDynamicData extends ConnectionUtil {
 		return map;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private String[] getMetrics(Document document){
 		Element rootElement = document.getRootElement();
 		List<Element> dsElements = rootElement.elements("ds");

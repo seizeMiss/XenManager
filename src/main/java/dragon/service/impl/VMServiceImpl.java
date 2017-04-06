@@ -23,6 +23,7 @@ import com.xensource.xenapi.VBD;
 import com.xensource.xenapi.VDI;
 import com.xensource.xenapi.VIF;
 import com.xensource.xenapi.VM;
+import com.xensource.xenapi.VMGuestMetrics;
 
 import main.java.dragon.dao.ClusterDao;
 import main.java.dragon.dao.HostDao;
@@ -58,7 +59,6 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	public VMServiceImpl() throws Exception {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	private int getStatusByVmStatus(String vmStatus) {
@@ -148,6 +148,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 				vmStorage.setName(vdi.getNameLabel(connection));
 				vmStorage.setStorageType(vdi.getType(connection).toString());
 				vmStorage.setVmId(vmId);
+				vmStorage.setSize((int)(vdi.getVirtualSize(connection)/1024/1024/1024));
 				vmStorage.setDescription(vdi.getNameDescription(connection));
 				vmStorage.setStorageId(storageId);
 				vmStorages.add(vmStorage);
@@ -175,7 +176,6 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	@Override
 	public void addVm(VmInstance vmInstance, List<VmStorage> vmStorage, List<VmNetwork> vmNetwork) throws Exception {
-		// TODO Auto-generated method stub
 		List<VmInstance> vmInstances = getVmInstance();
 		for (int i = 0; i < vmInstances.size(); i++) {
 			vmDao.insertVm(vmInstances.get(i));
@@ -184,20 +184,17 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	@Override
 	public void saveVm(VmInstance vmInstance, List<VmStorage> vmStorage, List<VmNetwork> vmNetwork) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public List<VmInstance> getAllVm() {
-		// TODO Auto-generated method stub
 		List<VmInstance> vmInstances = vmDao.selectAllVm();
 		return vmInstances;
 	}
 
 	@Override
 	public void deleteVm(String ids) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -214,7 +211,6 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	@Override
 	public List<VmInstance> getVmInstanceByCondition(String vmName, String vmStatus, String vmOsType) {
-		// TODO Auto-generated method stub
 		vmName = StringUtils.isEmpty(vmName) ? "" : vmName;
 		vmOsType = StringUtils.isEmpty(vmOsType) ? "" : vmOsType;
 		int status = 0;
@@ -226,7 +222,6 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	@Override
 	public VmInstance startVm(String id) {
-		// TODO Auto-generated method stub
 		VmInstance vmInstance = vmDao.selectVmById(id);
 		vmInstance.setStatus(CommonConstants.VM_OPENING_STATUS);
 		vmInstance.setPowerStatus(CommonConstants.VM_POWER_START);
@@ -235,11 +230,9 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				try {
 					openVm(id);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -253,12 +246,12 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		XenApiUtil.waitForTask(connection, task, 2000);
 		VmInstance vmInstance = vmDao.selectVmById(id);
 		vmInstance.setStatus(CommonConstants.VM_OPEN_STATUS);
+		vmInstance.setUpdateTime(new Date());
 		vmDao.updateVm(vmInstance);
 	}
 
 	@Override
 	public VmInstance closeVm(String id) {
-		// TODO Auto-generated method stub
 		VmInstance vmInstance = vmDao.selectVmById(id);
 		vmInstance.setStatus(CommonConstants.VM_CLOSING_STATUS);
 		vmInstance.setPowerStatus(CommonConstants.VM_POWER_CLOSED);
@@ -267,11 +260,9 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				try {
 					shutdownVm(id);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -285,12 +276,12 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		XenApiUtil.waitForTask(connection, task, 2000);
 		VmInstance vmInstance = vmDao.selectVmById(id);
 		vmInstance.setStatus(CommonConstants.VM_CLOSE_STATUS);
+		vmInstance.setUpdateTime(new Date());
 		vmDao.updateVm(vmInstance);
 	}
 
 	@Override
 	public VmInstance restartVm(String id) {
-		// TODO Auto-generated method stub
 		VmInstance vmInstance = vmDao.selectVmById(id);
 		vmInstance.setStatus(CommonConstants.VM_RESTARTING_STATUS);
 		vmInstance.setPowerStatus(CommonConstants.VM_POWER_RESTARTING);
@@ -298,11 +289,9 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				try {
 					rebootVm(id);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -316,6 +305,8 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		XenApiUtil.waitForTask(connection, task, 2000);
 		VmInstance vmInstance = vmDao.selectVmById(id);
 		vmInstance.setStatus(CommonConstants.VM_OPEN_STATUS);
+		vmInstance.setPowerStatus(CommonConstants.VM_POWER_START);
+		vmInstance.setUpdateTime(new Date());
 		vmDao.updateVm(vmInstance);
 	}
 
@@ -326,6 +317,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		for(String id : selectedIds){
 			VmInstance vmInstance = vmDao.selectVmById(id);
 			vmInstance.setStatus(CommonConstants.VM_DELETING_STATUS);
+			vmInstance.setUpdateTime(new Date());
 			vmInstances.add(vmInstance);
 			vmDao.updateVm(vmInstance);
 			new Thread(new Runnable() {
@@ -346,9 +338,19 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	// 删除虚拟机
 	public synchronized void deleteVm(VM vm, VmInstance vmInstance) throws Exception {
+		Set<VBD> vbds = vm.getVBDs(connection);
+		for(VBD vbd : vbds){
+			VDI vdi = vbd.getVDI(connection);
+			if(!vdi.getType(connection).toString().endsWith(".iso")){
+				vdi.destroy(connection);
+				vbd.destroy(connection);
+			}
+		}
 		vm.destroy(connection);
-		vmInstance.setPowerStatus("已删除");
+		
+		vmInstance.setPowerStatus(CommonConstants.VM_POWER_DELETED);
 		vmInstance.setStatus(CommonConstants.VM_DELETED_STATUS);
+		vmInstance.setUpdateTime(new Date());
 		vmDao.updateVm(vmInstance);
 	}
 
@@ -379,14 +381,25 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		// makeCDDrive(newVM);
 		Network network = getDefaultNetwork();
 		// 创建网络并挂载到虚机上
-		makeVIF(newVM, network, "0");
+		VIF vif = makeVIF(newVM, network, "0");
+		String ipAddress = "-";
+		VMGuestMetrics guestMetrics = newVM.getGuestMetrics(connection);
+		if(guestMetrics != null && !guestMetrics.isNull()){
+			Map<String, String> networkInfo = guestMetrics.getNetworks(connection);
+			String ipKey = vif.getDevice(connection) + "/ip";
+			if(networkInfo != null && networkInfo.size() > 0){
+				ipAddress = networkInfo.get(ipKey);
+			}
+		}
 		Set<VmNetwork> vmNetworks = getVmNetwork(newVM, vmInstance.getId());
 		Set<VmStorage> vmStorages = getVmStorage(newVM, vmInstance.getId(), vmInstance.getStorageId());
 		vmInstance.setStatus(CommonConstants.VM_CLOSE_STATUS);
 		vmInstance.setPowerStatus(newVM.getPowerState(connection).toString());
+		vmInstance.setVmIp(ipAddress);
 		vmInstance.setVmStorages(vmStorages);
 		vmInstance.setVmNetWorks(vmNetworks);
 		vmInstance.setUuid(newVM.getUuid(connection));
+		vmInstance.setUpdateTime(new Date());
 		vmDao.updateVmAndInsertOther(vmInstance);
 	}
 
@@ -563,7 +576,6 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 					sr = SR.getByUuid(connection, srStorage.getUuid());
 					createVmByImage(vmInstance, userDisk, sr);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -602,7 +614,6 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 							vmInstance.notifyAll();
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -663,7 +674,6 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	@Override
 	public VmInstance getVmInstanceById(String id) {
-		// TODO Auto-generated method stub
 		return vmDao.selectVmById(id);
 	}
 
@@ -703,20 +713,17 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
 					VM vm;
 					try {
 						vm = VM.getByUuid(connection, modifiedVm.getUuid());
 						modfiyVmConfig(vm, memorySize, cpuNumber, modifiedVm);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			}).start();
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return result;
@@ -740,6 +747,30 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 			}
 		}
 		return vmInstances;
+	}
+
+	@Override
+	public List<VmInstance> getVmCountByClusterId(String clusterId) {
+		List<VmInstance> vmInstances = vmDao.selectVmInstanceByClusterId(clusterId);
+		return vmInstances;
+	}
+
+	@Override
+	public List<VmInstance> getVmCountByHostId(String hostId) {
+		List<VmInstance> vmInstances = vmDao.selectVmInstanceByHostId(hostId);
+		return vmInstances;
+	}
+
+	@Override
+	public int getUserDiskSize(String vmId) {
+		List<VmStorage> storages = vmDao.selectVmStorageByVmId(vmId);
+		int userDiskSize = 0;
+		for(VmStorage vmStorage : storages){
+			if(vmStorage.getStorageType().equals("user") && !vmStorage.getName().endsWith(".iso")){
+				userDiskSize += vmStorage.getSize();
+			}
+		}
+		return userDiskSize;
 	}
 
 }

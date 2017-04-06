@@ -19,7 +19,10 @@ public class NumberUtils {
 	 * @return
 	 */
 	public static double computerUsedRate(double total,double free,int scal){
-		double target = ((total-free)/total)*100;
+		double target = 0.0d;
+		if(total > 0){
+			target = ((total-free)/total)*100;
+		}
 		BigDecimal format = new BigDecimal(target);
 		return format.setScale(scal, BigDecimal.ROUND_HALF_UP).doubleValue();
 	}

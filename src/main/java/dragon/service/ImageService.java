@@ -12,4 +12,5 @@ public interface ImageService {
 	public List<Image> getImagesByCondition(String imageName,String imageStatus,String imageOsType);
 	public boolean deleteImages(String ids);
 	public List<Image> getImagesByName(String name);
+	public List<Image> getImagesByIds(String ids);
 }

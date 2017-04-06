@@ -10,6 +10,7 @@ public class VmNeedInfo {
 	private String memoryUsed;
 	private int showMemoryRate;
 	private int showCpuRate;
+	private int userDiskSize;
 	
 
 	public VmNeedInfo() {
@@ -17,7 +18,7 @@ public class VmNeedInfo {
 	}
 	
 	public VmNeedInfo(VmInstance vmInstance, double cpuRate, double memoryRate, String clusterName, String hostName,
-			String memoryTotal, String memoryUsed, int isXenTool, int showCpuRate) {
+			String memoryTotal, String memoryUsed, int isXenTool, int showCpuRate,int userDiskSize) {
 		super();
 		this.vmInstance = vmInstance;
 		this.cpuRate = cpuRate;
@@ -28,9 +29,18 @@ public class VmNeedInfo {
 		this.memoryUsed = memoryUsed;
 		this.showMemoryRate = isXenTool;
 		this.showCpuRate = showCpuRate;
+		this.userDiskSize = userDiskSize;
 	}
 	
 	
+
+	public int getUserDiskSize() {
+		return userDiskSize;
+	}
+
+	public void setUserDiskSize(int userDiskSize) {
+		this.userDiskSize = userDiskSize;
+	}
 
 	public int getShowMemoryRate() {
 		return showMemoryRate;

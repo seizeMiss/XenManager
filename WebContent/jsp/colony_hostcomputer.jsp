@@ -20,7 +20,7 @@
 		//集群存储使用率
 		setCircleProgressColorInRange($(".cluster-storage-rate"), clusterStorageUserRate);
 		//主机内存使用率
-		setCircleProgressColorInRange($(".host-storage-rate"), hostMemoryUsedRate);
+		setCircleProgressColorInRange($(".host-memory-rate"), hostMemoryUsedRate);
 		//主机CPU使用率
 		setCircleProgressColorInRange($(".host-cpu-rate"), hostCpuUsedRate);
 		
@@ -130,7 +130,7 @@
 											<td><span id="show-colony-details" class="glyphicon glyphicon-chevron-down" style="cursor:pointer;line-height: 50px;margin-left: 30px;color: #337ab7"></span></td>
 										</tr>
 										<tr id="hide-colony-details">
-											<td colspan="11">${cluster.description == "" ? "无" : cluster.description}</td>
+											<td colspan="11">描述：${cluster.description == "" ? "无" : cluster.description}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -193,7 +193,7 @@
 											<td><span id="show-hostcomputer-details" class="glyphicon glyphicon-chevron-down" style="line-height: 50px;cursor:pointer;margin-left: 30px;color: #337ab7"></span></td>
 										</tr>
 										<tr id="hide-hostcomputer-details">
-											<td colspan="11">${hostInstance.description }</td>
+											<td colspan="11">描述：${hostInstance.description }</td>
 										</tr>
 										
 									</tbody>
