@@ -25,7 +25,9 @@ import com.xensource.xenapi.VMMetrics;
 import main.java.dragon.dao.ClusterDao;
 import main.java.dragon.dao.VMDao;
 import main.java.dragon.pojo.Cluster;
+import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.service.ClusterService;
+import main.java.dragon.utils.CommonConstants;
 import main.java.dragon.utils.StringUtils;
 import main.java.dragon.xenapi.FetchDynamicData;
 import main.java.dragon.xenapi.HostAPI;
@@ -92,7 +94,12 @@ public class ClusterServiceImpl extends ConnectionUtil implements ClusterService
 		storageTotal = hostAPI.getStorageInHost(host).get(1);
 		storageUsed = hostAPI.getStorageInHost(host).get(2);
 		hostCount = 1;
-		vmCount = vmDao.selectVmInstanceByClusterId(id) != null ? vmDao.selectVmInstanceByClusterId(id).size() : 0;
+		List<VmInstance> vmInstances = vmDao.selectVmInstanceByClusterId(id);
+		for(VmInstance vmInstance : vmInstances){
+			if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS){
+				vmCount++;
+			}
+		}
 		description = pool.getNameDescription(connection);
 		cluster = new Cluster(id, name, ipAddress, status, cpuAverage, memoryTotal.intValue(), memoryUsed.intValue(),
 				storageTotal, storageUsed, storageCount, hostCount, vmCount, description);

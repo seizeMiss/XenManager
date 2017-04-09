@@ -2,15 +2,19 @@ package main.java.dragon.timer;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadataResolutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.xensource.xenapi.VBD;
 import com.xensource.xenapi.VDI;
+import com.xensource.xenapi.VIF;
 import com.xensource.xenapi.VM;
+import com.xensource.xenapi.VMGuestMetrics;
 
 import main.java.dragon.dao.VMDao;
 import main.java.dragon.pojo.VmInstance;
@@ -27,12 +31,13 @@ public class VmInfoTimer extends ConnectionUtil {
 		super();
 	}
 
-	@Scheduled(cron = "0/30 * * * * ?") // 每十秒更新一次
+	@Scheduled(cron = "0/60 * * * * ?") // 每一分钟更新一次
 	public void refreshVmInfo() {
 		List<VmInstance> vmInstances = vmDao.selectAllVm();
 		try {
 			for (VmInstance vmInstance : vmInstances) {
-				if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS){
+				if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS
+						&& vmInstance.getStatus() != CommonConstants.VM_CREATING_STATUS){
 					VM vm = VM.getByUuid(connection, vmInstance.getUuid());
 					String realPowerStatus = vm.getPowerState(connection).toString();
 					if (!vmInstance.getPowerStatus().equals(realPowerStatus)) {
@@ -61,9 +66,21 @@ public class VmInfoTimer extends ConnectionUtil {
 			cpu = vm.getMetrics(connection).getVCPUsNumber(connection).intValue();
 			memory = (int) (vm.getMemoryTarget(connection) / 1024 / 1024);
 			status = getStatusByPowerStatus(realPowerStatus);
+			String ipAddress = "-";
+			
+			VMGuestMetrics guestMetrics = vm.getGuestMetrics(connection);
+			if(guestMetrics != null && !guestMetrics.isNull()){
+				Map<String, String> networkInfo = guestMetrics.getNetworks(connection);
+				VIF vif = getDefaultVIF(vm);
+				String ipKey = vif.getDevice(connection) + "/ip";
+				if(networkInfo != null && networkInfo.size() > 0){
+					ipAddress = networkInfo.get(ipKey);
+				}
+			}
+			vmInstance.setVmIp(ipAddress);
 			vmInstance.setSystemDisk(systemDiskSize);
 			vmInstance.setPowerStatus(realPowerStatus);
-			if(realPowerStatus.equals(CommonConstants.VM_POWER_CLOSED)){
+			if(!realPowerStatus.equals(CommonConstants.VM_POWER_CLOSED)){
 				vmInstance.setCpu(cpu);
 				vmInstance.setMemory(memory);
 			}
@@ -72,6 +89,16 @@ public class VmInfoTimer extends ConnectionUtil {
 			vmInstance.setName(name);
 		}
 		return vmInstance;
+	}
+	private VIF getDefaultVIF(VM vm) throws Exception{
+		Set<VIF> vifs = vm.getVIFs(connection);
+		VIF defaultVif = null;
+		for(VIF vif : vifs){
+			if(vif != null && !vif.isNull()){
+				defaultVif = vif;
+			}
+		}
+		return defaultVif;
 	}
 	
 	private int getSystemDiskSize(VM vm) throws Exception{

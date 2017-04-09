@@ -1,3 +1,8 @@
+*{
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
 .container{
 	width: 100%;
 	height: 100%;
@@ -21,17 +26,25 @@
 #loginout, #head-user{
 	font-size: 20px;
 	line-height: 55px;
-	margin-left: 30px;
+	margin-left: 20px;
 }
 #head-main{
-	font-size: 20px;
+	font-size: 25px;
 	line-height: 55px;
 }
 #loginout{
-	margin-right: 15px;
+	margin-right: 20px;
 }
 #head-user{
 	color: #337ab7;
+}
+.message-number{
+	position: relative;
+	left: -12px;
+	top: -10px;
+	background: red;
+	display: none;
+	
 }
 #head-user + a{
 	font-size: 25px;
@@ -50,6 +63,7 @@
 	background: #323232;
 	display: table-cell;
 	border-right: 1px solid gray;
+	float: none !important;
 }
 .left-nav ul li{
 	border-bottom: 1px solid gray;
@@ -69,6 +83,7 @@
 	display: table-cell;
 	min-width: 1100px;
 	background: #ededed;
+	float: none !important;
 }
 .nav-content{
 	width: 100%;
@@ -176,17 +191,38 @@ textarea{
 .content-search-submit button{
 	margin-right: 20px;
 }
-/*棣栭〉*/
-.show-resource-use-rate, .show-vm-total{
+/*首页*/
+.show-vm-cpu{
+	width: 100%;
+	height: 280px;
+}
+.show-memory-storage{
+	width: 100%;
+	height: 280px;
+}
+.show-vm-total,.show-memory-use-rate{
+	position: relative;
+	top: 5px;
+	left: 10px;
 	width: 47%;
 	height: 250px;
 	margin-top: 20px;
 	margin-left: 20px;
-	float: left;
+	border: 1px solid gray;
+}
+.show-cpu-use-rate,.show-storage-use-rate{
+	position: relative;
+	top: -94.8%;
+	left: 50%;
+	width: 47%;
+	height: 250px;
+	margin-top: 20px;
+	margin-left: 20px;
 	border: 1px solid gray;
 }
 .show-percentage{
 	position: relative;
+	width:15%;
 	left: 40%;
 	bottom: 120px;
 }

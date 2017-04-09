@@ -1,0 +1,114 @@
+<!DOCTYPE >
+<html>
+<head>
+<title>VMManager Center</title>
+<meta content="text/html" charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<link rel="stylesheet" href="../bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/normalize.css" />
+<link rel="stylesheet" type="text/css" href="../css/scroll.css" />
+<link rel="stylesheet" type="text/css" href="../css/common.css" />
+<script type="text/javascript" src="../script/jquery-2.1.0.js"></script>
+<script src="../bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<div class="pull-left">
+				<img src="../img/logo3.png" ondragstart="return false;" />
+			</div>
+			<div class="pull-right">
+				<ul class="head-ul">
+					<li title="任务消息"><a href="#"> <span id="head-main"
+							class="glyphicon glyphicon-th"></span>
+					</a></li>
+					<li><span id="head-user" class="glyphicon glyphicon-user"></span>
+						<a id="popover-local-user" href="#" data-container="body"
+						data-toggle="popover" data-placement="bottom"
+						data-content="<a href='local_user.html' style='color:#605757'>用户信息</a>">
+							admin </a></li>
+					<li title="注销"><a href="login.html"> <span id="loginout"
+							class="glyphicon glyphicon-log-out"></span>
+					</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="left-nav">
+				<ul id="nav" class="nav nav-pills nav-stacked">
+					<li class="nav-li"><a href="index.html"><span
+							class="glyphicon glyphicon-home left-nav-icon"></span>首页</a></li>
+					<li class="nav-li"><a href="colony_hostcomputer.html"><span
+							class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>集群和主机</a>
+					</li>
+					<li class="nav-li"><a href="image.html"><span
+							class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>镜像</a></li>
+					<li class="nav-li"><a href="virtual_machine.html"><span
+							class="glyphicon glyphicon-cloud left-nav-icon"></span> 虚拟机 </a></li>
+					<li class="nav-li"><a href="#user-child"
+						data-toggle="collapse" data-parent="left-nav"> <span
+							class="glyphicon glyphicon-cog left-nav-icon"></span> 用户管理 <i
+							class="glyphicon glyphicon-chevron-left pull-right"
+							style="line-height: 16px;"></i>
+					</a>
+						<div id="user-child" class="panel-collapse collapse">
+							<ul class="nav nav-pills nav-stacked" style="width: auto;">
+								<li><a href="local_user.html"><span
+										style="margin-left: 50px;">本地用户</span></a></li>
+								<li><a href="admin_user.html"><span
+										style="margin-left: 50px;">管理员</span></a></li>
+							</ul>
+						</div></li>
+					<li class="nav-li active"><a href="#"><span
+							class="glyphicon glyphicon-stats left-nav-icon"></span>关于</a></li>
+				</ul>
+			</div>
+			<div class="page-content">
+				<div class="show-vm-total">
+					<div class="vm-title">
+						<span>虚拟机状态</span>
+					</div>
+					<div class="vm-number">
+						<div class="vm-close-number">
+							<a href="virtual_machine.html">0</a>
+							<h3>异常</h3>
+						</div>
+						<div class="vm-line"></div>
+						<div class="vm-open-number">
+							<a href="virtual_machine.html">0</a>
+							<h3>正常</h3>
+						</div>
+					</div>
+				</div>
+				<div class="show-resource-use-rate">
+					<div class="resource-name">
+						<span>CPU使用率</span>
+					</div>
+					<div id="cpu-use-rate"></div>
+					<div class="show-percentage">
+						<a href="colony_hostcomputer.html"></a> <span>%</span>
+					</div>
+				</div>
+				<div class="show-resource-use-rate">
+					<div class="resource-name">
+						<span>内存使用率</span>
+					</div>
+					<div id="ram-use-rate"></div>
+					<div class="show-percentage">
+						<a href="colony_hostcomputer.html"></a> <span>%</span>
+					</div>
+				</div>
+				<div class="show-resource-use-rate">
+					<div class="resource-name">
+						<span>存储使用率</span>
+					</div>
+					<div id="storage-use-rate"></div>
+					<span class="total-storage">总300G</span>
+				</div>
+			</div>
+		</div>
+		<div class="footer"></div>
+	</div>
+</body>
+</html>

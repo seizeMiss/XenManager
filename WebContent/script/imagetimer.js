@@ -61,7 +61,7 @@ function imageStatusMapping(status){
 	case -1:
 		status = "不可用";
 		break;
-	case 0:
+	case 2:
 		status = "创建中";
 		break;
 	case 1:

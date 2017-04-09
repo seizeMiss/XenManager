@@ -94,9 +94,9 @@ public class ImageController {
 		String imageOsType = StringUtils.setEncodeString(request.getParameter("selected-os"));
 		List<Image> imagesbyCondition = imageService.getImagesByCondition(imageName, imageStatus, imageOsType);
 		List<Image> allImages = imageService.getAllImages();
+		Set<String> imageOsNames = getImageSystemName(allImages);
+		model.addAttribute("images", imagesbyCondition);
 		if(!StringUtils.isEmpty(imagesbyCondition)){
-			Set<String> imageOsNames = getImageSystemName(allImages);
-			model.addAttribute("images", imagesbyCondition);
 			model.addAttribute("imageCount", imagesbyCondition.size());
 			model.addAttribute("imageOsNames", imageOsNames);
 		}

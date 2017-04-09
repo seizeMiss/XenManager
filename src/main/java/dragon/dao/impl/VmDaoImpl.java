@@ -21,7 +21,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 
 	@Override
 	public void insertVm(VmInstance vmInstance) {
-		// TODO Auto-generated method stub
 		Session session = null;
 		try {
 			session = getSession();
@@ -40,7 +39,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			session.getTransaction().rollback();
 			e.printStackTrace();
 		}finally{
@@ -67,7 +65,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			session.getTransaction().rollback();
 			e.printStackTrace();
 		}finally{
@@ -77,7 +74,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 
 	@Override
 	public void updateVm(VmInstance vmInstance) {
-		// TODO Auto-generated method stub
 		Session session = null;
 		try {
 			session = sessionFactory.openSession();
@@ -86,7 +82,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			session.getTransaction().rollback();
 			e.printStackTrace();
 		}finally{
@@ -96,7 +91,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 
 	@Override
 	public List<VmInstance> selectAllVm() {
-		// TODO Auto-generated method stub
 		Session session = null;
 		List<VmInstance> vmInstances = null;
 		try {
@@ -107,7 +101,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			vmInstances = query.list();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}finally{
 			closeSession(session);
@@ -118,7 +111,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 
 	@Override
 	public VmInstance selectVmById(String id) {
-		// TODO Auto-generated method stub
 		Session session = null;
 		VmInstance vmInstance = null;
 		try {
@@ -127,7 +119,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			vmInstance = (VmInstance) session.get(VmInstance.class, id);
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}finally{
 			closeSession(session);
@@ -137,7 +128,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 
 	@Override
 	public List<VmStorage> selectVmStorageByVmId(String id) {
-		// TODO Auto-generated method stub
 		Session session = null;
 		List<VmStorage> selectVmStorage = null;
 		try {
@@ -148,7 +138,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			selectVmStorage = query.list();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}finally{
 			closeSession(session);
@@ -158,7 +147,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 
 	@Override
 	public List<VmNetwork> selectVmNetwrokByVmId(String id) {
-		// TODO Auto-generated method stub
 		Session session = null;
 		List<VmNetwork> selectVmNetworks = null;
 		try {
@@ -169,7 +157,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			selectVmNetworks = query.list();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}finally{
 			closeSession(session);
@@ -179,7 +166,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 
 	@Override
 	public VmInstance deleteVm(String id) {
-		// TODO Auto-generated method stub
 		Session session = null;
 		VmInstance vmInstance = null;
 		try {
@@ -198,7 +184,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			session.getTransaction().rollback();
 			e.printStackTrace();
 		}finally {
@@ -220,7 +205,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			vmInstances = query.list();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}finally{
 			closeSession(session);
@@ -248,7 +232,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			vmInstances = query.list();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}finally{
 			closeSession(session);
@@ -268,7 +251,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			vmInstances = query.list();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}finally{
 			closeSession(session);
@@ -287,7 +269,6 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 			vmInstances = query.list();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}finally{
 			closeSession(session);

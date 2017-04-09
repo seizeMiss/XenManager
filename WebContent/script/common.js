@@ -248,8 +248,9 @@ $(function() {
 			animation:'pop',
 			placement:'bottom',
 			width: 150,
-			content:"任务消息"
+			content:"无任务消息"
 	});
+	
 	//点击选择集群
 	$("#select-cluster li").click(function(){
 		$("#selected-cluster").val($(this).children("a").html());

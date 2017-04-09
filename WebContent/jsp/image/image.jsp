@@ -64,15 +64,15 @@
 										<button type="button" class="btn btn-default dropdown-toggle show-state" data-toggle="dropdown">
 											&nbsp;<span class="caret" style="font-size: 10px;"></span>
 										</button>
-										<ul id= "select-state" class="dropdown-menu pull-right" style="width: 190px;height:70px;">
+										<ul id= "select-state" class="dropdown-menu pull-right" style="width: 190px;height:85px;">
 											<li>
-												<a href="javacript:void(0)">可用</a>
+												<a href="javascript:void(0)">可用</a>
 											</li>
 											<li>
-												<a href="javacript:void(0)">不可用</a>
+												<a href="javascript:void(0)">不可用</a>
 											</li>
 											<li>
-												<a href="javacript:void(0)">创建中</a>
+												<a href="javascript:void(0)">创建中</a>
 											</li>
 										</ul>
 									</div>
@@ -92,7 +92,7 @@
 										<ul id= "select-os" class="dropdown-menu pull-right" style="width: 190px;">
 											<c:forEach var="osType" items="${imageOsNames }">
 												<li>
-													<a href="javacript:void(0)">${osType }</a>
+													<a href="javascript:void(0)">${osType }</a>
 												</li>
 											</c:forEach>
 										</ul>
@@ -146,7 +146,7 @@
 													<tr iid = "${image.id }">
 														<td>
 														<c:choose>
-															<c:when test="${image.status == 0 || image.status == 4 }"><img src="/VMManager/img/load.gif"/></c:when>
+															<c:when test="${image.status == 2 || image.status == 4 }"><img src="/VMManager/img/load.gif"/></c:when>
 															<c:otherwise><input type="radio" name="checkbox"></c:otherwise>
 														</c:choose>
 														</td>

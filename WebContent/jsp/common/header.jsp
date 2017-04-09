@@ -6,11 +6,13 @@
 	</div>
 	<div class="pull-right">
 		<ul class="head-ul">
-			<li title="任务消息"><a href="#"> <span id="head-main"
+			<li title="任务消息"><a href="javascript:void(0)"> <span id="head-main"
 					class="glyphicon glyphicon-th"></span>
-			</a></li>
+			</a>
+			<span class="badge message-number">1</span>
+			</li>
 			<li><span id="head-user" class="glyphicon glyphicon-user"></span>
-				<a id="popover-local-user" href="#" data-container="body"
+				<a id="popover-local-user" href="javascript:void(0)" data-container="body"
 				data-toggle="popover" data-placement="bottom"
 				data-content="<a href='showLocalUser' style='color:#605757'>用户信息</a>">
 					${account.userName } </a></li>

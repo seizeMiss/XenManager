@@ -37,6 +37,11 @@ import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.pojo.VmNetwork;
 import main.java.dragon.pojo.VmStorage;
 import main.java.dragon.service.VMService;
+import main.java.dragon.thread.DeleteVmsThread;
+import main.java.dragon.thread.ModifyVMThread;
+import main.java.dragon.thread.ReStartVMThread;
+import main.java.dragon.thread.ShutdownVmThread;
+import main.java.dragon.thread.StartVmThread;
 import main.java.dragon.utils.CommonConstants;
 import main.java.dragon.utils.StringUtils;
 import main.java.dragon.xenapi.FetchDynamicData;
@@ -148,7 +153,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 				vmStorage.setName(vdi.getNameLabel(connection));
 				vmStorage.setStorageType(vdi.getType(connection).toString());
 				vmStorage.setVmId(vmId);
-				vmStorage.setSize((int)(vdi.getVirtualSize(connection)/1024/1024/1024));
+				vmStorage.setSize((int) (vdi.getVirtualSize(connection) / 1024 / 1024 / 1024));
 				vmStorage.setDescription(vdi.getNameDescription(connection));
 				vmStorage.setStorageId(storageId);
 				vmStorages.add(vmStorage);
@@ -201,8 +206,8 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	@Override
 	public List<VmInstance> getVmInstanceByName(String name) {
 		List<VmInstance> vmInstances = new ArrayList<VmInstance>();
-		for(VmInstance vmInstance : vmDao.selectVmInstanceByName(name)){
-			if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS){
+		for (VmInstance vmInstance : vmDao.selectVmInstanceByName(name)) {
+			if (vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS) {
 				vmInstances.add(vmInstance);
 			}
 		}
@@ -226,28 +231,9 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		vmInstance.setStatus(CommonConstants.VM_OPENING_STATUS);
 		vmInstance.setPowerStatus(CommonConstants.VM_POWER_START);
 		vmDao.updateVm(vmInstance);
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					openVm(id);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
+		StartVmThread startVmThread = new StartVmThread(id, connection);
+		new Thread(startVmThread).start();//开启线程
 		return vmInstance;
-	}
-
-	private void openVm(String id) throws Exception {
-		VM vm = getVmByVmInstanceId(id);
-		Task task = vm.startAsync(connection, false, false);
-		XenApiUtil.waitForTask(connection, task, 2000);
-		VmInstance vmInstance = vmDao.selectVmById(id);
-		vmInstance.setStatus(CommonConstants.VM_OPEN_STATUS);
-		vmInstance.setUpdateTime(new Date());
-		vmDao.updateVm(vmInstance);
 	}
 
 	@Override
@@ -256,28 +242,9 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		vmInstance.setStatus(CommonConstants.VM_CLOSING_STATUS);
 		vmInstance.setPowerStatus(CommonConstants.VM_POWER_CLOSED);
 		vmDao.updateVm(vmInstance);
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					shutdownVm(id);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
+		ShutdownVmThread shutdownVmThread = new ShutdownVmThread(id, connection);
+		new Thread(shutdownVmThread).start();
 		return vmInstance;
-	}
-
-	private void shutdownVm(String id) throws Exception {
-		VM vm = getVmByVmInstanceId(id);
-		Task task = vm.shutdownAsync(connection);
-		XenApiUtil.waitForTask(connection, task, 2000);
-		VmInstance vmInstance = vmDao.selectVmById(id);
-		vmInstance.setStatus(CommonConstants.VM_CLOSE_STATUS);
-		vmInstance.setUpdateTime(new Date());
-		vmDao.updateVm(vmInstance);
 	}
 
 	@Override
@@ -286,270 +253,28 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		vmInstance.setStatus(CommonConstants.VM_RESTARTING_STATUS);
 		vmInstance.setPowerStatus(CommonConstants.VM_POWER_RESTARTING);
 		vmDao.updateVm(vmInstance);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					rebootVm(id);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
+		ReStartVMThread startVMThread = new ReStartVMThread(id, connection);
+		new Thread(startVMThread).start();
 		return vmInstance;
-	}
-
-	private void rebootVm(String id) throws Exception {
-		VM vm = getVmByVmInstanceId(id);
-		Task task = vm.hardRebootAsync(connection);
-		XenApiUtil.waitForTask(connection, task, 2000);
-		VmInstance vmInstance = vmDao.selectVmById(id);
-		vmInstance.setStatus(CommonConstants.VM_OPEN_STATUS);
-		vmInstance.setPowerStatus(CommonConstants.VM_POWER_START);
-		vmInstance.setUpdateTime(new Date());
-		vmDao.updateVm(vmInstance);
 	}
 
 	@Override
 	public List<VmInstance> deleteVms(String ids) {
 		List<VmInstance> vmInstances = new ArrayList<VmInstance>();
 		String[] selectedIds = ids.split(";");
-		for(String id : selectedIds){
+		for (String id : selectedIds) {
 			VmInstance vmInstance = vmDao.selectVmById(id);
 			vmInstance.setStatus(CommonConstants.VM_DELETING_STATUS);
 			vmInstance.setUpdateTime(new Date());
 			vmInstances.add(vmInstance);
 			vmDao.updateVm(vmInstance);
-			new Thread(new Runnable() {
-				public void run() {
-					VM vm = null;
-					try {
-						vm = VM.getByUuid(connection, vmInstance.getUuid());
-						deleteVm(vm,vmInstance);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}).start();
-			
+			DeleteVmsThread deleteVmsThread = new DeleteVmsThread(vmInstance, connection);
+			new Thread(deleteVmsThread).start();
+
 		}
 		return vmInstances;
 	}
-
-	// 删除虚拟机
-	public synchronized void deleteVm(VM vm, VmInstance vmInstance) throws Exception {
-		Set<VBD> vbds = vm.getVBDs(connection);
-		for(VBD vbd : vbds){
-			VDI vdi = vbd.getVDI(connection);
-			if(!vdi.getType(connection).toString().endsWith(".iso")){
-				vdi.destroy(connection);
-				vbd.destroy(connection);
-			}
-		}
-		vm.destroy(connection);
-		
-		vmInstance.setPowerStatus(CommonConstants.VM_POWER_DELETED);
-		vmInstance.setStatus(CommonConstants.VM_DELETED_STATUS);
-		vmInstance.setUpdateTime(new Date());
-		vmDao.updateVm(vmInstance);
-	}
-
-	private void createVmByImage(VmInstance vmInstance, String userDisk, SR sr) throws Exception {
-		VolumeAPI volAPI = new VolumeAPI();
-		String name = vmInstance.getName();
-		// VM vmTemplate = getSystemTemplate(os);
-		VM.Record vmRecord = createVmRecord(name, vmInstance.getMemory(), vmInstance.getCpu());
-		// 根据虚机属性创建虚拟机
-		Task task = VM.createAsync(connection, vmRecord);
-		XenApiUtil.waitForTask(connection, task, 2000);
-		VM newVM = Types.toVM(task, connection);
-		Image image = imageDao.selectImageById(vmInstance.getImageId());
-		VDI srcVDI = VDI.getByUuid(connection, image.getUuid());
-
-		VDI newVdi = volAPI.cloneNewVDI(srcVDI, name + "_COPY");
-
-		attachVDI(newVM, newVdi, true);
-		// 添加用户磁盘
-		if (!StringUtils.isEmpty(userDisk)) {
-			String[] userDisks = userDisk.split(";");
-			for (int i = 0; i < userDisks.length; i++) {
-				int diskSize = Integer.parseInt(userDisks[i]);
-				createDisk(newVM, sr, name + "-userDate-" + i, diskSize);
-			}
-		}
-		// 创建虚拟光驱
-		// makeCDDrive(newVM);
-		Network network = getDefaultNetwork();
-		// 创建网络并挂载到虚机上
-		VIF vif = makeVIF(newVM, network, "0");
-		String ipAddress = "-";
-		VMGuestMetrics guestMetrics = newVM.getGuestMetrics(connection);
-		if(guestMetrics != null && !guestMetrics.isNull()){
-			Map<String, String> networkInfo = guestMetrics.getNetworks(connection);
-			String ipKey = vif.getDevice(connection) + "/ip";
-			if(networkInfo != null && networkInfo.size() > 0){
-				ipAddress = networkInfo.get(ipKey);
-			}
-		}
-		Set<VmNetwork> vmNetworks = getVmNetwork(newVM, vmInstance.getId());
-		Set<VmStorage> vmStorages = getVmStorage(newVM, vmInstance.getId(), vmInstance.getStorageId());
-		vmInstance.setStatus(CommonConstants.VM_CLOSE_STATUS);
-		vmInstance.setPowerStatus(newVM.getPowerState(connection).toString());
-		vmInstance.setVmIp(ipAddress);
-		vmInstance.setVmStorages(vmStorages);
-		vmInstance.setVmNetWorks(vmNetworks);
-		vmInstance.setUuid(newVM.getUuid(connection));
-		vmInstance.setUpdateTime(new Date());
-		vmDao.updateVmAndInsertOther(vmInstance);
-	}
-
-	private VM getVmByVmInstanceId(String id) throws Exception {
-		VmInstance vmInstance = vmDao.selectVmById(id);
-		return VM.getByUuid(connection, vmInstance.getUuid());
-	}
-
-	// 根据传入的参数生成虚机的属性。
-	private VM.Record createVmRecord(String name, long ram, long cpu) {
-
-		// 该值为Windows平台的配置。
-		Map<String, String> platform = new HashMap<String, String>();
-		platform.put("viridian", "true");
-		platform.put("viridian_time_ref_count", "true");
-		platform.put("viridian_reference_tsc", "true");
-		platform.put("acpi", "1");
-		platform.put("apic", "true");
-		platform.put("pae", "true");
-		platform.put("nx", "true");
-		platform.put("cores-per-socket", "1");
-		platform.put("timeoffset", "28806");
-		platform.put("device_id", "0002");
-		VM.Record vmRecord = new VM.Record();
-		vmRecord.memoryStaticMax = ram * 1024 * 1024;
-		vmRecord.memoryStaticMin = ram * 1024 * 1024;
-		vmRecord.memoryDynamicMax = ram * 1024 * 1024;
-		vmRecord.memoryDynamicMin = ram * 1024 * 1024;
-		vmRecord.memoryTarget = 0L;
-		vmRecord.recommendations = "<restrictions><restriction field=\"memory-static-max\" max=\"137438953472\" /><restriction field=\"vcpus-max\" max=\"16\" /><restriction property=\"number-of-vbds\" max=\"16\" /><restriction property=\"number-of-vifs\" max=\"7\" /></restrictions>";
-		vmRecord.VCPUsMax = cpu;
-		vmRecord.VCPUsAtStartup = cpu;
-		vmRecord.nameLabel = name;
-		vmRecord.otherConfig = new HashMap<String, String>();
-		vmRecord.platform = platform;
-		vmRecord.HVMShadowMultiplier = 1.0d;
-		vmRecord.HVMBootPolicy = "BIOS order";
-		vmRecord.actionsAfterCrash = Types.OnCrashBehaviour.RESTART;
-		vmRecord.actionsAfterReboot = Types.OnNormalExit.RESTART;
-		vmRecord.actionsAfterShutdown = Types.OnNormalExit.DESTROY;
-
-		return vmRecord;
-	}
-
-	// 挂载VDI到VM上
-	private void attachVDI(VM vm, VDI vdi, boolean systemDisk) throws Exception {
-
-		VBD.Record vbdRecord = new VBD.Record();
-		vbdRecord.VM = vm;
-		vbdRecord.VDI = vdi;
-		vbdRecord.mode = Types.VbdMode.RW;
-		vbdRecord.type = Types.VbdType.DISK;
-		// 系统盘的，userdevice必须为"0"
-		vbdRecord.userdevice = systemDisk ? "0" : getVbdDevicePosition(vm);
-		VBD.create(connection, vbdRecord);
-	}
-
-	// 获取第一个网络
-	private Network getDefaultNetwork() throws Exception {
-		Set<Network> networks = Network.getAll(connection);
-
-		for (Network i : networks) {
-			return i;
-		}
-		throw new Exception("No networks found!");
-	}
-
-	// 获取可挂载的设备位置
-	public String getVbdDevicePosition(VM vm) throws Exception {
-		Set<VBD> vbdSet = vm.getVBDs(connection);
-		Set<String> devicePositionSet = new HashSet<String>();
-		for (VBD vbd : vbdSet) {
-			VBD.Record record = vbd.getRecord(connection);
-			devicePositionSet.add(record.userdevice);
-		}
-
-		for (int i = 1; i < 16; i++) {
-			if (!devicePositionSet.contains(String.valueOf(i))) {
-				return String.valueOf(i);
-			}
-		}
-		throw new Exception("Can't find vaild device position");
-
-	}
-
-	// 创建一个网卡并挂载到VM上。
-	private VIF makeVIF(VM newVm, Network network, String device) throws Exception {
-		VIF.Record newvifrecord = new VIF.Record();
-		// These three parameters are used in the command line VIF creation
-		newvifrecord.VM = newVm;
-		newvifrecord.network = network;
-		newvifrecord.device = device;
-		newvifrecord.MTU = 1500L;
-		newvifrecord.lockingMode = Types.VifLockingMode.NETWORK_DEFAULT;
-
-		return VIF.create(connection, newvifrecord);
-	}
-
-	// 创建空的磁盘,并挂载到VM上
-	private void createDisk(VM vm, SR sr, String name, long size) throws Exception {
-		VDI.Record vdir = new VDI.Record();
-		vdir.type = Types.VdiType.USER;
-		// 代表将放置 VDI 的位的物理存储
-		vdir.SR = sr;
-		vdir.nameLabel = name;
-		vdir.virtualSize = size * 1024 * 1024 * 1024;
-		vdir.readOnly = false;
-		// 创建空白磁盘映像
-		VDI vdi = VDI.create(connection, vdir);
-		attachDisk(vm, vdi, false);
-	}
-
-	private void attachDisk(VM vm, VDI vdi, boolean isSystemDisk) throws Exception {
-		VBD.Record vbdRecord = new VBD.Record();
-		vbdRecord.VM = vm;
-		vbdRecord.VDI = vdi;
-		// 指定 VDI 是以只读方式还是读写方式连接。
-		vbdRecord.mode = Types.VbdMode.RW;
-		// 指定 VDI 是应当作为常规磁盘还是作为 CD 显示在 VM 中
-		vbdRecord.type = Types.VbdType.DISK;
-		if (isSystemDisk) {
-			vbdRecord.bootable = true;
-			vbdRecord.userdevice = "0";
-		} else {
-			// 指定来宾系统中的块设备，通过该设备正在 VM 中运行的应用程序将能读/写 VDI 的位。
-			vbdRecord.userdevice = getVbdDeviceAvailablePosition(connection, vm);
-		}
-		vbdRecord.device = "xvda";
-		VBD.create(connection, vbdRecord);
-	}
-
-	/**
-	 * 获取磁盘挂载的position
-	 */
-	public static String getVbdDeviceAvailablePosition(Connection connection, VM vm) throws Exception {
-		Set<VBD> vbds = vm.getVBDs(connection);
-		Set<String> devicePositionSet = new HashSet<String>();
-		for (VBD vbd : vbds) {
-			VBD.Record vbdRecord = vbd.getRecord(connection);
-			devicePositionSet.add(vbdRecord.userdevice);
-		}
-
-		for (int i = 1; i < 16; i++) {
-			if (!devicePositionSet.contains(String.valueOf(i))) {
-				return String.valueOf(i);
-			}
-		}
-		throw new Exception("vm can't find valid user_device position");
-	}
-
+	
 	@Override
 	public int addVm(String vmName, String clusterId, String imageId, String cpuNumber, String memorySize,
 			String storageId, String userDisk) {
@@ -574,7 +299,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 				SR sr = null;
 				try {
 					sr = SR.getByUuid(connection, srStorage.getUuid());
-					createVmByImage(vmInstance, userDisk, sr);
+//					createVmByImage(vmInstance, userDisk, sr);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -610,7 +335,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 					try {
 						sr = SR.getByUuid(connection, srStorage.getUuid());
 						synchronized (vmInstance) {
-							createVmByImage(vmInstance, userDisk, sr);
+//							createVmByImage(vmInstance, userDisk, sr);
 							vmInstance.notifyAll();
 						}
 					} catch (Exception e) {
@@ -676,28 +401,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	public VmInstance getVmInstanceById(String id) {
 		return vmDao.selectVmById(id);
 	}
-
-	// 修改虚拟机配置
-	private void modfiyVmConfig(VM vm, long memory, long cpu, VmInstance vmInstance) throws Exception {
-
-		long memorySize = memory * 1024 * 1024 * 1024;
-		vm.setMemoryLimits(connection, memorySize, memorySize, memorySize, memorySize);
-		VM.Record record = vm.getRecord(connection);
-
-		// 修改CPU配置时，需要对CPU的个数进行判断，并确定配置的先后顺序。
-		if (record.VCPUsAtStartup > cpu) {
-			vm.setVCPUsAtStartup(connection, cpu);
-			vm.setVCPUsMax(connection, cpu);
-		} else {
-			vm.setVCPUsMax(connection, cpu);
-			vm.setVCPUsAtStartup(connection, cpu);
-		}
-		vmInstance.setStatus(CommonConstants.VM_CLOSE_STATUS);
-		vmInstance.setCpu((int) cpu);
-		vmInstance.setMemory((int) memory * 1024);
-		vmDao.updateVm(vmInstance);
-	}
-
+	
 	@Override
 	public int modifyVm(String cpu, String memory, VmInstance modifiedVm) {
 		int result = 0;
@@ -707,28 +411,14 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 			result = -1;
 			return result;
 		}
-		try {
-			modifiedVm.setStatus(0);
-			vmDao.updateVm(modifiedVm);
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					VM vm;
-					try {
-						vm = VM.getByUuid(connection, modifiedVm.getUuid());
-						modfiyVmConfig(vm, memorySize, cpuNumber, modifiedVm);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}).start();
+		modifiedVm.setStatus(CommonConstants.VM_EDITING_STATUS);
+		modifiedVm.setPowerStatus(CommonConstants.VM_POWER_EDITING);
+		vmDao.updateVm(modifiedVm);
+		ModifyVMThread modifyVMThread = new ModifyVMThread(modifiedVm, connection, memorySize, cpuNumber);
+		new Thread(modifyVMThread).start();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		return result;
 	}
-
 	private double getClusterMemoryFreeSize() throws Exception {
 		FetchDynamicData data = new FetchDynamicData();
 		double memoryFreeSize = 0;
@@ -740,9 +430,9 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	public List<VmInstance> getVmInstancesByIds(String ids) {
 		List<VmInstance> vmInstances = new ArrayList<VmInstance>();
 		String[] selectedIds = ids.split(";");
-		for(String id : selectedIds){
+		for (String id : selectedIds) {
 			VmInstance vmInstance = vmDao.selectVmById(id);
-			if(!StringUtils.isEmpty(vmInstance)){
+			if (!StringUtils.isEmpty(vmInstance)) {
 				vmInstances.add(vmInstance);
 			}
 		}
@@ -751,13 +441,23 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	@Override
 	public List<VmInstance> getVmCountByClusterId(String clusterId) {
-		List<VmInstance> vmInstances = vmDao.selectVmInstanceByClusterId(clusterId);
+		List<VmInstance> vmInstances = new ArrayList<>();
+		for (VmInstance vmInstance : vmDao.selectVmInstanceByClusterId(clusterId)) {
+			if (vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS) {
+				vmInstances.add(vmInstance);
+			}
+		}
 		return vmInstances;
 	}
 
 	@Override
 	public List<VmInstance> getVmCountByHostId(String hostId) {
-		List<VmInstance> vmInstances = vmDao.selectVmInstanceByHostId(hostId);
+		List<VmInstance> vmInstances = new ArrayList<>();
+		for (VmInstance vmInstance : vmDao.selectVmInstanceByHostId(hostId)) {
+			if (vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS) {
+				vmInstances.add(vmInstance);
+			}
+		}
 		return vmInstances;
 	}
 
@@ -765,8 +465,8 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	public int getUserDiskSize(String vmId) {
 		List<VmStorage> storages = vmDao.selectVmStorageByVmId(vmId);
 		int userDiskSize = 0;
-		for(VmStorage vmStorage : storages){
-			if(vmStorage.getStorageType().equals("user") && !vmStorage.getName().endsWith(".iso")){
+		for (VmStorage vmStorage : storages) {
+			if (vmStorage.getStorageType().equals("user") && !vmStorage.getName().endsWith(".iso")) {
 				userDiskSize += vmStorage.getSize();
 			}
 		}

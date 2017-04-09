@@ -82,8 +82,10 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 					if(vmInstance.getPowerStatus().equals(CommonConstants.VM_POWER_START)){
 						vmRunningCount++;
 					}
+					if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS){
+						vmTotalCount++;
+					}
 				}
-				vmTotalCount = vmInstances.size();
 			}
 		}
 		description = host.getNameDescription(connection);

@@ -46,7 +46,7 @@
 								用户管理
 							</li>
 							<li>
-								<a href="#">管理员</a>
+								<a href="javascript:void(0)">管理员</a>
 							</li>
 						</ol>
 					</div>

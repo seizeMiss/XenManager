@@ -83,7 +83,7 @@
 												<ul id= "select-cluster" class="dropdown-menu pull-right" style="width: 580px;">
 													<c:forEach var="cluster" items="${clusters }">
 													<li cid="${cluster.id }">
-														<a href="#">${cluster.name }</a>
+														<a href="javascript:void(0)">${cluster.name }</a>
 													</li>
 													</c:forEach>
 												</ul>

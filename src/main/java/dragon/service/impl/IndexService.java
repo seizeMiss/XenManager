@@ -13,6 +13,7 @@ import com.xensource.xenapi.VM;
 import main.java.dragon.utils.NumberUtils;
 import main.java.dragon.utils.StringUtils;
 import main.java.dragon.xenapi.FetchDynamicData;
+import main.java.dragon.xenapi.HostAPI;
 
 @Service
 public class IndexService extends ConnectionUtil{
@@ -102,8 +103,14 @@ public class IndexService extends ConnectionUtil{
 		return storageRate;
 	}
 	public String getMemoryUsedRate() throws Exception{
-		FetchDynamicData data = new FetchDynamicData();
-		String memoryRate = StringUtils.double2String((double)data.getIndexNeedInfo().get("memory_used"));
+		HostAPI hostAPI = new HostAPI();
+		Host host = getDefaultHost();
+		String memoryRate = "0";
+		if(host != null){
+			long memoryTotal = hostAPI.getMemoryInHost(host).get(1);
+			long memoryUsed = hostAPI.getMemoryInHost(host).get(0);
+			memoryRate = memoryUsed*100/memoryTotal + "";
+		}
 		return memoryRate;
 	}
 	
@@ -111,6 +118,16 @@ public class IndexService extends ConnectionUtil{
 		FetchDynamicData data = new FetchDynamicData();
 		String cpuRate = StringUtils.double2String((double)data.getIndexNeedInfo().get("cpu_avg"));
 		return cpuRate;
+	}
+	
+	private Host getDefaultHost() throws Exception{
+		Set<Host> hosts = Host.getAll(connection);
+		for(Host host : hosts){
+			if(null != host && !host.isNull()){
+				return host;
+			}
+		}
+		return null;
 	}
 
 }

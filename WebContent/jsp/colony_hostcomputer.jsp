@@ -69,7 +69,7 @@
 								集群和主机
 							</li>
 							<li>
-								<a href="#">集群</a>
+								<a href="javascript:void(0)">集群</a>
 							</li>
 						</ol>
 					</div>
@@ -143,7 +143,7 @@
 								集群和主机
 							</li>
 							<li>
-								<a href="#">主机</a>
+								<a href="javascript:void(0)">主机</a>
 							</li>
 						</ol>
 					</div>

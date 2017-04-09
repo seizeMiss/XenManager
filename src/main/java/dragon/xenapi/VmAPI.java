@@ -6,6 +6,7 @@ import java.util.Map;
 import com.xensource.xenapi.VM;
 import com.xensource.xenapi.VMGuestMetrics;
 
+import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.service.impl.ConnectionUtil;
 
 public class VmAPI extends ConnectionUtil{
@@ -23,5 +24,5 @@ public class VmAPI extends ConnectionUtil{
 		}
 		return osVersion;
 	}
-
+	
 }

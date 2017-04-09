@@ -63,7 +63,7 @@ function showVmInfo(vmNeedInfos) {
 }
 
 function isUnderWay(status) {
-	if(status == 0 || status == 2 || status == 3 || status == 4 || status == 5 || status == 8){
+	if(status == 0 || status == 2 || status == 3 || status == 4 || status == 5 || status == 8 || status == 10){
 		return true;
 	}else{
 		return false;

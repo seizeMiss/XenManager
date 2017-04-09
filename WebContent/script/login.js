@@ -2,28 +2,36 @@ $(function() {
 	$("#input-username").focus();
 	//点击切换明文查看密码
 	$("#psw-label").click(function() {
-		//求换图标
+		//切换图标
 		$(this).toggleClass("glyphicon-eye-close");
 		var $psw = $("#input-psw");
 		var $psw_clear = $("#input-psw-clear");
 		//求换不同类型输入框
 		if ($psw.css("display") == "none") {
 			$psw.val($psw_clear.val());
-			$psw.css("display", "block");
+			$psw.show();
 		} else {
-			$psw.css("display", "none");
+			$psw.hide();
 		}
 		if ($psw_clear.css("display") == "none") {
 			$psw_clear.val($psw.val());
-			$psw_clear.css("display", "block");
+			$psw_clear.show();
 		} else {
-			$psw_clear.css("display", "none");
+			$psw_clear.hide();
 		}
 	});
 	
 	$("#login").click(function(){
 		var userName = $("#input-username").val();
-		var password = $("#input-psw").val();
+		var password = "";
+		var showPassword;
+		if($("#input-psw").css("display") != "none"){
+			password = $("#input-psw").val();
+			showPassword = $("#input-psw");
+		}else{
+			password = $("#input-psw-clear").val();
+			showPassword = $("#input-psw-clear");
+		}
 		if(!userName || !password){
 			if(!userName){
 				$(".login-error").html("用户名不能为空").show();
@@ -49,7 +57,7 @@ $(function() {
 					window.location.href = "showIndex";
 				}else{
 					$(".login-error").html("登录失败，用户名或密码错误！").show();
-					$("#input-username").focus();
+					showPassword.focus().select();
 				}
 			},
 			error: function(data){

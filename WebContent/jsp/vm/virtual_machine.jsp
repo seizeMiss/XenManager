@@ -67,14 +67,14 @@
 										</button>
 										<ul id="select-state" class="dropdown-menu pull-right"
 											style="width: 190px;">
-											<li><a href="#">不可用</a></li>
-											<li><a href="#">可用</a></li>
-											<li><a href="#">启动</a></li>
-											<li><a href="#">关闭</a></li>
-											<li><a href="#">开启中</a></li>
-											<li><a href="#">关闭中</a></li>
-											<li><a href="#">重启中</a></li>
-											<li><a href="#">删除中</a></li>
+											<li><a href="javascript:void(0)">不可用</a></li>
+											<li><a href="javascript:void(0)">可用</a></li>
+											<li><a href="javascript:void(0)">启动</a></li>
+											<li><a href="javascript:void(0)">关闭</a></li>
+											<li><a href="javascript:void(0)">开启中</a></li>
+											<li><a href="javascript:void(0)">关闭中</a></li>
+											<li><a href="javascript:void(0)">重启中</a></li>
+											<li><a href="javascript:void(0)">删除中</a></li>
 										</ul>
 									</div>
 								</div>
@@ -97,7 +97,7 @@
 										<ul id="select-os" class="dropdown-menu pull-right"
 											style="width: 190px;">
 											<c:forEach var="vmOsType" items="${vmOsTypes }">
-												<li><a href="#">${vmOsType }</a></li>
+												<li><a href="javascript:void(0)">${vmOsType }</a></li>
 											</c:forEach>
 										</ul>
 									</div>
@@ -160,7 +160,7 @@
 										<tr vid="${vmNeedInfo.vmInstance.id }">
 											<td class="select-td"><c:choose>
 													<c:when
-														test="${vmNeedInfo.vmInstance.status == 0 || vmNeedInfo.vmInstance.status == 2 || vmNeedInfo.vmInstance.status == 3 || vmNeedInfo.vmInstance.status == 4 || vmNeedInfo.vmInstance.status == 5 || vmNeedInfo.vmInstance.status == 8}">
+														test="${vmNeedInfo.vmInstance.status == 0 || vmNeedInfo.vmInstance.status == 2 || vmNeedInfo.vmInstance.status == 3 || vmNeedInfo.vmInstance.status == 4 || vmNeedInfo.vmInstance.status == 5 || vmNeedInfo.vmInstance.status == 8 || vmNeedInfo.vmInstance.status == 10}">
 														<img src="/VMManager/img/load.gif" />
 													</c:when>
 													<c:otherwise>
@@ -184,6 +184,8 @@
 														test="${vmNeedInfo.vmInstance.powerStatus == 'Starting'}">启动中</c:if>
 													<c:if
 														test="${vmNeedInfo.vmInstance.powerStatus == 'Deleting'}">删除中</c:if>
+													<c:if
+														test="${vmNeedInfo.vmInstance.powerStatus == 'Editing'}">编辑中</c:if>
 											</span></td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.vmInstance.osType }</span></td>
 											<td><span style="line-height: 50px;">${vmNeedInfo.clusterName }</span></td>
@@ -253,8 +255,8 @@
 													</div>
 												<div class="vm-explain">
 													说明:
-													<c:if test="${vmNeedInfo.showMemoryRate == 1}">无</c:if>
-													<c:if test="${vmNeedInfo.showMemoryRate == 0}">未安装XenTools，无法查看内存使用率</c:if>
+													<c:if test="${vmNeedInfo.showMemoryRate == 1 || vmNeedInfo.vmInstance.status == 6}">无</c:if>
+													<c:if test="${vmNeedInfo.showMemoryRate == 0 && vmNeedInfo.vmInstance.status != 6}">未安装XenTools，无法查看内存使用率</c:if>
 												</div>
 											</td>
 										</tr>

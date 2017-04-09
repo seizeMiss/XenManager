@@ -65,7 +65,7 @@
 									用户管理
 								</li>
 								<li>
-									<a href="#">本地用户</a>
+									<a href="javascript:void(0)">本地用户</a>
 								</li>
 								<li>
 									修改密码

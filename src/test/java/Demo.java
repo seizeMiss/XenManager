@@ -197,7 +197,7 @@ public class Demo extends ConnectionUtil {
 
 								System.out.println(vbd.getVM(connection).getNameLabel(connection));
 
-								if (vm.getNameLabel(connection).equals("vm-win7")) {
+								if (vm.getNameLabel(connection).equals("vm-demo-2")) {
 									
 									VM.Record vmRecord = vm.getRecord(connection);
 									System.out.println("------record---------");

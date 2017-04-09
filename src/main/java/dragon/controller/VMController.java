@@ -54,7 +54,7 @@ public class VMController {
 		if (!StringUtils.isEmpty(vmInstances)) {
 			vmOsTypes = getVmOsTypes();
 			try {
-				vmNeedInfos = initVmNeedInfo(vmInstances);
+				vmNeedInfos = initVmNeedInfo(vmInstances, false);
 				model.addAttribute("vmCount", vmNeedInfos.size());
 				model.addAttribute("vmOsTypes", vmOsTypes);
 			} catch (Exception e) {
@@ -144,7 +144,7 @@ public class VMController {
 		if (!StringUtils.isEmpty(vmInstances)) {
 			vmOsTypes = getVmOsTypes();
 			try {
-				vmNeedInfos = initVmNeedInfo(vmInstances);
+				vmNeedInfos = initVmNeedInfo(vmInstances, false);
 				model.addAttribute("vmCount", vmNeedInfos.size());
 				model.addAttribute("vmOsTypes", vmOsTypes);
 			} catch (Exception e) {
@@ -265,7 +265,7 @@ public class VMController {
 			}
 			if(!StringUtils.isEmpty(vmInstances)){
 				try {
-					VmNeedInfos = initVmNeedInfo(vmInstances);
+					VmNeedInfos = initVmNeedInfo(vmInstances, true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -274,7 +274,7 @@ public class VMController {
 		return VmNeedInfos;
 	}
 	
-	private List<VmNeedInfo> initVmNeedInfo(List<VmInstance> vmInstances) throws Exception {
+	private List<VmNeedInfo> initVmNeedInfo(List<VmInstance> vmInstances, boolean isAll) throws Exception {
 		List<VmNeedInfo> vmNeedInfos = new ArrayList<VmNeedInfo>();
 		boolean isShowMemoryRate = false;
 		boolean isShowCpuRate = true;
@@ -283,7 +283,7 @@ public class VMController {
 		Cluster cluster = null;
 		HostInstance hostInstance = null;
 		for (VmInstance vmInstance : vmInstances) {
-			if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS){
+			if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS || isAll){
 				cluster = clusterService.getClusterById(vmInstance.getClusterId());
 				hostInstance = hostService.getHostInstanceById(vmInstance.getHostId());
 				vmInstance.setMemory(vmInstance.getMemory() / 1024);

@@ -100,7 +100,7 @@
 												<ul id= "select-cluster" class="dropdown-menu pull-right" style="width: 580px;">
 													<c:forEach var="cluster" items="${clusters }">
 													<li cid="${cluster.id }">
-														<a href="javacript:void(0)">${cluster.name }</a>
+														<a href="javascript:void(0)">${cluster.name }</a>
 													</li>
 													</c:forEach>
 												</ul>
@@ -227,7 +227,7 @@
 												<ul id= "select-storage" class="dropdown-menu pull-right" style="width: 490px;">
 													<c:forEach var="storage" items="${storages }">
 													<li sid="${storage.id }">
-														<a href="javacript:void(0)">
+														<a href="javascript:void(0)">
 															<span class="storage-name">${storage.name }</span>
 															<span class="storage-desc">总大小:${storage.storageTotal }G  可用:${storage.storageTotal-storage.storageUsed }G</span>
 														</a>
