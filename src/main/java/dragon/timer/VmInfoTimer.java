@@ -106,8 +106,8 @@ public class VmInfoTimer extends ConnectionUtil {
 		Set<VBD> vbds = vm.getVBDs(connection);
 		for(VBD vbd : vbds){
 			VDI vdi = vbd.getVDI(connection);
-			System.out.println(vdi.getType(connection));
-			if(vdi.getType(connection).toString().equals("system")){
+//			System.out.println(vdi.getType(connection));
+			if(!vdi.isNull() && vdi.getType(connection).toString().equals("system")){
 				systemDiskSize = (int) (vdi.getVirtualSize(connection)/1024/1024/1024);
 			}
 		}

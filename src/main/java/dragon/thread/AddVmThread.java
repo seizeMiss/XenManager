@@ -32,21 +32,22 @@ import main.java.dragon.xenapi.VolumeAPI;
 import main.java.dragon.xenapi.XenApiUtil;
 
 public class AddVmThread implements Runnable{
-	@Autowired
-	private VMDao vmDao;
-	@Autowired
-	private ImageDao imageDao;
 	
+	private VMDao vmDao;
+	private ImageDao imageDao;
 	private Connection connection;
 	private VmInstance vmInstance;
 	private String userDisk;
 	private Storage srStorage;
 	
-	public AddVmThread(Connection connection, VmInstance vmInstance, String userDisk, Storage storage) {
+	public AddVmThread(Connection connection, VmInstance vmInstance, String userDisk, 
+			Storage storage, VMDao vmDao, ImageDao imageDao) {
 		this.connection = connection;
 		this.vmInstance = vmInstance;
 		this.userDisk = userDisk;
 		this.srStorage = storage;
+		this.vmDao = vmDao;
+		this.imageDao = imageDao;
 	}
 	
 	@Override

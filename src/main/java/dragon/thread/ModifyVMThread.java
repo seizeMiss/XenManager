@@ -13,19 +13,18 @@ import main.java.dragon.utils.CommonConstants;
 
 public class ModifyVMThread implements Runnable {
 	
-	@Autowired
 	private VMDao vmDao;
-
 	private VmInstance vmInstance;
 	private Connection connection;
 	private long memorySize;
 	private long cpuNumber;
 	
-	public ModifyVMThread(VmInstance vmInstance, Connection connection, long memorySize, long cpuNumber) {
+	public ModifyVMThread(VmInstance vmInstance, Connection connection, long memorySize, long cpuNumber, VMDao vmDao) {
 		this.vmInstance = vmInstance;
 		this.connection = connection;
 		this.memorySize = memorySize;
 		this.cpuNumber = cpuNumber;
+		this.vmDao = vmDao;
 	}
 
 	@Override

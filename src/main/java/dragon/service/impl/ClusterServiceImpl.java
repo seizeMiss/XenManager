@@ -67,7 +67,7 @@ public class ClusterServiceImpl extends ConnectionUtil implements ClusterService
 		String name = "4.206";
 		String ipAddress = "";
 		int status = 0;
-		double cpuAverage = 0.0d;
+		Double cpuAverage = 0.0d;
 		Long memoryTotal = 0l;
 		Long memoryUsed = 0l;
 		int storageTotal = 0;
@@ -84,15 +84,15 @@ public class ClusterServiceImpl extends ConnectionUtil implements ClusterService
 		ipAddress = host.getAddress(connection);
 		if (host.getEnabled(connection)) {
 			status = 1;
+			cpuAverage = (Double) data.getIndexNeedInfoByParseXml().get("cpu_avg");
+			memoryTotal = hostAPI.getMemoryInHost(host).get(1);
+			memoryUsed = hostAPI.getMemoryInHost(host).get(0);
+			memoryTotal = (long) Math.ceil(memoryTotal*1.0/1024);
+			memoryUsed = (long)Math.ceil(memoryUsed*1.0/1024);
+			storageCount = hostAPI.getStorageInHost(host).get(0);
+			storageTotal = hostAPI.getStorageInHost(host).get(1);
+			storageUsed = hostAPI.getStorageInHost(host).get(2);
 		}
-		cpuAverage = (double) data.getIndexNeedInfoByParseXml().get("cpu_avg");
-		memoryTotal = hostAPI.getMemoryInHost(host).get(1);
-		memoryUsed = hostAPI.getMemoryInHost(host).get(0);
-		memoryTotal = (long) Math.ceil(memoryTotal*1.0/1024);
-		memoryUsed = (long)Math.ceil(memoryUsed*1.0/1024);
-		storageCount = hostAPI.getStorageInHost(host).get(0);
-		storageTotal = hostAPI.getStorageInHost(host).get(1);
-		storageUsed = hostAPI.getStorageInHost(host).get(2);
 		hostCount = 1;
 		List<VmInstance> vmInstances = vmDao.selectVmInstanceByClusterId(id);
 		for(VmInstance vmInstance : vmInstances){
@@ -101,7 +101,7 @@ public class ClusterServiceImpl extends ConnectionUtil implements ClusterService
 			}
 		}
 		description = pool.getNameDescription(connection);
-		cluster = new Cluster(id, name, ipAddress, status, cpuAverage, memoryTotal.intValue(), memoryUsed.intValue(),
+		cluster = new Cluster(id, name, ipAddress, status, cpuAverage.isNaN() ? 0.0 : cpuAverage, memoryTotal.intValue(), memoryUsed.intValue(),
 				storageTotal, storageUsed, storageCount, hostCount, vmCount, description);
 		return cluster;
 	}

@@ -45,7 +45,7 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 		String powerStatus = "death";
 		int cpuTotal = 0;
 		int cpuUsed = 0;
-		double cpuAverage = 0.0d;
+		Double cpuAverage = 0.0d;
 		Long memoryTotal = 0l;
 		Long memoryUsed = 0l;
 		int diskTotal = 0;
@@ -65,31 +65,31 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 		Host host = pool.getMaster(connection);
 		String uuid = host.getUuid(connection);
 		String name = host.getNameLabel(connection);
+		List<VmInstance> vmInstances  = vmDao.selectVmInstanceByHostId(id);
+		if(!StringUtils.isEmpty(vmInstances)){
+			for(VmInstance vmInstance : vmInstances){
+				if(vmInstance.getPowerStatus().equals(CommonConstants.VM_POWER_START)){
+					vmRunningCount++;
+				}
+				if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS){
+					vmTotalCount++;
+				}
+			}
+		}
 		if(host.getEnabled(connection)){
-			List<VmInstance> vmInstances  = vmDao.selectVmInstanceByHostId(id);
 			Map<String, Object> dataMap = data.getIndexNeedInfoByParseXml();
 			status = 1;
 			powerStatus = "running";
 			cpuTotal = (int)dataMap.get("cpu_account");
-			cpuAverage = (double)dataMap.get("cpu_avg");
+			cpuAverage = (Double)dataMap.get("cpu_avg");
 			memoryTotal = hostAPI.getMemoryInHost(host).get(1);
 			memoryUsed = hostAPI.getMemoryInHost(host).get(0);
 			memoryTotal = (long) Math.ceil(memoryTotal*1.0/1024);
 			memoryUsed = (long)Math.ceil(memoryUsed*1.0/1024);
-			if(!StringUtils.isEmpty(vmInstances)){
-				for(VmInstance vmInstance : vmInstances){
-					if(vmInstance.getPowerStatus().equals(CommonConstants.VM_POWER_START)){
-						vmRunningCount++;
-					}
-					if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS){
-						vmTotalCount++;
-					}
-				}
-			}
 		}
 		description = host.getNameDescription(connection);
 		hostInstance = new HostInstance(id, name, uuid, clusterId, status, powerStatus, 
-				cpuUsed, cpuTotal, cpuAverage, memoryTotal.intValue(), memoryUsed.intValue(), 
+				cpuUsed, cpuTotal, cpuAverage.isNaN() ? 0.0 : cpuAverage, memoryTotal.intValue(), memoryUsed.intValue(), 
 				diskTotal, diskUsed, vmTotalCount, vmRunningCount, description);
 		return hostInstance;
 	}

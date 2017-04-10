@@ -131,7 +131,7 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 		Session session = null;
 		List<VmStorage> selectVmStorage = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
 			String hql = "from VmStorage where vmId = ?";
 			Query query = queryByParams(session, hql, id);
@@ -150,7 +150,7 @@ public class VmDaoImpl extends HibernateUtils implements VMDao{
 		Session session = null;
 		List<VmNetwork> selectVmNetworks = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
 			String hql = "from VmStorage where vmId = ?";
 			Query query = queryByParams(session, hql, id);

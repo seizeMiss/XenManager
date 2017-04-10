@@ -1,7 +1,5 @@
 package main.java.dragon.thread;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.xensource.xenapi.Connection;
 import com.xensource.xenapi.Task;
 import com.xensource.xenapi.VDI;
@@ -12,17 +10,16 @@ import main.java.dragon.utils.CommonConstants;
 import main.java.dragon.xenapi.XenApiUtil;
 
 public class DeleteImageThread implements Runnable{
-	@Autowired
 	private ImageDao imageDao;
-	
 	private String uuid;
 	private Image image;
 	private Connection connection;
 	
-	public DeleteImageThread(String uuid, Image image, Connection connection) {
+	public DeleteImageThread(String uuid, Image image, Connection connection, ImageDao imageDao) {
 		this.image = image;
 		this.uuid = uuid;
 		this.connection = connection;
+		this.imageDao = imageDao;
 	}
 
 	@Override

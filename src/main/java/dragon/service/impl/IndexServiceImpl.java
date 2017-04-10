@@ -123,7 +123,8 @@ public class IndexServiceImpl extends ConnectionUtil implements IndexService{
 		String cpuRate = "";
 		try {
 			data = new FetchDynamicData();
-			cpuRate = StringUtils.double2String((double)data.getIndexNeedInfo().get("cpu_avg"));
+			Double cpuAverage = (Double)data.getIndexNeedInfo().get("cpu_avg");
+			cpuRate = StringUtils.double2String(cpuAverage.isNaN() ? 0.0 : cpuAverage);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

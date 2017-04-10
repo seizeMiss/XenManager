@@ -15,17 +15,17 @@ import main.java.dragon.xenapi.ImageAPI;
 import main.java.dragon.xenapi.XenApiUtil;
 
 public class AddImageThread implements Runnable{
-	@Autowired
-	private ImageDao imageDao;
 	
+	private ImageDao imageDao;
 	private Connection connection;
 	private VM vm;
 	private Image image;
 	
-	public AddImageThread(Connection connection, VM vm, Image image) {
+	public AddImageThread(Connection connection, VM vm, Image image, ImageDao imageDao) {
 		this.image = image;
 		this.vm = vm;
 		this.connection = connection;
+		this.imageDao = imageDao;
 	}
 
 	@Override

@@ -180,9 +180,6 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		return vmNetworks;
 	}
 	
-	
-
-
 	@Override
 	public void saveVm(VmInstance vmInstance, List<VmStorage> vmStorage, List<VmNetwork> vmNetwork) {
 
@@ -225,9 +222,8 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	public VmInstance startVm(String id) {
 		VmInstance vmInstance = vmDao.selectVmById(id);
 		vmInstance.setStatus(CommonConstants.VM_OPENING_STATUS);
-		vmInstance.setPowerStatus(CommonConstants.VM_POWER_START);
 		vmDao.updateVm(vmInstance);
-		StartVmThread startVmThread = new StartVmThread(id, connection);
+		StartVmThread startVmThread = new StartVmThread(id, connection, vmDao);
 		new Thread(startVmThread).start();//开启线程
 		return vmInstance;
 	}
@@ -236,9 +232,8 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	public VmInstance closeVm(String id) {
 		VmInstance vmInstance = vmDao.selectVmById(id);
 		vmInstance.setStatus(CommonConstants.VM_CLOSING_STATUS);
-		vmInstance.setPowerStatus(CommonConstants.VM_POWER_CLOSED);
 		vmDao.updateVm(vmInstance);
-		ShutdownVmThread shutdownVmThread = new ShutdownVmThread(id, connection);
+		ShutdownVmThread shutdownVmThread = new ShutdownVmThread(id, connection, vmDao);
 		new Thread(shutdownVmThread).start();
 		return vmInstance;
 	}
@@ -247,9 +242,8 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	public VmInstance restartVm(String id) {
 		VmInstance vmInstance = vmDao.selectVmById(id);
 		vmInstance.setStatus(CommonConstants.VM_RESTARTING_STATUS);
-		vmInstance.setPowerStatus(CommonConstants.VM_POWER_RESTARTING);
 		vmDao.updateVm(vmInstance);
-		ReStartVMThread startVMThread = new ReStartVMThread(id, connection);
+		ReStartVMThread startVMThread = new ReStartVMThread(id, connection, vmDao);
 		new Thread(startVMThread).start();
 		return vmInstance;
 	}
@@ -264,7 +258,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 			vmInstance.setUpdateTime(new Date());
 			vmInstances.add(vmInstance);
 			vmDao.updateVm(vmInstance);
-			DeleteVmsThread deleteVmsThread = new DeleteVmsThread(vmInstance, connection);
+			DeleteVmsThread deleteVmsThread = new DeleteVmsThread(vmInstance, connection, vmDao);
 			new Thread(deleteVmsThread).start();
 
 		}
@@ -289,7 +283,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		}
 		initVmInstance(vmName, clusterId, imageId, cpuCount, memoryAlloSize, storageId);
 		vmDao.insertVm(vmInstance);
-		AddVmThread addVmThread = new AddVmThread(connection, vmInstance, userDisk, srStorage);
+		AddVmThread addVmThread = new AddVmThread(connection, vmInstance, userDisk, srStorage, vmDao, imageDao);
 		new Thread(addVmThread).start();
 		return backType;
 	}
@@ -398,9 +392,8 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 			return result;
 		}
 		modifiedVm.setStatus(CommonConstants.VM_EDITING_STATUS);
-		modifiedVm.setPowerStatus(CommonConstants.VM_POWER_EDITING);
 		vmDao.updateVm(modifiedVm);
-		ModifyVMThread modifyVMThread = new ModifyVMThread(modifiedVm, connection, memorySize, cpuNumber);
+		ModifyVMThread modifyVMThread = new ModifyVMThread(modifiedVm, connection, memorySize, cpuNumber, vmDao);
 		new Thread(modifyVMThread).start();
 
 		return result;

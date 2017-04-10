@@ -14,15 +14,15 @@ import main.java.dragon.utils.CommonConstants;
 import main.java.dragon.xenapi.XenApiUtil;
 
 public class ShutdownVmThread implements Runnable{
-	@Autowired
-	private VMDao vmDao;
 	
+	private VMDao vmDao;
 	private String id;
 	private Connection connection;
 	
-	public ShutdownVmThread(String id, Connection connection) {
+	public ShutdownVmThread(String id, Connection connection, VMDao vmDao) {
 		this.id = id;
 		this.connection = connection;
+		this.vmDao = vmDao;
 	}
 
 	@Override
@@ -40,6 +40,7 @@ public class ShutdownVmThread implements Runnable{
 		XenApiUtil.waitForTask(connection, task, 2000);
 		VmInstance vmInstance = vmDao.selectVmById(id);
 		vmInstance.setStatus(CommonConstants.VM_CLOSE_STATUS);
+		vmInstance.setPowerStatus(CommonConstants.VM_POWER_CLOSED);
 		vmInstance.setUpdateTime(new Date());
 		vmDao.updateVm(vmInstance);
 	}

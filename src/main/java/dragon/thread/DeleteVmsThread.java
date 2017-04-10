@@ -16,15 +16,14 @@ import main.java.dragon.utils.CommonConstants;
 
 public class DeleteVmsThread implements Runnable {
 
-	@Autowired
 	private VMDao vmDao;
-
 	private VmInstance vmInstance;
 	private Connection connection;
 	
-	public DeleteVmsThread(VmInstance vmInstance, Connection connection) {
+	public DeleteVmsThread(VmInstance vmInstance, Connection connection, VMDao vmDao) {
 		this.vmInstance = vmInstance;
 		this.connection = connection;
+		this.vmDao = vmDao;
 	}
 	
 	@Override

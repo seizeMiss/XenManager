@@ -56,7 +56,7 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 				image.setOsName(StringUtils.isEmpty(map.get("name")) ? "" : map.get("name").split("\\|")[0]);
 			}
 			imageDao.insertImage(image);
-			AddImageThread addImageThread = new AddImageThread(connection, vm, image);
+			AddImageThread addImageThread = new AddImageThread(connection, vm, image, imageDao);
 			new Thread(addImageThread).start();//添加线程
 			return true;
 		} catch (Exception e) {
@@ -119,7 +119,7 @@ public class ImageServiceImpl extends ConnectionUtil implements ImageService{
 		String uuid = image.getUuid();
 		image.setStatus(CommonConstants.IMAGE_DELETING_STATUS);
 		imageDao.saveImage(image);
-		DeleteImageThread deleteImageThread = new DeleteImageThread(uuid, image, connection);
+		DeleteImageThread deleteImageThread = new DeleteImageThread(uuid, image, connection, imageDao);
 		new Thread(deleteImageThread).start();//添加线程
 		return true;
 	}

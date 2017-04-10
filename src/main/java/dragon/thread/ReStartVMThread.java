@@ -15,15 +15,14 @@ import main.java.dragon.xenapi.XenApiUtil;
 
 public class ReStartVMThread implements Runnable{
 
-	@Autowired
 	private VMDao vmDao;
-	
 	private String id;
 	private Connection connection;
 	
-	public ReStartVMThread(String id, Connection connection) {
+	public ReStartVMThread(String id, Connection connection, VMDao vmDao) {
 		this.id = id;
 		this.connection = connection;
+		this.vmDao = vmDao;
 	}
 	
 	@Override
