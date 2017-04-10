@@ -37,6 +37,7 @@ import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.pojo.VmNetwork;
 import main.java.dragon.pojo.VmStorage;
 import main.java.dragon.service.VMService;
+import main.java.dragon.thread.AddVmThread;
 import main.java.dragon.thread.DeleteVmsThread;
 import main.java.dragon.thread.ModifyVMThread;
 import main.java.dragon.thread.ReStartVMThread;
@@ -134,7 +135,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 					VmInstance vmInstance = new VmInstance(id, clusterId, hostId, imageId, storageId, uuid, name, vmIp,
 							status, powerStatus, createTime, updateTime, osType, osName, cpu, memory, systemDisk);
 					vmInstance.setVmNetWorks(getVmNetwork(vm, id));
-					// vmInstance.setVmStorages(getVmStorage(vm, id));
+					 vmInstance.setVmStorages(getVmStorage(vm, id, storageId));
 					vmInstances.add(vmInstance);
 				}
 			}
@@ -178,14 +179,9 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		}
 		return vmNetworks;
 	}
+	
+	
 
-	@Override
-	public void addVm(VmInstance vmInstance, List<VmStorage> vmStorage, List<VmNetwork> vmNetwork) throws Exception {
-		List<VmInstance> vmInstances = getVmInstance();
-		for (int i = 0; i < vmInstances.size(); i++) {
-			vmDao.insertVm(vmInstances.get(i));
-		}
-	}
 
 	@Override
 	public void saveVm(VmInstance vmInstance, List<VmStorage> vmStorage, List<VmNetwork> vmNetwork) {
@@ -293,18 +289,8 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		}
 		initVmInstance(vmName, clusterId, imageId, cpuCount, memoryAlloSize, storageId);
 		vmDao.insertVm(vmInstance);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				SR sr = null;
-				try {
-					sr = SR.getByUuid(connection, srStorage.getUuid());
-//					createVmByImage(vmInstance, userDisk, sr);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
+		AddVmThread addVmThread = new AddVmThread(connection, vmInstance, userDisk, srStorage);
+		new Thread(addVmThread).start();
 		return backType;
 	}
 

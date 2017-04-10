@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.xensource.xenapi.Connection;
 import com.xensource.xenapi.Network;
 import com.xensource.xenapi.SR;
@@ -17,7 +19,10 @@ import com.xensource.xenapi.VIF;
 import com.xensource.xenapi.VM;
 import com.xensource.xenapi.VMGuestMetrics;
 
+import main.java.dragon.dao.ImageDao;
+import main.java.dragon.dao.VMDao;
 import main.java.dragon.pojo.Image;
+import main.java.dragon.pojo.Storage;
 import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.pojo.VmNetwork;
 import main.java.dragon.pojo.VmStorage;
@@ -26,8 +31,35 @@ import main.java.dragon.utils.StringUtils;
 import main.java.dragon.xenapi.VolumeAPI;
 import main.java.dragon.xenapi.XenApiUtil;
 
-public class AddVmThread {
+public class AddVmThread implements Runnable{
+	@Autowired
+	private VMDao vmDao;
+	@Autowired
+	private ImageDao imageDao;
 	
+	private Connection connection;
+	private VmInstance vmInstance;
+	private String userDisk;
+	private Storage srStorage;
+	
+	public AddVmThread(Connection connection, VmInstance vmInstance, String userDisk, Storage storage) {
+		this.connection = connection;
+		this.vmInstance = vmInstance;
+		this.userDisk = userDisk;
+		this.srStorage = storage;
+	}
+	
+	@Override
+	public void run() {
+		SR sr = null;
+		try {
+			sr = SR.getByUuid(connection, srStorage.getUuid());
+			createVmByImage(vmInstance, userDisk, sr);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	private void createVmByImage(VmInstance vmInstance, String userDisk, SR sr) throws Exception {
 		VolumeAPI volAPI = new VolumeAPI();
@@ -219,5 +251,44 @@ public class AddVmThread {
 		}
 		throw new Exception("vm can't find valid user_device position");
 	}
+	
+	private Set<VmStorage> getVmStorage(VM vm, String vmId, String storageId) throws Exception {
+		Set<VmStorage> vmStorages = new HashSet<>();
+		Set<VBD> vbds = vm.getVBDs(connection);
+		for (VBD vbd : vbds) {
+			VmStorage vmStorage = new VmStorage();
+			VDI vdi = vbd.getVDI(connection);
+			if (!vdi.isNull() && vdi.getVirtualSize(connection) > 0) {
+				vmStorage.setId(StringUtils.generateUUID());
+				vmStorage.setName(vdi.getNameLabel(connection));
+				vmStorage.setStorageType(vdi.getType(connection).toString());
+				vmStorage.setVmId(vmId);
+				vmStorage.setSize((int) (vdi.getVirtualSize(connection) / 1024 / 1024 / 1024));
+				vmStorage.setDescription(vdi.getNameDescription(connection));
+				vmStorage.setStorageId(storageId);
+				vmStorages.add(vmStorage);
+			}
+		}
+		return vmStorages;
+	}
+
+	private Set<VmNetwork> getVmNetwork(VM vm, String vmId) throws Exception {
+		Set<VmNetwork> vmNetworks = new HashSet<>();
+		Set<VIF> vifs = vm.getVIFs(connection);
+		for (VIF vif : vifs) {
+			VmNetwork vmNetwork = new VmNetwork();
+			Network network = vif.getNetwork(connection);
+			String id = StringUtils.generateUUID();
+			vmNetwork.setId(id);
+			vmNetwork.setMacAddress(vif.getMAC(connection));
+			vmNetwork.setNetworkId(network.getUuid(connection));
+			vmNetwork.setNetworkName(network.getNameLabel(connection));
+			vmNetwork.setVmId(vmId);
+			vmNetworks.add(vmNetwork);
+		}
+		return vmNetworks;
+	}
+
+	
 
 }

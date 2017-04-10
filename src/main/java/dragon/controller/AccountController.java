@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -16,13 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
-
 import main.java.dragon.pojo.Account;
 import main.java.dragon.service.AccountService;
-import main.java.dragon.service.StorageService;
-import main.java.dragon.service.impl.ConnectionUtil;
-import main.java.dragon.service.impl.IndexService;
+import main.java.dragon.service.IndexService;
 import main.java.dragon.utils.StringUtils;
 
 @Controller
@@ -32,8 +29,6 @@ public class AccountController{
 	private AccountService accountService;
 	@Autowired
 	private IndexService indexService;
-	@Autowired
-	private StorageService storageService;
 	
 	/**
 	 * 登录
@@ -89,7 +84,6 @@ public class AccountController{
 				model.addAttribute("storageTotal", storageTotal);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -218,7 +212,6 @@ public class AccountController{
 		try {
 			description = new String(request.getParameter("description").getBytes("iso-8859-1"),"UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

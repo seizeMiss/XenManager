@@ -37,7 +37,6 @@ public class HostServiceImpl extends ConnectionUtil implements HostService{
 
 	public HostServiceImpl() throws Exception {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	public HostInstance getHost(String id) throws Exception{
 		HostInstance hostInstance = null;
