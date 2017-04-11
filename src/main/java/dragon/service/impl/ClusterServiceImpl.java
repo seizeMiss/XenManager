@@ -64,7 +64,7 @@ public class ClusterServiceImpl extends ConnectionUtil implements ClusterService
 	public Cluster getCluster(String id) throws Exception{
 		Cluster cluster = null;
 		Pool pool = null;
-		String name = "4.206";
+		String name = "4.21";
 		String ipAddress = "";
 		int status = 0;
 		Double cpuAverage = 0.0d;
@@ -79,21 +79,24 @@ public class ClusterServiceImpl extends ConnectionUtil implements ClusterService
 
 		HostAPI hostAPI = new HostAPI();
 		pool = hostAPI.getPoolByName(name);
-		FetchDynamicData data = new FetchDynamicData();
-		Host host = pool.getMaster(connection);
-		ipAddress = host.getAddress(connection);
-		if (host.getEnabled(connection)) {
-			status = 1;
-			cpuAverage = (Double) data.getIndexNeedInfoByParseXml().get("cpu_avg");
-			memoryTotal = hostAPI.getMemoryInHost(host).get(1);
-			memoryUsed = hostAPI.getMemoryInHost(host).get(0);
-			memoryTotal = (long) Math.ceil(memoryTotal*1.0/1024);
-			memoryUsed = (long)Math.ceil(memoryUsed*1.0/1024);
-			storageCount = hostAPI.getStorageInHost(host).get(0);
-			storageTotal = hostAPI.getStorageInHost(host).get(1);
-			storageUsed = hostAPI.getStorageInHost(host).get(2);
+		Host masterHost = pool.getMaster(connection);
+		ipAddress = masterHost.getAddress(connection);
+		Set<Host> hosts = Host.getAll(connection);
+		for(Host host : hosts){
+			if (host.getEnabled(connection)) {
+				FetchDynamicData data = new FetchDynamicData(host.getAddress(connection));
+				status = 1;
+				cpuAverage = (Double) data.getIndexNeedInfoByParseXml().get("cpu_avg");
+				memoryTotal = memoryTotal + hostAPI.getMemoryInHost(host).get(1);
+				memoryUsed = memoryUsed + hostAPI.getMemoryInHost(host).get(0);
+				storageCount = storageCount + hostAPI.getStorageInHost(host).get(0);
+				storageTotal = storageTotal + hostAPI.getStorageInHost(host).get(1);
+				storageUsed = storageUsed + hostAPI.getStorageInHost(host).get(2);
+				hostCount++;
+			}
 		}
-		hostCount = 1;
+		memoryTotal = (long) Math.ceil(memoryTotal*1.0/1024);
+		memoryUsed = (long)Math.ceil(memoryUsed*1.0/1024);
 		List<VmInstance> vmInstances = vmDao.selectVmInstanceByClusterId(id);
 		for(VmInstance vmInstance : vmInstances){
 			if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS){

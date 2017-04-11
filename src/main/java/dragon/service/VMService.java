@@ -2,6 +2,7 @@ package main.java.dragon.service;
 
 import java.util.List;
 
+import main.java.dragon.pojo.HostInstance;
 import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.pojo.VmNetwork;
 import main.java.dragon.pojo.VmStorage;
@@ -9,6 +10,7 @@ import main.java.dragon.pojo.VmStorage;
 public interface VMService {
 	public int addVmBatch(String vmName, String vmNumber, String clusterId, String iamgeUuid, String cpuNumber, String memorySize,String storageLocation, String userDisk);
 	public int addVm(String vmName, String clusterId, String iamgeUuid, String cpuNumber, String memorySize,String storageLocation, String userDisk);
+	public void addVm();
 	public void saveVm(VmInstance vmInstance, List<VmStorage> vmStorage, List<VmNetwork> vmNetwork);
 	public List<VmInstance> getAllVm();
 	public void deleteVm(String ids);

@@ -86,5 +86,9 @@ public class HostAPI extends ConnectionUtil{
 		return targetPool;
 	}
 	
+	public String getHostIpAddress(String id) throws Exception{
+		Host host = Host.getByUuid(connection, id);
+		return host.getAddress(connection);
+	}
 	
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import main.java.dragon.dao.StorageDao;
 import main.java.dragon.pojo.Storage;
+import main.java.dragon.utils.StringUtils;
 
 @Repository
 @Transactional
@@ -110,6 +111,31 @@ public class StorageDaoImpl extends HibernateUtils implements StorageDao {
 		}
 		
 		return storages;
+	}
+
+	@Override
+	public Storage selectStorageByUuid(String uuid) {
+		Session session = null;
+		List<Storage> storages = null;
+		Storage storage = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String hql = "from Storage where uuid = ?";
+			Query query = queryByParams(session, hql, uuid);
+			storages = query.list();
+			if(!StringUtils.isEmpty(storages)){
+				storage = storages.get(0);
+			}
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
+		
+		return storage;
 	}
 
 }

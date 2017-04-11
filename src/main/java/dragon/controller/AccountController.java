@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import main.java.dragon.dao.StorageDao;
 import main.java.dragon.pojo.Account;
 import main.java.dragon.service.AccountService;
 import main.java.dragon.service.IndexService;
+import main.java.dragon.service.StorageService;
 import main.java.dragon.utils.StringUtils;
 
 @Controller
@@ -29,6 +31,8 @@ public class AccountController{
 	private AccountService accountService;
 	@Autowired
 	private IndexService indexService;
+	@Autowired
+	private StorageService storageService;
 	
 	/**
 	 * 登录
@@ -74,7 +78,7 @@ public class AccountController{
 			String memoryUsedRate = indexService.getMemoryUsedRate();
 			String storageUsedRate = indexService.getStorageUsedRate();
 			String storageTotal = indexService.getStorageTotal();
-//			storageService.addStorage();
+			storageService.addStorage();
 			if(!StringUtils.isEmpty(vmCount,activeVmCount,cpuUsedRate,memoryUsedRate,storageTotal,storageUsedRate)){
 				model.addAttribute("vmCount", vmCount);
 				model.addAttribute("activeVmCount", activeVmCount);

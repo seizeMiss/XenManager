@@ -292,6 +292,8 @@ textarea{
 /*搜索*/
 .search-content{
 	margin-top: 15px;
+	height: 270px;
+	overflow-y: auto;
 }
 .cpu-group,.ram-group{
 	padding-top: 2px;
@@ -484,6 +486,10 @@ textarea{
 .cpu-number-edit-warning-info span{
 	color: red;
 	font-size: 14px;
+}
+
+.hide-hostcomputer-details{
+	display: none;
 }
 /*星号*/
 .asterisk{

@@ -151,7 +151,6 @@ $(function() {
 			$("input[name='checkbox']").prop("checked", true);
 			$(".show-selected").children("span").html(length);
 			$("#delete-admin-user").attr("disabled",false);
-			$("#delete-vm").attr("disabled",false);
 		} else {
 			$("input[name='checkbox']").prop("checked", false);
 			$(".show-selected").children("span").html(0);

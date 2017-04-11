@@ -29,7 +29,6 @@ public class StorageServiceImpl extends ConnectionUtil implements StorageService
 	
 	public StorageServiceImpl() throws Exception {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	private Storage getStorage(String id, SR sr) throws Exception{
 		Storage storage = null;
@@ -53,10 +52,21 @@ public class StorageServiceImpl extends ConnectionUtil implements StorageService
 
 	@Override
 	public void addStorage() throws Exception{
-		// TODO Auto-generated method stub
 		Set<SR> srs = SR.getAll(connection);
+		List<Storage> storages = getAllStorage();
+		boolean isStorageExist = false;
 		for(SR sr : srs){
 			if(sr.getPhysicalSize(connection) > 0){
+				String uuid = sr.getUuid(connection);
+				for(Storage storage : storages){
+					if(storage.getUuid().equals(uuid)){
+						isStorageExist = true;
+					}
+				}
+				if(isStorageExist){
+					isStorageExist = false;
+					continue;
+				}
 				String id = StringUtils.generateUUID();
 				Storage storage = getStorage(id, sr);
 				storageDao.insertStorage(storage);
@@ -66,17 +76,20 @@ public class StorageServiceImpl extends ConnectionUtil implements StorageService
 
 	@Override
 	public void saveStorage() {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public List<Storage> getAllStorage() {
-		// TODO Auto-generated method stub
 		List<Storage> storages = storageDao.selectAllStorage();
 		if(!StringUtils.isEmpty(storages)){
 			return storages;
 		}
 		return null;
+	}
+	@Override
+	public Storage getStorageByUuid(String uuid) {
+		// TODO Auto-generated method stub
+		return storageDao.selectStorageByUuid(uuid);
 	}
 
 }

@@ -10,7 +10,7 @@
 					<li class="nav-li active"><a href="showIndex"><span
 							class="glyphicon glyphicon-home left-nav-icon"></span>首页</a></li>
 					<li class="nav-li"><a href="showClusterAndHost"><span
-							class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>集群和主机</a>
+							class="glyphicon glyphicon-th-large left-nav-icon"></span>集群和主机</a>
 					</li>
 					<li class="nav-li"><a href="showImage"><span
 							class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>镜像</a></li>

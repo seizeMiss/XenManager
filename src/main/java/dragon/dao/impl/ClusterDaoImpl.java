@@ -57,7 +57,7 @@ public class ClusterDaoImpl extends HibernateUtils implements ClusterDao{
 		Session session = null;
 		List<Cluster> clusters = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
 			String hql = "from Cluster";
 			Query query = session.createQuery(hql);

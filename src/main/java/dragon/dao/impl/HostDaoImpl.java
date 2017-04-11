@@ -10,19 +10,22 @@ import org.springframework.transaction.annotation.Transactional;
 import main.java.dragon.dao.HostDao;
 import main.java.dragon.pojo.Cluster;
 import main.java.dragon.pojo.HostInstance;
+import main.java.dragon.utils.StringUtils;
 
 @Repository
 @Transactional
 public class HostDaoImpl extends HibernateUtils implements HostDao {
 
 	@Override
-	public void insertHost(HostInstance host) {
+	public void insertHost(List<HostInstance> hosts) {
 		// TODO Auto-generated method stub
 		Session session = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
-			session.save(host);
+			for(HostInstance hostInstance : hosts){
+				session.save(hostInstance);
+			}
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
@@ -36,13 +39,15 @@ public class HostDaoImpl extends HibernateUtils implements HostDao {
 	}
 
 	@Override
-	public void updateHost(HostInstance host) {
+	public void updateHost(List<HostInstance> hosts) {
 		// TODO Auto-generated method stub
 		Session session = null;
 		try {
 			session = getSession();
 			session.beginTransaction();
-			session.update(host);
+			for(HostInstance hostInstance : hosts){
+				session.update(hostInstance);
+			}
 			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
@@ -60,7 +65,7 @@ public class HostDaoImpl extends HibernateUtils implements HostDao {
 		Session session = null;
 		List<HostInstance> hosts = null;
 		try {
-			session = getSession();
+			session = sessionFactory.openSession();
 			session.beginTransaction();
 			String hql = "from HostInstance";
 			Query query = session.createQuery(hql);
@@ -114,6 +119,31 @@ public class HostDaoImpl extends HibernateUtils implements HostDao {
 		}
 		
 		return hosts;
+	}
+
+	@Override
+	public HostInstance selectHostByUuid(String uuid) {
+		Session session = null;
+		List<HostInstance> hosts = null;
+		HostInstance hostInstance = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String hql = "from HostInstance where uuid = ?";
+			Query query = queryByParams(session, hql, uuid);
+			hosts = query.list();
+			if(!StringUtils.isEmpty(hosts)){
+				hostInstance = hosts.get(0);
+			}
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
+		
+		return hostInstance;
 	}
 
 }

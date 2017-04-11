@@ -8,6 +8,13 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:spring-hibernate.xml</param-value>
   </context-param>
+  <context-param>
+  	<param-name>webAppRootKey</param-name>
+  	<param-value>vmmanager-webapp</param-value>
+  </context-param>
+  <listener>
+  	<listener-class>org.springframework.web.util.WebAppRootListener</listener-class>
+  </listener>
   <!-- 避免懒加载异常 -->
   <filter>
     <filter-name>openSessionInViewFilter</filter-name>
@@ -54,4 +61,5 @@
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
+  
 </web-app>

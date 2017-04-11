@@ -1,17 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="./common/common.jsp" />
 <script type="text/javascript">
 	var clusterCpuUsedRate = "${cluster.cpuAverage }";
 	var clusterMemoryUsedRate = "${clusterMemoryUsedRate }";
 	var clusterStorageUserRate = "${clusterStorageUserRate };"
-	var hostCpuUsedRate = "${hostInstance.cpuAverage }"
-	var hostMemoryUsedRate = "${hostMemoryUsedRate }";
+	
 	clusterMemoryUsedRate = parseInt(clusterMemoryUsedRate);
 	clusterCpuUsedRate = parseInt(clusterCpuUsedRate);
 	clusterStorageUserRate = parseInt(clusterStorageUserRate);
-	hostCpuUsedRate = parseInt(hostCpuUsedRate);
-	hostMemoryUsedRate = parseInt(hostMemoryUsedRate);
 	$(function(){
 		//集群内存使用率
 		setCircleProgressColorInRange($(".cluster-memory-rate"),clusterMemoryUsedRate);
@@ -19,11 +17,44 @@
 		setCircleProgressColorInRange($(".cluster-cpu-rate"), clusterCpuUsedRate);
 		//集群存储使用率
 		setCircleProgressColorInRange($(".cluster-storage-rate"), clusterStorageUserRate);
-		//主机内存使用率
-		setCircleProgressColorInRange($(".host-memory-rate"), hostMemoryUsedRate);
-		//主机CPU使用率
-		setCircleProgressColorInRange($(".host-cpu-rate"), hostCpuUsedRate);
+		$(".show-hostcomputer-details").click(function(){
+			if($(this).closest("tr").next().css("display") == "none"){
+				$(".hide-hostcomputer-details").each(function(){
+					if($(this).css("display") != "none"){
+						$(this).hide();
+						$(this).prev("tr").find(".show-hostcomputer-details").removeClass("glyphicon-chevron-up");
+						$(this).prev("tr").find(".show-hostcomputer-details").addClass("glyphicon-chevron-down");
+					}
+				});
+				$(this).closest("tr").next().show();
+				$(this).removeClass("glyphicon-chevron-down");
+				$(this).addClass("glyphicon-chevron-up");
+			}else{
+				$(this).closest("tr").next().hide();
+				$(this).removeClass("glyphicon-chevron-up");
+				$(this).addClass("glyphicon-chevron-down");
+			}
+		});
 		
+		var vmCpuUsedRate = "";
+		var vmMemoryUsedRate = "";
+		$(".data-table-tbody").children("tr").each(
+				function() {
+					vmCpuUsedRate = $(this).find(".progress-percent-cpu")
+							.html();
+					vmMemoryUsedRate = $(this)
+							.find(".progress-percent-ram").html();
+					if (vmCpuUsedRate) {
+						vmCpuUsedRate = vmCpuUsedRate.split("%")[0];
+						setCircleProgressColorInRange($(this).find(
+								".host-cpu-rate"), vmCpuUsedRate);
+					}
+					if (vmMemoryUsedRate) {
+						vmMemoryUsedRate = vmMemoryUsedRate.split("%")[0];
+						setCircleProgressColorInRange($(this).find(
+								".host-memory-rate"), vmMemoryUsedRate);
+					}
+				});
 	});
 </script>
 <body>
@@ -36,7 +67,7 @@
 							<a href="showIndex" ><span class="glyphicon glyphicon-home left-nav-icon"></span>首页</a>
 						</li>
 						<li class="nav-li active">
-							<a href="showClusterAndHost"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>集群和主机</a>
+							<a href="showClusterAndHost"><span class="glyphicon glyphicon-th-large left-nav-icon"></span>集群和主机</a>
 						</li>
 						<li class="nav-li">
 							<a href="showImage"><span class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>镜像</a>
@@ -151,7 +182,7 @@
 						<div class="data-table">
 							<div class="data-table-top">
 								<div class="show-total">
-									已展示数/总数:<span>1</span>/<span>1</span>
+									已展示数/总数:<span>${host_size }</span>/<span>${host_size }</span>
 								</div>
 							</div>
 							<div class="data-table-content">
@@ -168,35 +199,38 @@
 											<th>详情</th>
 										</tr>
 									</thead>
-									<tbody>
+									<tbody class="data-table-tbody">
+									<c:forEach var="hostNeedInfo" items="${hostNeedInfos }">
 										<tr>
-											<td><span style="line-height: 50px;">${hostInstance.name }</span></td>
+											<td><span style="line-height: 50px;">${hostNeedInfo.hostInstance.name }</span></td>
 											<td style="width: 180px;">
 											<div class="progress" style="width: 70%;margin-top: 15px;margin-bottom: 0;height: 15px;background:#c3bebe">
 												<div class="progress-bar progress-bar-success host-cpu-rate" role="progressbar" aria-valuenow="60"
 												aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
 													<span class="boyond-percent"></span>
 												</div>
-											</div><span class="progress-percent-cpu">${hostInstance.cpuAverage }%</span></td>
+											</div><span class="progress-percent-cpu">${hostNeedInfo.hostInstance.cpuAverage }%</span></td>
 											<td style="width: 180px;">
-												<div >${hostInstance.memoryUsed }/${hostInstance.memoryTotal }GB</div>
+												<div >${hostNeedInfo.hostInstance.memoryUsed }/${hostNeedInfo.hostInstance.memoryTotal }GB</div>
 												<div class="progress" style="width: 70%;margin-bottom: 0;height: 15px;background:#c3bebe">
 												<div class="progress-bar progress-bar-success host-memory-rate" role="progressbar" aria-valuenow="60"
 												aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
 													<span class="boyond-percent"></span>
 												</div>
-											</div><span class="progress-percent-ram">${hostMemoryUsedRate }%</span></td>
-											<td><span style="line-height: 50px;">${hostInstance.status == 1 ? "可用" : "不可用" }</span></td>
-											<td><span style="line-height: 50px;">${clusterName }</span></td>
-											<td><span style="line-height: 50px;"><a href="showVM" style="color: green">${hostInstance.vmTotalCount }</a></span></td>
-											<td><span style="line-height: 50px;"><a href="showVM" style="color: green">${hostInstance.vmRunningCount }</a></span></td>
-											<td><span id="show-hostcomputer-details" class="glyphicon glyphicon-chevron-down" style="line-height: 50px;cursor:pointer;margin-left: 30px;color: #337ab7"></span></td>
+											</div><span class="progress-percent-ram">${hostNeedInfo.memoryUsedRate }%</span></td>
+											<td><span style="line-height: 50px;">${hostNeedInfo.hostInstance.status == 1 ? "可用" : "不可用" }</span></td>
+											<td><span style="line-height: 50px;">${hostNeedInfo.clusterName }</span></td>
+											<td><span style="line-height: 50px;"><a href="showVM" style="color: green">${hostNeedInfo.hostInstance.vmTotalCount }</a></span></td>
+											<td><span style="line-height: 50px;"><a href="showVM" style="color: green">${hostNeedInfo.hostInstance.vmRunningCount }</a></span></td>
+											<td><span class="glyphicon glyphicon-chevron-down show-hostcomputer-details" style="line-height: 50px;cursor:pointer;margin-left: 30px;color: #337ab7"></span></td>
 										</tr>
-										<tr id="hide-hostcomputer-details">
-											<td colspan="11">描述：${hostInstance.description }</td>
+										<tr class="hide-hostcomputer-details">
+											<td colspan="11">描述：${hostNeedInfo.hostInstance.description }</td>
 										</tr>
+									</c:forEach>
 										
 									</tbody>
+									
 								</table>
 							</div>
 						</div>

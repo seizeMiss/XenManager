@@ -74,7 +74,7 @@ public class VmInstance {
 	public void setId(String id) {
 		this.id = id;
 	}
-	@Column(name="cluster_id",length=36)
+	@Column(name="cluster_id",length=50)
 	public String getClusterId() {
 		return clusterId;
 	}

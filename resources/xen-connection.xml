@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xen>
+	<connection>
+		<hosturl>192.168.4.21</hosturl>
+		<user>root</user>
+		<password>centerm</password>
+	</connection>
+</xen>

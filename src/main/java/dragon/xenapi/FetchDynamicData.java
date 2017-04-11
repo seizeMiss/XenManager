@@ -22,20 +22,22 @@ import org.junit.Test;
 import com.xensource.xenapi.VM;
 
 import main.java.dragon.service.impl.ConnectionUtil;
+import main.java.dragon.utils.ConnectionInfoParseXml;
 import main.java.dragon.utils.NumberUtils;
+import main.java.dragon.utils.StringUtils;
 import main.java.dragon.utils.XenConstants;
 import sun.misc.BASE64Encoder;
 
 public class FetchDynamicData extends ConnectionUtil {
+	private String ip;
 
 	public FetchDynamicData() throws Exception {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-	private static final String IP = "192.168.4.206";
-	private static final String HOST_NAME = "root";
-	private static final String HOST_PASSWORD = "centerm";
-
+	public FetchDynamicData(String ip) throws Exception {
+		super();
+		this.ip = ip;
+	}
 	// 定义标签
 	private static final String RRD_META_STR = "meta";
 	private static final String RRD_DATA_STR = "data";
@@ -368,22 +370,27 @@ public class FetchDynamicData extends ConnectionUtil {
 	 * @return
 	 */
 	private Document getDocById(String id, String type, String pathName){
+		Map<String, String> connectionInfo = ConnectionInfoParseXml.getXenConenctionInfo();
+		String ipAddress = connectionInfo.get("ip-address");
+		if(!StringUtils.isEmpty(ip)){
+			ipAddress = ip;
+		}
 		Document  document = null;
 		Date date = new Date();
 		String result = "";
 		String urlString = "";
 		long startTime = date.getTime() / 1000 - 3600 * 24 * 6 - 3600 * 23;
 		if(type.equals("isVM")){
-			urlString = "http://" + IP + "/vm_rrd?uuid="+ id;
+			urlString = "http://" + ipAddress + "/vm_rrd?uuid="+ id;
 		}else if(type.equals("isHost")){
-			urlString = "http://" + IP +"/host_rrd";
+			urlString = "http://" + ipAddress +"/host_rrd";
 		}else{
-			urlString = "http://" + IP + "/rrd_updates?host=true&cf=AVERAGE&interval=" + 60 + "&start=" + startTime;
+			urlString = "http://" + ipAddress + "/rrd_updates?host=true&cf=AVERAGE&interval=" + 60 + "&start=" + startTime;
 		}
 		try {
 			URL url = new URL(urlString);
 			URLConnection urlConnection = url.openConnection();
-			String encoding = new BASE64Encoder().encode((HOST_NAME + ":" + HOST_PASSWORD).getBytes());
+			String encoding = new BASE64Encoder().encode((connectionInfo.get("user") + ":" + connectionInfo.get("password")).getBytes());
 			urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
 			InputStream iStream = urlConnection.getInputStream();
 			result = IOUtils.toString(iStream);

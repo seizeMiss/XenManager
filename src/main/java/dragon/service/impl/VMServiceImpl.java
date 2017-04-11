@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xensource.xenapi.Connection;
+import com.xensource.xenapi.Host;
 import com.xensource.xenapi.Network;
 import com.xensource.xenapi.SR;
 import com.xensource.xenapi.Task;
@@ -46,6 +47,7 @@ import main.java.dragon.thread.StartVmThread;
 import main.java.dragon.utils.CommonConstants;
 import main.java.dragon.utils.StringUtils;
 import main.java.dragon.xenapi.FetchDynamicData;
+import main.java.dragon.xenapi.VmAPI;
 import main.java.dragon.xenapi.VolumeAPI;
 import main.java.dragon.xenapi.XenApiUtil;
 
@@ -99,13 +101,26 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		}
 		return status;
 	}
+	public void addVm(){
+		List<VmInstance> vmInstances;
+		try {
+			vmInstances = getVmInstance();
+			if(!StringUtils.isEmpty(vmInstances)){
+				for(VmInstance vmInstance : vmInstances){
+					vmDao.insertVm(vmInstance);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	private List<VmInstance> getVmInstance() throws Exception {
 
 		String clusterId = "22f7d051-d8ea-4646-8692-7de4d189b8c4";
-		String hostId = "e120960b-d35b-405b-81c1-49ca8599edc0";
-		String imageId = "6e7beda7-9fb9-45c7-ab5a-6e4bb17fbcea";
-		String storageId = "44c9f5e8-9d29-43ac-b866-6079b440ce67";
+		String hostId = "";
+		String imageId = "120dceda-a2aa-45a6-88d0-21e06c88ac31";
+		String storageId = "";
 		String uuid = "";
 		String name = "";
 		String vmIp = "";
@@ -118,26 +133,41 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		int cpu = 0;
 		int memory = 0;
 		int systemDisk = 20;
+		boolean isVmExist = false;
 		List<VmInstance> vmInstances = new ArrayList<VmInstance>();
+		List<VmInstance> selectVmInstances = vmDao.selectAllVm();
 		Set<VM> vms = VM.getAll(connection);
 		for (VM vm : vms) {
 			if (XenApiUtil.isAvailableVm(vm)) {
-				if (!vm.getNameLabel(connection).equals("cbl-vm-1")) {
-					String id = StringUtils.generateUUID();
-					uuid = vm.getUuid(connection);
-					name = vm.getNameLabel(connection);
-					if (vm.getDomid(connection) > 0) {
-						status = 1;
+				uuid = vm.getUuid(connection);
+				if(!StringUtils.isEmpty(selectVmInstances)){
+					for(VmInstance vmInstance : selectVmInstances){
+						if(vmInstance.getUuid().equals(uuid)){
+							isVmExist = true;
+						}
 					}
-					powerStatus = vm.getPowerState(connection).toString();
-					cpu = vm.getMetrics(connection).getVCPUsNumber(connection).intValue();
-					memory = (int) (vm.getMemoryTarget(connection) / 1024 / 1024);
-					VmInstance vmInstance = new VmInstance(id, clusterId, hostId, imageId, storageId, uuid, name, vmIp,
-							status, powerStatus, createTime, updateTime, osType, osName, cpu, memory, systemDisk);
-					vmInstance.setVmNetWorks(getVmNetwork(vm, id));
-					 vmInstance.setVmStorages(getVmStorage(vm, id, storageId));
-					vmInstances.add(vmInstance);
 				}
+				if(isVmExist){
+					isVmExist = false;
+					continue;
+				}
+				VmAPI vmAPI = new VmAPI();
+				String id = StringUtils.generateUUID();
+				Storage storage = storageDao.selectStorageByUuid(vmAPI.getSrUuidByVm(vm));
+				storageId = storage.getId();
+				Host host = vmAPI.getHostByVm(vm);
+				HostInstance hostInstance = hostDao.selectHostByUuid(host.getUuid(connection));
+				hostId = hostInstance.getId();
+				name = vm.getNameLabel(connection);
+				status = getStatusByVmStatus(vm.getPowerState(connection).toString());
+				powerStatus = vm.getPowerState(connection).toString();
+				cpu = vm.getMetrics(connection).getVCPUsNumber(connection).intValue();
+				memory = (int) (vm.getMemoryTarget(connection) / 1024 / 1024);
+				VmInstance vmInstance = new VmInstance(id, clusterId, hostId, imageId, storageId, uuid, name, vmIp,
+						status, powerStatus, createTime, updateTime, osType, osName, cpu, memory, systemDisk);
+				vmInstance.setVmNetWorks(getVmNetwork(vm, id));
+				vmInstance.setVmStorages(getVmStorage(vm, id, storageId));
+				vmInstances.add(vmInstance);
 			}
 		}
 		return vmInstances;
@@ -179,7 +209,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		}
 		return vmNetworks;
 	}
-	
+
 	@Override
 	public void saveVm(VmInstance vmInstance, List<VmStorage> vmStorage, List<VmNetwork> vmNetwork) {
 
@@ -224,7 +254,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		vmInstance.setStatus(CommonConstants.VM_OPENING_STATUS);
 		vmDao.updateVm(vmInstance);
 		StartVmThread startVmThread = new StartVmThread(id, connection, vmDao);
-		new Thread(startVmThread).start();//开启线程
+		new Thread(startVmThread).start();// 开启线程
 		return vmInstance;
 	}
 
@@ -264,7 +294,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		}
 		return vmInstances;
 	}
-	
+
 	@Override
 	public int addVm(String vmName, String clusterId, String imageId, String cpuNumber, String memorySize,
 			String storageId, String userDisk) {
@@ -315,7 +345,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 					try {
 						sr = SR.getByUuid(connection, srStorage.getUuid());
 						synchronized (vmInstance) {
-//							createVmByImage(vmInstance, userDisk, sr);
+							// createVmByImage(vmInstance, userDisk, sr);
 							vmInstance.notifyAll();
 						}
 					} catch (Exception e) {
@@ -381,7 +411,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	public VmInstance getVmInstanceById(String id) {
 		return vmDao.selectVmById(id);
 	}
-	
+
 	@Override
 	public int modifyVm(String cpu, String memory, VmInstance modifiedVm) {
 		int result = 0;
@@ -398,6 +428,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 		return result;
 	}
+
 	private double getClusterMemoryFreeSize() throws Exception {
 		FetchDynamicData data = new FetchDynamicData();
 		double memoryFreeSize = 0;

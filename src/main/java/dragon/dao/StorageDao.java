@@ -10,4 +10,5 @@ public interface StorageDao {
 	public List<Storage> selectAllStorage();
 	public Storage selectStorageById(String id);
 	public List<Storage> selectStorageByCluster(String clusterId);
+	public Storage selectStorageByUuid(String uuid);
 }

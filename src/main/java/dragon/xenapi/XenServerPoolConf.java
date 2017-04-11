@@ -1,5 +1,9 @@
 package main.java.dragon.xenapi;
 
+import java.util.Map;
+
+import main.java.dragon.utils.ConnectionInfoParseXml;
+
 class XenServerPoolConf {
 	private String hostURL;
 	private String username;
@@ -14,6 +18,18 @@ class XenServerPoolConf {
 		return this.hostURL;
 	}
 
+	public void setHostURL(String hostURL) {
+		this.hostURL = hostURL;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public String getUsername() {
 		return this.username;
 	}
@@ -23,9 +39,11 @@ class XenServerPoolConf {
 	}
 
 	private XenServerPoolConf() {
-		this.hostURL = "http://192.168.4.206";
-		this.username = "root";
-		this.password = "centerm";
+		Map<String, String> connectionInfo = ConnectionInfoParseXml.getXenConenctionInfo();
+		this.hostURL = connectionInfo.get("host-url");
+		this.username = connectionInfo.get("user");
+		this.password = connectionInfo.get("password");
+		
 	}
 
 }

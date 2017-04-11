@@ -30,16 +30,6 @@ $(function(){
 		}
 	});
 	
-//	$("#delete-vm").click(function(){
-//		$("input[name='checkbox']").each(function(){
-//			if($(this).is(":checked")){
-//				var td = $(this).parent("td");
-//				td.html("<img src='../img/load.gif'/>");
-//				
-//				td.html("<input type='checkbox' name='checkbox' checked>");
-//			}
-//		});
-//	});
 	$("#delete-vm").bind("click", deleteVms);
 	$(".add-vm-btn").bind("click", addVm);
 	$(".edit-vm-btn").bind("click", editVm);
@@ -47,7 +37,35 @@ $(function(){
 	$("#restart-vm").bind("click",restartVm);
 	$("#close-vm").bind("click",closeVm);
 	$("#search-image").bind("click",searchImage);
+	//取消默认
+	$("tr").bind("mousedown", function(e){
+		return false;
+	});
+	$(".data-table-tbody").children("tr").mousedown(function(e){
+		//右键
+		if(3 == e.which){
+			rightHandClick(e);
+		}else if(2 == e.which){
+			
+		}else if(1 == e.which){
+			
+		}
+		return false;
+	});
 });
+
+function rightHandClick(e){
+	let items = [
+        { title: '启动', icon: 'ion-plus-round', fn: launchVm },
+        { title: '重启', icon: 'ion-person', fn: restartVm },
+        { title: '关闭', icon: 'ion-help-buoy', fn: closeVm },
+        { title: '修改', icon: 'ion-minus-circled', fn: editVm, disabled: true },
+        { title: '删除', icon: 'ion-eye-disabled', fn: deleteVms, visible: false },
+    ];
+ 
+    basicContext.show(items, e.originalEvent);
+}
+
 function searchImage(){
 	var searchContent = $("#search-content").val();
 	if (searchContent.length > 20) {

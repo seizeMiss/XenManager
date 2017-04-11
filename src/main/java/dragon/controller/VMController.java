@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import main.java.dragon.pojo.Cluster;
 import main.java.dragon.pojo.HostInstance;
+import main.java.dragon.pojo.HostNeedInfo;
 import main.java.dragon.pojo.Image;
 import main.java.dragon.pojo.Storage;
 import main.java.dragon.pojo.VmInstance;
@@ -32,6 +33,7 @@ import main.java.dragon.utils.CommonConstants;
 import main.java.dragon.utils.NumberUtils;
 import main.java.dragon.utils.StringUtils;
 import main.java.dragon.xenapi.FetchDynamicData;
+import main.java.dragon.xenapi.HostAPI;
 
 @Controller
 public class VMController {
@@ -48,6 +50,7 @@ public class VMController {
 
 	@RequestMapping("showVM")
 	public String showVM(Model model) {
+		vmService.addVm();
 		List<VmInstance> vmInstances = vmService.getAllVm();
 		List<VmNeedInfo> vmNeedInfos = null;
 		Set<String> vmOsTypes = null;
@@ -58,7 +61,6 @@ public class VMController {
 				model.addAttribute("vmCount", vmNeedInfos.size());
 				model.addAttribute("vmOsTypes", vmOsTypes);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -79,15 +81,19 @@ public class VMController {
 			model.addAttribute("clusterMemoryUsedRate", clusterMemoryUsedRate);
 			model.addAttribute("clusterStorageUserRate", clusterStorageUserRate);
 		}
-		HostInstance hostInstance = hostService.saveHost();
-		if (!StringUtils.isEmpty(hostInstance)) {
-			hostInstance.setCpuAverage(Double.parseDouble(StringUtils.double2String(hostInstance.getCpuAverage())));
-			String hostMemoryUsedRate = StringUtils
-					.double2String(hostInstance.getMemoryUsed() * 100.0 / hostInstance.getMemoryTotal());
-			model.addAttribute("hostInstance", hostInstance);
-			model.addAttribute("hostMemoryUsedRate", hostMemoryUsedRate);
-			Cluster clusterByHost = clusterService.getClusterById(hostInstance.getClusterId());
-			model.addAttribute("clusterName", clusterByHost.getName());
+		List<HostInstance> hostInstances = hostService.saveHost();
+		List<HostNeedInfo> hostNeedInfos = new ArrayList<HostNeedInfo>();
+		if (!StringUtils.isEmpty(hostInstances)) {
+			for(HostInstance hostInstance : hostInstances){
+				hostInstance.setCpuAverage(Double.parseDouble(StringUtils.double2String(hostInstance.getCpuAverage())));
+				String hostMemoryUsedRate = StringUtils
+						.double2String(hostInstance.getMemoryUsed() * 100.0 / hostInstance.getMemoryTotal());
+				Cluster clusterByHost = clusterService.getClusterById(hostInstance.getClusterId());
+				HostNeedInfo hostNeedInfo = new HostNeedInfo(hostInstance, clusterByHost.getName(), hostMemoryUsedRate);
+				hostNeedInfos.add(hostNeedInfo);
+			}
+			model.addAttribute("hostNeedInfos", hostNeedInfos);
+			model.addAttribute("host_size", hostNeedInfos.size());
 		}
 		return "jsp/colony_hostcomputer";
 	}
@@ -278,14 +284,16 @@ public class VMController {
 		List<VmNeedInfo> vmNeedInfos = new ArrayList<VmNeedInfo>();
 		boolean isShowMemoryRate = false;
 		boolean isShowCpuRate = true;
-		FetchDynamicData data = new FetchDynamicData();
 		VmNeedInfo vmNeedInfo = null;
 		Cluster cluster = null;
+		HostAPI hostAPI = new HostAPI();
 		HostInstance hostInstance = null;
 		for (VmInstance vmInstance : vmInstances) {
 			if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS || isAll){
 				cluster = clusterService.getClusterById(vmInstance.getClusterId());
 				hostInstance = hostService.getHostInstanceById(vmInstance.getHostId());
+				String ipAddress = hostAPI.getHostIpAddress(hostInstance.getUuid());
+				FetchDynamicData data = new FetchDynamicData(ipAddress);
 				vmInstance.setMemory(vmInstance.getMemory() / 1024);
 				int userDiskSize = vmService.getUserDiskSize(vmInstance.getId());
 				if (vmInstance.getPowerStatus().equals("Running")) {

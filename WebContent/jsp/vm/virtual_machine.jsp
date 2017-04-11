@@ -11,7 +11,7 @@
 					<li class="nav-li"><a href="showIndex"><span
 							class="glyphicon glyphicon-home left-nav-icon"></span>首页</a></li>
 					<li class="nav-li"><a href="showClusterAndHost"><span
-							class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>集群和主机</a>
+							class="glyphicon glyphicon-th-large left-nav-icon"></span>集群和主机</a>
 					</li>
 					<li class="nav-li"><a href="showImage"><span
 							class="glyphicon glyphicon-floppy-disk left-nav-icon"></span>镜像</a></li>
@@ -144,7 +144,7 @@
 								<thead class="data-thead">
 									<tr>
 										<th><input type="checkbox" id="all_cb"></th>
-										<th>名称</th>
+										<th style="max-width: 40px;">名称</th>
 										<th>IP地址</th>
 										<th>状态</th>
 										<th>操作系统</th>
