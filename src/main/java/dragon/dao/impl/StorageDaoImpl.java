@@ -17,16 +17,13 @@ public class StorageDaoImpl extends HibernateUtils implements StorageDao {
 
 	@Override
 	public void insertStorage(Storage storage) {
-		// TODO Auto-generated method stub
 		Session session = null;
 		try {
 			session = getSession();
 			session.beginTransaction();
 			session.save(storage);
-			session.flush();
 			session.getTransaction().commit();
 		} catch (Exception e) {
-			// TODO: handle exception
 			session.getTransaction().rollback();
 			e.printStackTrace();
 		}finally{

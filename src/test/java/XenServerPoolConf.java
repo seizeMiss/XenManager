@@ -23,7 +23,7 @@ class XenServerPoolConf {
 	}
 
 	private XenServerPoolConf() {
-		this.hostURL = "http://192.168.4.206";
+		this.hostURL = "http://10.96.52.50";
 //		this.hostURL = "http://192.168.127.20";
 		this.username = "root";
 		this.password = "centerm";

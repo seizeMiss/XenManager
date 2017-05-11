@@ -78,7 +78,7 @@
 							<div class="form-group">
 								<label for="vm-number" class="col-sm-2 control-label"> <span class="asterisk">*</span>虚拟机数量 </label>
 								<div class="col-sm-10">
-									<input type="number" maxlength="3" class="form-control" id="vm-number" placeholder="请输入虚拟机数量">
+									<input type="number" maxlength="3" value="1" class="form-control" id="vm-number" placeholder="请输入虚拟机数量">
 								</div>
 								<a id="popover-vm-number" data-trigger="click" data-container="body" data-toggle="popover"
 								data-placement="right" data-content="支持批量创建 1 ~ 500 个虚拟机"
@@ -209,7 +209,7 @@
 								data-placement="right" data-content="如果选择“其他”，内存量为 1 ~ 8 GB 时，最小步进 0.5 GB；内存量为 8 ~ 16 GB 时，最小步进 1 GB；<br>不支持为虚拟机分配超过 16 GB内存"
 								class="glyphicon glyphicon-info-sign"></a>
 								<div class="memory-number-warning-info" style="float: left">
-									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">请选择内存分配的个数！</label></span>
+									<span class="glyphicon glyphicon-warning-sign"><label style="margin-left: 5px;">请选择内存分配的大小！</label></span>
 								</div>
 							</div>
 

@@ -17,9 +17,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sun.jndi.url.corbaname.corbanameURLContextFactory;
+
 import main.java.dragon.dao.StorageDao;
+import main.java.dragon.entities.Cluster;
+import main.java.dragon.entities.HostInstance;
 import main.java.dragon.pojo.Account;
 import main.java.dragon.service.AccountService;
+import main.java.dragon.service.ClusterService;
+import main.java.dragon.service.HostService;
 import main.java.dragon.service.IndexService;
 import main.java.dragon.service.StorageService;
 import main.java.dragon.utils.StringUtils;
@@ -33,6 +39,10 @@ public class AccountController{
 	private IndexService indexService;
 	@Autowired
 	private StorageService storageService;
+	@Autowired
+	private ClusterService clusterService;
+	@Autowired
+	private HostService hostService;
 	
 	/**
 	 * 登录
@@ -78,6 +88,8 @@ public class AccountController{
 			String memoryUsedRate = indexService.getMemoryUsedRate();
 			String storageUsedRate = indexService.getStorageUsedRate();
 			String storageTotal = indexService.getStorageTotal();
+//			clusterService.addCluster();
+//			hostService.addHost();
 			storageService.addStorage();
 			if(!StringUtils.isEmpty(vmCount,activeVmCount,cpuUsedRate,memoryUsedRate,storageTotal,storageUsedRate)){
 				model.addAttribute("vmCount", vmCount);

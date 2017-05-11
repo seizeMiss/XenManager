@@ -230,6 +230,7 @@ $(function() {
 	//设置取消按钮的点击事件
 	$(".cancle-btn").click(function(){
 		window.history.back(-1);
+		$("input[type='checkbox']").prop("checked", false);
 	});
 	//设置确定按钮的点击事件
 	$(".ok-btn").click(function(){

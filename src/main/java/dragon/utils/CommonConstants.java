@@ -32,8 +32,8 @@ public class CommonConstants {
 	public static final int VM_DELETING_STATUS = 5;//5
 	public static final int VM_AVAILABEL_STATUS = 1;//1
 	public static final int VM_NO_AVAILABEL_STATUS = -1;//-1
-	public static final int VM_DELETED_STATUS = 9;
-	public static final int VM_EDITING_STATUS = 10;
+	public static final int VM_DELETED_STATUS = 9;//已删除
+	public static final int VM_EDITING_STATUS = 10;//编辑中
 	
 	public static final int IMAGE_CREATING_STATUS = 2;
 	public static final int IMAGE_AVAILABLE_STATUS = 1;

@@ -10,4 +10,5 @@ public interface ClusterDao {
 	public void updateCluster(Cluster cluster);
 	public List<Cluster> selectAllClusters();
 	public Cluster selectClusterById(String id);
+	public Cluster selectClusterByName(String name);
 }

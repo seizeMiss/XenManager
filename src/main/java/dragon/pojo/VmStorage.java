@@ -42,7 +42,7 @@ public class VmStorage {
 	public void setId(String id) {
 		this.id = id;
 	}
-	@Column(name="name",length=20)
+	@Column(name="name",length=50)
 	public String getName() {
 		return name;
 	}

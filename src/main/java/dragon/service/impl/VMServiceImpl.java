@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.taglibs.standard.tag.common.fmt.ParseDateSupport;
 import org.apache.xmlrpc.XmlRpcException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ import main.java.dragon.dao.HostDao;
 import main.java.dragon.dao.ImageDao;
 import main.java.dragon.dao.StorageDao;
 import main.java.dragon.dao.VMDao;
+import main.java.dragon.pojo.Cluster;
 import main.java.dragon.pojo.HostInstance;
 import main.java.dragon.pojo.Image;
 import main.java.dragon.pojo.Storage;
@@ -45,6 +47,7 @@ import main.java.dragon.thread.ReStartVMThread;
 import main.java.dragon.thread.ShutdownVmThread;
 import main.java.dragon.thread.StartVmThread;
 import main.java.dragon.utils.CommonConstants;
+import main.java.dragon.utils.ConnectionInfoParseXml;
 import main.java.dragon.utils.StringUtils;
 import main.java.dragon.xenapi.FetchDynamicData;
 import main.java.dragon.xenapi.VmAPI;
@@ -62,6 +65,8 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 	private StorageDao storageDao;
 	@Autowired
 	private ImageDao imageDao;
+	@Autowired
+	private ClusterDao clusterDao;
 
 	private VmInstance vmInstance;
 
@@ -101,8 +106,42 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 		}
 		return status;
 	}
+	
+	private int getStatusByVmPowerStatus(String powerStatus){
+		int status = 0;
+		switch (powerStatus) {
+		case CommonConstants.VM_POWER_START:
+			status = CommonConstants.VM_OPEN_STATUS;
+			break;
+		case CommonConstants.VM_POWER_CLOSED:
+			status = CommonConstants.VM_CLOSE_STATUS;
+			break;
+		case CommonConstants.VM_POWER_CLOSING:
+			status = CommonConstants.VM_CLOSING_STATUS;
+			break;
+		case CommonConstants.VM_POWER_CREATING:
+			status = CommonConstants.VM_CREATING_STATUS;
+			break;
+		case CommonConstants.VM_POWER_DELETED:
+			status = CommonConstants.VM_DELETED_STATUS;
+			break;
+		case CommonConstants.VM_POWER_EDITING:
+			status = CommonConstants.VM_EDITING_STATUS;
+			break;
+		case CommonConstants.VM_POWER_RESTARTING:
+			status = CommonConstants.VM_RESTARTING_STATUS;
+			break;
+		case CommonConstants.VM_POWER_STARTING:
+			status = CommonConstants.VM_OPENING_STATUS;
+			break;
+		default:
+			break;
+		}
+		
+		return status;
+	}
 	public void addVm(){
-		List<VmInstance> vmInstances;
+		List<VmInstance> vmInstances = null;
 		try {
 			vmInstances = getVmInstance();
 			if(!StringUtils.isEmpty(vmInstances)){
@@ -117,7 +156,9 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 
 	private List<VmInstance> getVmInstance() throws Exception {
 
-		String clusterId = "22f7d051-d8ea-4646-8692-7de4d189b8c4";
+		Map<String, String> connectionInfo = ConnectionInfoParseXml.getXenConenctionInfo();
+		Cluster cluster = clusterDao.selectClusterByName(connectionInfo.get("cluster-name"));
+		String clusterId = cluster.getId();
 		String hostId = "";
 		String imageId = "120dceda-a2aa-45a6-88d0-21e06c88ac31";
 		String storageId = "";
@@ -159,7 +200,7 @@ public class VMServiceImpl extends ConnectionUtil implements VMService {
 				HostInstance hostInstance = hostDao.selectHostByUuid(host.getUuid(connection));
 				hostId = hostInstance.getId();
 				name = vm.getNameLabel(connection);
-				status = getStatusByVmStatus(vm.getPowerState(connection).toString());
+				status = getStatusByVmPowerStatus(vm.getPowerState(connection).toString());
 				powerStatus = vm.getPowerState(connection).toString();
 				cpu = vm.getMetrics(connection).getVCPUsNumber(connection).intValue();
 				memory = (int) (vm.getMemoryTarget(connection) / 1024 / 1024);

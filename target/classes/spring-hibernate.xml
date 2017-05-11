@@ -40,12 +40,17 @@
 			</props>
 		</property>
 		<!-- 自动扫描注解方式配置的hibernate类文件 -->
+		<!-- 此处与entity实体路径对应 -->
 		<property name="packagesToScan">
 			<list>
-				<!-- 此处与entity实体路径对应 -->
 				<value>main.java.dragon.pojo</value>
 			</list>
 		</property>
+		 <!-- <property name="mappingDirectoryLocations">
+     		<list>
+         		<value>classpath:/main/java/dragon/entities/*.hbm.xml</value>
+     		</list>
+		</property> -->
 	</bean>
 	<!-- 配置事务管理器 -->
 	<bean name="transactionManager"

@@ -223,7 +223,7 @@ textarea{
 .show-percentage{
 	position: relative;
 	width:15%;
-	left: 40%;
+	left: 42%;
 	bottom: 120px;
 }
 .show-percentage a{
@@ -292,7 +292,7 @@ textarea{
 /*搜索*/
 .search-content{
 	margin-top: 15px;
-	height: 270px;
+	height: 240px;
 	overflow-y: auto;
 }
 .cpu-group,.ram-group{
@@ -406,9 +406,10 @@ textarea{
 	display: none;
 }
 .search-warning-info{
-	position: absolute;
-	top:43%;
-	left:1020px;
+	position: relative;
+	top:-290px;
+	left:760px;
+	width:150px;
 	display:none;
 }
 .cluster-warning-info{
@@ -418,14 +419,14 @@ textarea{
 	display:none;
 }
 .image-name-warning-info{
-	position: absolute;
-	top:22.5%;
-	left:1010px;
+	position: relative;
+	top:-25px;
+	left:760px;
 	display:none;
 }
 .image-warning-info{
 	position: absolute;
-	top:35%;
+	top:42%;
 	left:980px;
 	display: none;
 }
@@ -437,19 +438,19 @@ textarea{
 }
 .cpu-number-warning-info{
 	position: absolute;
-	top:61.5%;
+	top:74%;
 	left:1010px;
 	display: none;
 }
 .vm-rule-warning-info{
-	position: absolute;
-	top:16%;
-	left:1010px;
+	position: relative;
+	top:-25px;
+	left:760px;
 	display: none;
 }
 .memory-number-warning-info{
 	position: absolute;
-	top:68.5%;
+	top:83%;
 	left:1010px;
 	display: none;
 }
@@ -466,15 +467,15 @@ textarea{
 	display: none;
 }
 .cpu-number-edit-warning-info{
-	position: absolute;
-	top:29%;
-	left:1020px;
+	position: relative;
+	top:-25px;
+	left:760px;
 	display: none;
 }
 .memory-number-edit-warning-info{
-	position: absolute;
-	top:35%;
-	left:1020px;
+	position: relative;
+	top:-25px;
+	left:760px;
 	display: none;
 }
 .psd-warning-info span,.psd-conf-warming-info span,.search-warning-info span,

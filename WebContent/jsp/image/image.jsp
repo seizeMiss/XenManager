@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>	
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>	
 <jsp:include page="../common/common.jsp" />
 <body>
 		<div class="container">
@@ -141,7 +142,7 @@
 								</thead>
 									<tbody class="data-table-tbody">
 										<c:choose>
-											<c:when test="${images != null }">
+											<c:when test="${images != null || fn:length(images) > 0  }">
 												<c:forEach var="image" items ="${images }">
 													<tr iid = "${image.id }">
 														<td>

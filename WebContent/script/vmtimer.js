@@ -2,6 +2,7 @@
 setInterval(() => {
 	refreshData();
 }, 5000);
+
 function refreshData() {
 	var vid = "";
 	var count = 0;

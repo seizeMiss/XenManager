@@ -34,10 +34,13 @@ public class ConnectionInfoParseXml {
 		String hostUrl = "http://";
 		String userName = "";
 		String password = "";
+		String clusterName = "";
 		Map<String, String> connectionInfo = new HashMap<String, String>();
 		File file = new File("xen-connection.xml");
 		String wenAppPath = System.getProperty("vmmanager-webapp");
-		String realpath = wenAppPath + "WEB-INF\\classes\\" + file.getName();
+		String realpath = wenAppPath + "\\WEB-INF\\classes\\" + file.getName();
+		System.out.println(wenAppPath);
+		System.out.println(realpath);
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(new File(realpath));
@@ -47,14 +50,18 @@ public class ConnectionInfoParseXml {
 			Element hostElement = conElement.element("hosturl");
 			Element userElement = conElement.element("user");
 			Element psdElement = conElement.element("password");
+			Element cNameElement = conElement.element("cluster-name");
 			
 			hostUrl = hostUrl + hostElement.getText();
 			userName = userElement.getText();
 			password = psdElement.getText();
+			clusterName = cNameElement.getText();
+			
 			connectionInfo.put("host-url", hostUrl);
 			connectionInfo.put("user", userName);
 			connectionInfo.put("password", password);
 			connectionInfo.put("ip-address", hostElement.getText());
+			connectionInfo.put("cluster-name", clusterName);
 			fis.close();
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -67,7 +74,7 @@ public class ConnectionInfoParseXml {
 		String hostUrl = "http://";
 		String userName = "";
 		String password = "";
-		File file = new File("/conf/xen-connection.xml");
+		File file = new File("xen-connection.xml");
 		System.out.println(file.getAbsolutePath());
 		System.out.println(realFilePath(file.getAbsolutePath()));
 		FileInputStream fis = null;

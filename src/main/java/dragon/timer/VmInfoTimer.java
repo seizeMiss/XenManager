@@ -20,6 +20,7 @@ import main.java.dragon.dao.VMDao;
 import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.service.impl.ConnectionUtil;
 import main.java.dragon.utils.CommonConstants;
+import main.java.dragon.utils.StringUtils;
 
 @Component
 public class VmInfoTimer extends ConnectionUtil {
@@ -35,14 +36,17 @@ public class VmInfoTimer extends ConnectionUtil {
 	public void refreshVmInfo() {
 		List<VmInstance> vmInstances = vmDao.selectAllVm();
 		try {
-			for (VmInstance vmInstance : vmInstances) {
-				if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS
-						&& vmInstance.getStatus() != CommonConstants.VM_CREATING_STATUS){
-					VM vm = VM.getByUuid(connection, vmInstance.getUuid());
-					String realPowerStatus = vm.getPowerState(connection).toString();
-					if (!vmInstance.getPowerStatus().equals(realPowerStatus)) {
-						VmInstance modifiedVmInstance = getVmInstanceByVM(vm, vmInstance);
-						vmDao.updateVm(modifiedVmInstance);
+			if(!StringUtils.isEmpty(vmInstances)){
+				for (VmInstance vmInstance : vmInstances) {
+					if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS
+							&& vmInstance.getStatus() != CommonConstants.VM_CREATING_STATUS
+							&& vmInstance.getStatus() != CommonConstants.VM_NO_AVAILABEL_STATUS){
+						VM vm = VM.getByUuid(connection, vmInstance.getUuid());
+						String realPowerStatus = vm.getPowerState(connection).toString();
+						if (!vmInstance.getPowerStatus().equals(realPowerStatus)) {
+							VmInstance modifiedVmInstance = getVmInstanceByVM(vm, vmInstance);
+							vmDao.updateVm(modifiedVmInstance);
+						}
 					}
 				}
 			}

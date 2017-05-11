@@ -160,7 +160,7 @@ public class VmInstance {
 	public void setOsType(String osType) {
 		this.osType = osType;
 	}
-	@Column(name="os_name",length=20)
+	@Column(name="os_name",length=50)
 	public String getOsName() {
 		return osName;
 	}

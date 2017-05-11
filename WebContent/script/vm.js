@@ -6,10 +6,8 @@ $(function(){
 	$("#add-vm").click(function(){
 		location.href = "showAddVm";
 	});
-	$("#edit-vm").click(function(){
-		var vid = getVmIdBySelected();
-		location.href = "showEditVm?vid=" + vid;
-	});
+	
+	$("edit-vm").bind("click", showEditVM);
 	//点击选择存储
 	$("#select-storage li").click(function(){
 		$("#selected-storage-place").val($(this).find(".storage-name").html());
@@ -37,31 +35,71 @@ $(function(){
 	$("#restart-vm").bind("click",restartVm);
 	$("#close-vm").bind("click",closeVm);
 	$("#search-image").bind("click",searchImage);
+	
 	//取消默认
-	$("tr").bind("mousedown", function(e){
+	$(document).bind("contextmenu", function(e){
 		return false;
 	});
-	$(".data-table-tbody").children("tr").mousedown(function(e){
-		//右键
-		if(3 == e.which){
-			rightHandClick(e);
-		}else if(2 == e.which){
-			
-		}else if(1 == e.which){
-			
-		}
+	$(".data-table-tbody").on("contextmenu","tr",function(e){
+		$("body").css("height","500px","overflow-y","show");
+		rightHandClick(e, $(this));
 		return false;
 	});
 });
 
-function rightHandClick(e){
-	let items = [
-        { title: '启动', icon: 'ion-plus-round', fn: launchVm },
-        { title: '重启', icon: 'ion-person', fn: restartVm },
-        { title: '关闭', icon: 'ion-help-buoy', fn: closeVm },
-        { title: '修改', icon: 'ion-minus-circled', fn: editVm, disabled: true },
-        { title: '删除', icon: 'ion-eye-disabled', fn: deleteVms, visible: false },
-    ];
+function showEditVM(){
+	var vid = getVmIdBySelected();
+	location.href = "showEditVm?vid=" + vid;
+}
+
+function rightHandClick(e, obj){
+	if(!obj.find("input[name='checkbox']").is(":checked")){
+		obj.parent("tbody").find("input[name='checkbox']").each(function(){
+			if($(this).is(":checked")){
+				$(this).prop("checked", false);
+			}
+		});
+		obj.find("input[name='checkbox']").prop("checked", true);
+	}
+	$(".show-selected").find("span").html(1);
+	var status = obj.children("td").eq(3).find("span").attr("status");
+	status = parseInt(status);
+	var items = [];
+	if(status == 6){//关闭
+		items = [
+		         { title: '启动', icon: 'ion-plus-round', fn: launchVm},
+		         { title: '重启', icon: 'ion-person', fn: restartVm, disabled: true },
+		         { title: '关闭', icon: 'ion-help-buoy', fn: closeVm, disabled: true },
+		         { title: '修改', icon: 'ion-minus-circled', fn: showEditVM},
+		         { title: '删除', icon: 'ion-eye-disabled', fn: deleteVms},
+		     ];
+		$("#launch-vm").attr("disabled",false);
+		$("#restart-vm").attr("disabled",true);
+		$("#close-vm").attr("disabled", true);
+		$("#edit-vm").attr("disabled",false);
+		$("#delete-vm").attr("disabled",false);
+	}else if(status == 7){//启动
+		items = [
+		         { title: '启动', icon: 'ion-plus-round', fn: launchVm, disabled: true},
+		         { title: '重启', icon: 'ion-person', fn: restartVm },
+		         { title: '关闭', icon: 'ion-help-buoy', fn: closeVm },
+		         { title: '修改', icon: 'ion-minus-circled', fn: showEditVM, disabled: true },
+		         { title: '删除', icon: 'ion-eye-disabled', fn: deleteVms, disabled: true },
+		     ];
+		$("#launch-vm").attr("disabled",true);
+		$("#restart-vm").attr("disabled",false);
+		$("#close-vm").attr("disabled",false);
+		$("#edit-vm").attr("disabled",true);
+		$("#delete-vm").attr("disabled",true);
+	}else{
+		items = [
+		         { title: '启动', icon: 'ion-plus-round', fn: launchVm, disabled: true  },
+		         { title: '重启', icon: 'ion-person', fn: restartVm , disabled: true },
+		         { title: '关闭', icon: 'ion-help-buoy', fn: closeVm, disabled: true  },
+		         { title: '修改', icon: 'ion-minus-circled', fn: showEditVM, disabled: true },
+		         { title: '删除', icon: 'ion-eye-disabled', fn: deleteVms, disabled: true },
+		     ];
+	}
  
     basicContext.show(items, e.originalEvent);
 }
@@ -158,6 +196,7 @@ function addVm(){
 				$(".vm-rule-warning-info"),$(".image-warning-info"),
 				$(".cpu-number-warning-info"),$(".memory-number-warning-info"),
 				$(".storage-warning-info"));
+		$(".cluster-name-warning-info").find("label").html("请输入集群的名称！");
 		return false;
 	}
 	if(!imageName){
@@ -398,10 +437,18 @@ function editVm(){
 	var cpuNumber = $("input[name='select-cpu']:checked").val();
 	if(cpuNumber && cpuNumber == "other"){
 		cpuNumber = $("input[name='select-cpu']:checked").parent().find("#cpu-number").val();
+		if(!cpuNumber){
+			$(".cpu-number-edit-warning-info").show().find("label").html("cpu个数不能为空！");
+			return false;
+		}
 	}
 	var memoryNumber = $("input[name='select-ram']:checked").val();
 	if(memoryNumber && memoryNumber == "other"){
 		memoryNumber = $("input[name='select-ram']:checked").parent().find("#ram-number").val();
+		if(!memoryNumber){
+			$(".memory-number-edit-warning-info").show().find("label").html("内存大小不能为空！");
+			return false;
+		}
 	}
 	cpuNumber = parseInt(cpuNumber);
 	if(cpuNumber > 16){

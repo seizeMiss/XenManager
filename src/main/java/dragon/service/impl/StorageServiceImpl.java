@@ -58,9 +58,11 @@ public class StorageServiceImpl extends ConnectionUtil implements StorageService
 		for(SR sr : srs){
 			if(sr.getPhysicalSize(connection) > 0){
 				String uuid = sr.getUuid(connection);
-				for(Storage storage : storages){
-					if(storage.getUuid().equals(uuid)){
-						isStorageExist = true;
+				if(!StringUtils.isEmpty(storages)){
+					for(Storage storage : storages){
+						if(storage.getUuid().equals(uuid)){
+							isStorageExist = true;
+						}
 					}
 				}
 				if(isStorageExist){

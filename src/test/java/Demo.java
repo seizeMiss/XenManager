@@ -287,11 +287,16 @@ public class Demo extends ConnectionUtil {
 	public void testGetVm() throws Exception{
 		Set<VM> vms = VM.getAll(connection);
 		for(VM vm : vms){
-			if(vm.getNameLabel(connection).equals("Win7-32")){
+			if(isAvailableVm(vm)){
 				System.out.println(vm.getUuid(connection));
-			}
-			if(vm.getUuid(connection) == "367e69eb-1875-4bb9-9fea-6a9fda592bc1"){
-				System.out.println("win 7");
+				if(vm.getUuid(connection).toString().equals("a27169f3-3e5c-fbc3-afa1-f574b2bad518")){
+					Map<String, String> osVersion = null;
+					if(!vm.isNull()){
+						VMGuestMetrics vmGuestMetrics = vm.getGuestMetrics(connection);
+						osVersion = vmGuestMetrics.getOsVersion(connection);
+					}
+					System.out.println(osVersion);
+				}
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 package main.java.dragon.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +49,7 @@ public class VMController {
 
 	@RequestMapping("showVM")
 	public String showVM(Model model) {
-		vmService.addVm();
+//		vmService.addVm();
 		List<VmInstance> vmInstances = vmService.getAllVm();
 		List<VmNeedInfo> vmNeedInfos = null;
 		Set<String> vmOsTypes = null;

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import main.java.dragon.dao.ClusterDao;
 import main.java.dragon.pojo.Cluster;
+import main.java.dragon.utils.StringUtils;
 
 @Repository
 @Transactional
@@ -87,6 +88,31 @@ public class ClusterDaoImpl extends HibernateUtils implements ClusterDao{
 			e.printStackTrace();
 		}finally {
 			closeSession(session);
+		}
+		return cluster;
+	}
+
+	@Override
+	public Cluster selectClusterByName(String name) {
+		Cluster cluster = null;
+		Session session = null;
+		List<Cluster> clusters = null;
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			String hql = "from Cluster c where c.name = :name";
+			Query query = session.createQuery(hql);
+			query.setString("name", name);
+			clusters = query.list();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			closeSession(session);
+		}
+		if(!StringUtils.isEmpty(clusters)){
+			cluster = clusters.get(0);
 		}
 		return cluster;
 	}

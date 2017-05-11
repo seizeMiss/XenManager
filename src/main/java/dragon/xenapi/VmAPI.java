@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Test;
+
 import com.xensource.xenapi.Host;
 import com.xensource.xenapi.PBD;
 import com.xensource.xenapi.SR;
@@ -19,7 +21,6 @@ public class VmAPI extends ConnectionUtil{
 
 	public VmAPI() throws Exception {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	public Map<String, String> getOsVersion(VM vm) throws Exception{
@@ -61,6 +62,7 @@ public class VmAPI extends ConnectionUtil{
 				if(vdi != null && !vdi.isNull()){
 					SR sr = vdi.getSR(connection);
 					uuid = sr.getUuid(connection);
+					break;
 				}
 				
 			}

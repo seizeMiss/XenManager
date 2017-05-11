@@ -95,10 +95,12 @@ public class ImageController {
 		List<Image> imagesbyCondition = imageService.getImagesByCondition(imageName, imageStatus, imageOsType);
 		List<Image> allImages = imageService.getAllImages();
 		Set<String> imageOsNames = getImageSystemName(allImages);
-		model.addAttribute("images", imagesbyCondition);
 		if(!StringUtils.isEmpty(imagesbyCondition)){
+			model.addAttribute("images", imagesbyCondition);
 			model.addAttribute("imageCount", imagesbyCondition.size());
 			model.addAttribute("imageOsNames", imageOsNames);
+		}else{
+			model.addAttribute("images", null);
 		}
 		return "/jsp/image/image";
 	}

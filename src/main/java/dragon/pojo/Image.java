@@ -64,7 +64,7 @@ public class Image {
 	public void setImageSize(int imageSize) {
 		this.imageSize = imageSize;
 	}
-	@Column(name="os_name",length=20)
+	@Column(name="os_name",length=60)
 	public String getOsName() {
 		return osName;
 	}

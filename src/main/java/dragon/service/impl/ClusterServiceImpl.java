@@ -28,6 +28,7 @@ import main.java.dragon.pojo.Cluster;
 import main.java.dragon.pojo.VmInstance;
 import main.java.dragon.service.ClusterService;
 import main.java.dragon.utils.CommonConstants;
+import main.java.dragon.utils.ConnectionInfoParseXml;
 import main.java.dragon.utils.StringUtils;
 import main.java.dragon.xenapi.FetchDynamicData;
 import main.java.dragon.xenapi.HostAPI;
@@ -62,9 +63,10 @@ public class ClusterServiceImpl extends ConnectionUtil implements ClusterService
 	}
 
 	public Cluster getCluster(String id) throws Exception{
+		Map<String, String> connectionInfo = ConnectionInfoParseXml.getXenConenctionInfo();
 		Cluster cluster = null;
 		Pool pool = null;
-		String name = "4.21";
+		String name = connectionInfo.get("cluster-name");
 		String ipAddress = "";
 		int status = 0;
 		Double cpuAverage = 0.0d;
@@ -116,7 +118,6 @@ public class ClusterServiceImpl extends ConnectionUtil implements ClusterService
 			cluster = getCluster(id);
 			clusterDao.insertCluster(cluster);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return cluster;

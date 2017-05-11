@@ -60,7 +60,7 @@ public class VmNetwork {
 	public void setNetworkId(String networkId) {
 		this.networkId = networkId;
 	}
-	@Column(name="network_name",length=20)
+	@Column(name="network_name",length=50)
 	public String getNetworkName() {
 		return networkName;
 	}
