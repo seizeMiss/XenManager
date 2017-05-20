@@ -65,8 +65,6 @@ $(function() {
 			}
 			
 		});
-		
-//		location.href = "index.html";
 	});
 	
 	$("body").keydown(function(){

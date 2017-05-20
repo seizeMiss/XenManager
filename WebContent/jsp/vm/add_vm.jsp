@@ -51,7 +51,7 @@
 						<div class="nav-content">
 							<ol class="breadcrumb" style="width: 100%;background: white">
 								<li>
-									<a href="virtual_machine.html">虚拟机</a>
+									<a href="showVM">虚拟机</a>
 								</li>
 								<li>
 									添加虚拟机

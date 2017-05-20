@@ -172,15 +172,15 @@ function addUser() {
 			$("#user_psd_conf").focus();
 			return false;
 		}
-
 		// 进行密码验证(密码中必须包含字母、数字、特称字符，至少8个字符，最多30个字符)
-		/*
-		 * var regex = new
-		 * RegExp('(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,16}');
-		 * if(!regex.test(password)){ $(".warming-info").show();
-		 * $(".warming-info").children().children("label").html("密码不符合规则，请重新输入！");
-		 * return; }
-		 */
+		var regex = new RegExp(
+				'(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,16}');
+		if (!regex.test(password)) {
+			$(".warming-info").show();
+			$(".warming-info").children().children("label").html(
+					"密码不符合规则，请重新输入！");
+			return;
+		}
 	}
 	jQuery.ajax({
 		dataType : "json",

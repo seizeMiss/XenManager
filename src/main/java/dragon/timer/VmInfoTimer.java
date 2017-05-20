@@ -38,11 +38,13 @@ public class VmInfoTimer extends ConnectionUtil {
 		try {
 			if(!StringUtils.isEmpty(vmInstances)){
 				for (VmInstance vmInstance : vmInstances) {
+					//检测虚拟机的状态是否是删除、创建中、不可用状态
 					if(vmInstance.getStatus() != CommonConstants.VM_DELETED_STATUS
 							&& vmInstance.getStatus() != CommonConstants.VM_CREATING_STATUS
 							&& vmInstance.getStatus() != CommonConstants.VM_NO_AVAILABEL_STATUS){
 						VM vm = VM.getByUuid(connection, vmInstance.getUuid());
 						String realPowerStatus = vm.getPowerState(connection).toString();
+						//判断是否需要更新数据，当虚拟机真实状态和数据库的状态不一致的时候
 						if (!vmInstance.getPowerStatus().equals(realPowerStatus)) {
 							VmInstance modifiedVmInstance = getVmInstanceByVM(vm, vmInstance);
 							vmDao.updateVm(modifiedVmInstance);
