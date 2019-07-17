@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xen>
-	<connection>
-		<hosturl>10.96.52.50</hosturl>
-		<user>root</user>
-		<password>centerm</password>
-		<cluster-name>xen</cluster-name>
-	</connection>
-</xen>
